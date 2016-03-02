@@ -1,3 +1,7 @@
+import _setupRoutes = require('../routes/setup');
+
+export var setupRoutes = _setupRoutes;
+
 var _flash = require('./flash');
 
 export var flash = _flash;
