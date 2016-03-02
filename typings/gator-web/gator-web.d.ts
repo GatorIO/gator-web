@@ -1,7 +1,9 @@
+/// <reference path="../gator-api/gator-api.d.ts" />
 
 declare module 'gator-web' {
+    import api = require('gator-api');
 
-    export class Branding {
+    export interface IBranding {
         productName: string;
         companyName: string;
         logoDarkBackground: string;
@@ -32,6 +34,44 @@ declare module 'gator-web' {
         pods: Array<string>;
     }
 
-    export function flash(type, msg);
+    export function flash(options);
     export function renderError(req, res, message);
+
+    export class MenuLink {
+        public title: string;
+        public url: string;
+        constructor(title: string, url: string);
+    }
+
+    export class MenuItem {
+        public title: string;
+        public iconClass: string;
+        public link: MenuLink;
+        public subItems: Array<MenuItem>;
+        public target: string;
+        constructor(title: string, iconClass: string, link: MenuLink, item);
+    }
+
+    export interface Report {
+        description?: string;
+        options: Object;
+    }
+
+    export interface Reports {
+        Types: Object;
+        definitions: Array<Report>;
+    }
+
+    export interface IApplication {
+        settings: api.ISettings;
+        api: any;
+        branding: IBranding;
+        projectTypes: Object;
+        projectDesc(type): string;
+        defaultDashboard(type): Object;
+        menuItems(user, account, project): Array<MenuItem>;
+        enforceSecure(req, res, next: Function);
+        reports: Reports;
+    }
 }
+

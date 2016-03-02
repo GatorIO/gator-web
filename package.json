@@ -21,9 +21,15 @@
   },
   "dependencies": {
     "async": "^1.5.0",
+    "body-parser": "*",
+    "cookie-parser": "*",
+    "ejs": "^2.4.1",
+    "express": "^4.13.3",
     "lru-cache": "^4.0.0",
+    "gator-api": "GatorIO/gator-api",
     "gator-utils": "GatorIO/gator-utils",
-    "restify": "^4.0.3"
+    "restify": "^4.0.3",
+    "serve-favicon": "*"
   },
   "license" : "MIT"
 }
