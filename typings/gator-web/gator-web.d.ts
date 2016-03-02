@@ -76,7 +76,8 @@ declare module 'gator-web' {
 
     export var trackingProjectId: number;
 
-    export function setupRoutes(app, application, callback);
-
+    module routes {
+        export function setup(app, application, callback);
+    }
 }
 
