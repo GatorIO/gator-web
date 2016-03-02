@@ -1,6 +1,6 @@
-import _setupRoutes = require('../routes/setup');
+import _routes = require('../routes/setup');
 
-export var setupRoutes = _setupRoutes;
+export var routes = _routes;
 
 var _flash = require('./flash');
 
