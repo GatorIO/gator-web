@@ -1,0 +1,28 @@
+.idea/
+node_modules
+logs
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+
+# Grunt intermediate storage (http://gruntjs.com/creating-plugins#storing-task-files)
+.grunt
+
+# Compiled binary addons (http://nodejs.org/api/addons.html)
+build/Release
+
+# Users Environment Variables
+.lock-wscript
+
+obj/
+bin/
+*.suo
+*.js.map
+
+*.user
+*.sln.docstates
+
+!**/public/**
