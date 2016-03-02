@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include partials/home/header %>
+    <title>Conversion Tracking - <%- application.branding.companyName %></title>
+</head>
+<body id="page-top" class="landing-page">
+<% include partials/home/navbar %>
+<div id="inSlider" class="carousel slide" data-ride="carousel" data-interval="7000">
+
+    <ol class="carousel-indicators">
+        <li data-target="#inSlider" data-slide-to="0" class="active"></li>
+        <li data-target="#inSlider" data-slide-to="1"></li>
+    </ol>
+
+    <div class="carousel-inner" role="listbox">
+        <div class="item active">
+            <div class="container">
+                <div class="carousel-caption">
+                    <h1>
+                        Conversion Tracking<br/>
+                        On Your Real Users<br/>
+                    </h1>
+                    <p>
+                    Optimize your campaigns without the bots
+                    <br>and hidden users - <a href="/how">Here's how</a>
+                    <br><p>
+                        <a class="btn btn-lg btn-primary" href="<%- application.branding.signupUrl %>" role="button">TAKE A BITE - FREE TRIAL</a>
+                        &nbsp;<a class="btn btn-lg btn-primary" href="/demo" role="button">Live Demo</a>
+                    </p>
+                </div>
+                <div class="carousel-image wow zoomIn">
+                    <img src="/images/landing/laptop.png" alt="laptop"/>
+                </div>
+            </div>
+            <!-- Set background for slide in css -->
+            <div class="header-back one"></div>
+
+        </div>
+        <div class="item">
+            <div class="container">
+                <div class="carousel-caption">
+                    <h1>
+                        Realtime User Scoring
+                        <br>and Profiling
+                    </h1>
+                    <p>Optimize your interaction with your users,
+                    <br>not your bots.
+                    </p>
+                    <p>
+                        <a class="btn btn-lg btn-primary" href="<%- application.branding.signupUrl %>" role="button">Free trial</a>
+                        &nbsp;<a class="btn btn-lg btn-primary" href="/demo" role="button">Live Demo</a>
+                    </p>
+                </div>
+            </div>
+            <!-- Set background for slide in css -->
+            <div class="header-back two"></div>
+        </div>
+    </div>
+
+    <a class="left carousel-control" href="#inSlider" role="button" data-slide="prev">
+        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+    </a>
+    <a class="right carousel-control" href="#inSlider" role="button" data-slide="next">
+        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+    </a>
+</div>
+
+<section id="features" class="container services">
+    <div class="row">
+        <div class="col-sm-4">
+            <h2>Reduce fraud</h2>
+            <p>With our proprietary technology, we detect suspicious and hidden sessions by all your sources and report on the quality factors.  Quit paying for useless traffic.</p>
+            <p><a class="navy-link" href="/how" role="button">Details &raquo;</a></p>
+        </div>
+        <div class="col-sm-4">
+            <h2>Realtime User Scoring</h2>
+            <p>Use our REST API to get full user profiles with quality scores and demographics in realtime to make better decisions about how to engage your users.</p>
+            <p><a class="navy-link" href="/scoring" role="button">Details &raquo;</a></p>
+        </div>
+        <div class="col-sm-4">
+            <h2>People Analytics</h2>
+            <p>See how your known users engage, even across devices.  Track custom events and attributes on profiles.  Integrate people profiles into your
+                existing systems.</p>
+            <p><a class="navy-link" href="/features#people" role="button">Details &raquo;</a></p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <h2>Conversion Tracking</h2>
+            <p>Full campaign, conversion and revenue analysis.  Includes funnel analysis and attribution.  Eliminate sources that don't convert.</p>
+            <p><a class="navy-link" href="/features" role="button">Details &raquo;</a></p>
+        </div>
+        <div class="col-sm-4">
+            <h2>Event Tracking</h2>
+            <p>Events can have any amount of data attached and can be updated at any time.  Reports can be customized to display event attributes.</p>
+            <p><a class="navy-link" href="/features#events" role="button">Details &raquo;</a></p>
+        </div>
+        <div class="col-sm-4">
+            <h2>Developers</h2>
+            <p>Integrate and customize using our platform.  And with our open source website, you can build your own custom product using our data platform.</p>
+            <p><a class="navy-link" href="/developer/overview" role="button">Developer's Guide &raquo;</a>&nbsp;&nbsp; <a class="navy-link" href="/help/overview" role="button">Product FAQ &raquo;</a></p>
+        </div>
+    </div>
+</section>
+
+<section class="container features">
+    <div class="row">
+        <div class="col-lg-12 text-center">
+            <div class="navy-line"></div>
+            <h1>Over 150+ attributes tracked<br/> <span class="navy"> plus any custom data you wish</span> </h1>
+            <p>We automatically track 22,000+ devices, geolocation, demographic, campaign and ecommerce data.<br>Events can track any amount of custom data with a simple call.</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3 text-center wow fadeInLeft">
+            <div>
+                <i class="fa fa-filter features-icon"></i>
+                <h2>Fully segmentable</h2>
+                <p>Create any number of reporting segments.  Reporting is 100% realtime with no sampling.</p>
+            </div>
+            <div class="m-t-lg">
+                <i class="fa fa-bar-chart features-icon"></i>
+                <h2>Flexible</h2>
+                <p>Reports are fully customizable.  Create your own dashboards.</p>
+            </div>
+        </div>
+        <div class="col-md-6 text-center  wow zoomIn">
+            <img src="/images/landing/perspective.png" alt="dashboard" class="img-responsive">
+        </div>
+        <div class="col-md-3 text-center wow fadeInRight">
+            <div>
+                <i class="fa fa-list features-icon"></i>
+                <h2>Infinite Logs</h2>
+                <p>Session-level data from the beginning of your account is accessible at anytime via the website or API.</p>
+            </div>
+            <div class="m-t-lg">
+                <i class="fa fa-file-pdf-o features-icon"></i>
+                <h2>Exports</h2>
+                <p>Get email delivery of reports.  Schedule exports on any timeframe.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!--
+<section class="comments gray-section" style="margin-top: 0">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="navy-line"></div>
+                <h1>What our partners say</h1>
+                <p>Donec sed odio dui. Etiam porta sem malesuada. </p>
+            </div>
+        </div>
+        <div class="row features-block">
+            <div class="col-lg-4">
+                <div class="bubble">
+                    "Uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like)."
+                </div>
+                <div class="comments-avatar">
+                    <a href="" class="pull-left">
+                        <img alt="image" src="/images/landing/avatar3.jpg">
+                    </a>
+                    <div class="media-body">
+                        <div class="commens-name">
+                            Andrew Williams
+                        </div>
+                        <small class="text-muted">Company X from California</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="bubble">
+                    "Uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like)."
+                </div>
+                <div class="comments-avatar">
+                    <a href="" class="pull-left">
+                        <img alt="image" src="/images/landing/avatar1.jpg">
+                    </a>
+                    <div class="media-body">
+                        <div class="commens-name">
+                            Andrew Williams
+                        </div>
+                        <small class="text-muted">Company X from California</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="bubble">
+                    "Uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like)."
+                </div>
+                <div class="comments-avatar">
+                    <a href="" class="pull-left">
+                        <img alt="image" src="/images/landing/avatar2.jpg">
+                    </a>
+                    <div class="media-body">
+                        <div class="commens-name">
+                            Andrew Williams
+                        </div>
+                        <small class="text-muted">Company X from California</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+-->
+
+<section id="pricing" class="pricing">
+    <div class="container">
+        <div class="row m-b-lg">
+            <div class="col-lg-12 text-center">
+                <div class="navy-line"></div>
+                <h1>Monthly Pricing</h1>
+                <p>Pricing is based on how many calls are made into our platform.  This is the total of events, sessions, page views, and API calls.</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-4 wow zoomIn">
+                <ul class="pricing-plan list-unstyled">
+                    <li class="pricing-title">
+                        Free
+                    </li>
+                    <li class="pricing-desc">
+                        First 25,000 calls.<br><br>
+                    </li>
+                    <li>
+                        <a class="btn btn-primary btn-xs" href="<%- application.branding.signupUrl %>">Signup</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-lg-4 wow zoomIn">
+                <ul class="pricing-plan list-unstyled selected">
+                    <li class="pricing-title">
+                        Standard
+                    </li>
+                    <li class="pricing-desc">
+                        Based on total sessions, events, page views and API calls per month (hits).
+                        <br><br>
+                        Pricing includes phone and email support and unlimited people profiles.
+                        <br>
+                    </li>
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th style="width:50%;text-align:center">Hits (up to)</th>
+                            <th style="text-align:center">Price</th>
+                        </tr>
+                        </thead>
+                        <tr><td style="width:50%;text-align:center">500,000</td><td style="text-align:center">$100 (U.S.)</td></tr>
+                        <tr><td style="width:50%;text-align:center">1,000,000</td><td style="text-align:center">$200 (U.S.)</td></tr>
+                        <tr><td style="width:50%;text-align:center">Over 1,000,000</td><td style="text-align:center">$100 (U.S.) per million</td></tr>
+                    </table>
+                    <li class="plan-action">
+                        <a class="btn btn-primary btn-xs" href="<%- application.branding.signupUrl %>">Signup</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-lg-4 wow zoomIn">
+                <ul class="pricing-plan list-unstyled">
+                    <li class="pricing-title">
+                        High Volume
+                    </li>
+                    <li class="pricing-desc">
+                        Bulk pricing is available.  Contact us for more information.
+                    </li>
+                    <li>
+                        <a class="btn btn-primary btn-xs" href="/contact/form">Contact Form</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<% include partials/home/contactFooter %>
+<% include partials/home/footerScripts %>
+
+<script>
+
+    $(document).ready(function () {
+
+        $('body').scrollspy({
+            target: '.navbar-fixed-top',
+            offset: 80
+        });
+
+        // Page scrolling feature
+        $('a.page-scroll').bind('click', function(event) {
+            var link = $(this);
+
+            if (this.href.indexOf('#') > -1) {
+
+                $('html, body').stop().animate({
+                    scrollTop: $(link.attr('href')).offset().top - 50
+                }, 500);
+                event.preventDefault();
+            }
+        });
+    });
+
+    var cbpAnimatedHeader = (function() {
+        var docElem = document.documentElement,
+                header = document.querySelector( '.navbar-default' ),
+                didScroll = false,
+                changeHeaderOn = 70;
+        function init() {
+            window.addEventListener( 'scroll', function( event ) {
+                if( !didScroll ) {
+                    didScroll = true;
+                    setTimeout( scrollPage, 250 );
+                }
+            }, false );
+        }
+        function scrollPage() {
+            var sy = scrollY();
+            if ( sy >= changeHeaderOn ) {
+                $(header).addClass('navbar-scroll')
+            }
+            else {
+                $(header).removeClass('navbar-scroll')
+            }
+            didScroll = false;
+        }
+        function scrollY() {
+            return window.pageYOffset || docElem.scrollTop;
+        }
+        init();
+
+    })();
+
+    // Activate WOW.js plugin for animation on scroll
+    new WOW().init();
+
+</script>
+
+</body>
+</html>

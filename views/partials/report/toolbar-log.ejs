@@ -1,0 +1,136 @@
+<form class="form-inline pull-right" style="margin-top:15px" role="form">
+
+    <div id="reportTimeframe" class="visible-print"></div>
+
+    <div class="input-group hidden-print">
+
+        <span class="input-group-btn">
+            <button title="Prior period" class="btn btn-white" type="button" onclick="this.blur(); Toolbar.prior()">
+                <i class="fa fa-step-backward"></i>
+            </button>
+        </span>
+
+        <input type="text" id="reportRange" class="form-control" style="min-width:325px;cursor:pointer;background-color:white" readonly />
+
+        <span class="input-group-btn">
+            <button title="Next period" class="btn btn-white form-control" type="button" onclick="this.blur(); Toolbar.next()">
+                <i class="fa fa-step-forward"></i>
+            </button>
+        </span>
+
+        <span class="input-group-btn hideAt600">
+            <button type="button" class="btn btn-white" onclick="runQuery(); return false;"><i class="fa fa-refresh"></i></button>
+        </span>
+
+        <span class="input-group-btn hideAt600">
+            <button type="button" class="btn btn-white" data-toggle="modal" data-target="#dashboardModal" onclick="getSuggestedTitle()">
+                <i class="fa fa-th-large"></i>
+            </button>
+        </span>
+
+        <span class="input-group-btn hideAt600">
+            <button type="button" class="btn btn-white" data-toggle="modal" data-target="#bookmarkCreateModal"><i class="fa fa-bookmark"></i></button>
+            <div class="modal inmodal fade" id="bookmarkCreateModal" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-md">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <i class="fa fa-bookmark modal-icon"></i>
+                            <h2 class="modal-title">Bookmark Report</h2>
+                            <small class="font-bold">Save this report to the 'Bookmarks' menu.</small>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Bookmark Name:</label>
+                                <input type="text" id="bookmarkName" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" onclick="Toolbar.createBookmark(); return false">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </span>
+
+        <span class="input-group-btn hideAt600">
+            <button type="button" data-toggle="dropdown" class="btn btn-white dropdown-toggle"><i class="glyphicon glyphicon-share"></i></button>
+            <ul class="dropdown-menu pull-right">
+                <!--
+                        <li><a href="#" onclick="return false"><i class="fa fa-envelope-o"></i>&nbsp; Email</a></li>
+                        <li><a href="#" onclick="return false"><i class="fa fa-file-pdf-o"></i>&nbsp; PDF</a></li>
+                        <li><a href="#" onclick="return false"><i class="fa fa-file-word-o"></i>&nbsp; Word</a></li>
+                        <li><a href="#" onclick="return false"><i class="fa fa-file-excel-o"></i>&nbsp; Excel</a></li>
+                        <li><a href="#" onclick="return false">OpenDocument Spreadsheet</a></li>
+                        <li><a href="#" onclick="return false">Rich Text Format</a></li>
+                        <li><a href="#" onclick="return false">Tab Delimited</a></li>
+                -->
+                <li><a href="#" onclick="report.download('pdf'); return false">Adobe PDF</a></li>
+                <li><a href="#" onclick="report.download('csv'); return false">Comma Separated Values</a></li>
+            </ul>
+        </span>
+    </div>
+</form>
+
+<div class="modal inmodal fade" id="dashboardModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <i class="fa fa-th-large modal-icon"></i>
+                <h2 class="modal-title">Add to Dashboard</h2>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Pick a Dashboard or <a href="/setup/dashboards">Create a new dashboard</a></label>
+                    <br><select id="dashboard-name" class="form-control">
+<%
+    var dashboards = application.api.reporting.currentDashboards(req);
+
+    if (dashboards) {
+
+        for (var key in dashboards) {
+            if (dashboards.hasOwnProperty(key)) {
+%>
+                <option value="<%- key %>"><%- key %>
+<%
+            }
+    }
+}
+%>
+                    </select>
+                    <br><label>Pick a title:</label>
+                    <br><input id="pod-title" type="text" class="form-control" />
+                    <br><label>Select what to display:</label>
+                    <br><input type="radio" name="pod-type" value="map" checked> Map &nbsp;&nbsp; <input type="radio" name="pod-type" value="table"> Table
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+
+                <%  if (dashboards && Object.keys(dashboards).length > 0) { %>
+                <a onclick="Toolbar.addToDashboard();" id="modal-create-ok" class="btn btn-primary btn-ok">OK</a>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function getSuggestedTitle() {
+        var title = 'Log';
+        var view = '<%- definition.view %>';
+
+        switch (view) {
+            case 'sessions':
+                title = 'Session Log';
+                break;
+            case 'events':
+                title = 'Event Log';
+                break;
+        }
+
+        $('#pod-title').val(title);
+    }
+</script>

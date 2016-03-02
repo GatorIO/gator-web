@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <% include ../partials/master/header %>
+    <title>Ad Fraud Scoring Help</title>
+</head>
+
+<body class="fixed-navigation">
+
+<div id="wrapper">
+
+    <% include partials/leftPanel %>
+
+    <div id="page-wrapper" class="white-bg">
+
+        <% include partials/topPanel %>
+
+        <div class="wrapper wrapper-content animated fadeInRight">
+            <div class="row white-bg" style="margin-top:-20px">
+                <div class="col-md-12">
+                    <div class="faq-item">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h1>Scoring Methodology</h1>
+                                <br>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <a data-toggle="collapse" href="#faq6" class="faq-question"><span class="fa fa-angle-down"></span>&nbsp; How do rate users?</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div id="faq6" class="panel-collapse collapse">
+                                    <div class="faq-answer">
+                                        <p>
+                                        For every session, we check for a variety of factors that would indicate whether the session was from a human or not.  Based on these factors, we
+                                        assign a quality score from 0 to 1000.  A score of less than 100 is labeled 'invalid', meaning there is a high likelyhood that the session was not from a
+                                        human.  These scores can be included in reporting.  For example, you may want to see your campaigns where the quality score is above 100 to filter out
+                                        the worst sessions.
+                                        <br><br>
+                                        We use many methods, and make a subset of them public.  However, we do not publish them all to prevent reverse-engineering.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <a data-toggle="collapse" href="#faq7" class="faq-question"><span class="fa fa-angle-down"></span>&nbsp; What factors influence the quality score of a user?</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div id="faq7" class="panel-collapse collapse">
+                                    <div class="faq-answer">
+                                        <p>
+                                        Check out our page on <a href="/how">how we do it</a>.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <a data-toggle="collapse" href="#faq8" class="faq-question"><span class="fa fa-angle-down"></span>&nbsp; How can I see this in reports?</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div id="faq8" class="panel-collapse collapse">
+                                    <div class="faq-answer">
+                                        <p>
+                                        Scores are part of each session and can be added to any report.  Also, they can be filtered and segmented like any other attribute.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <% include ../partials/master/footer %>
+    </div>
+</div>
+
+<% include ../partials/master/footerScripts %>
+
+</body>
+</html>

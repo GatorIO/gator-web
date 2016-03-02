@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <% include ../partials/master/header %>
+    <title>Analytics Help</title>
+</head>
+
+<body class="fixed-navigation">
+
+<div id="wrapper">
+
+    <% include partials/leftPanel %>
+
+    <div id="page-wrapper" class="white-bg">
+
+        <% include partials/topPanel %>
+
+        <div class="wrapper wrapper-content animated fadeInRight">
+
+            <div class="row white-bg" style="margin-top:-20px">
+                <div class="col-md-12">
+                    <div class="faq-item">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h1>Getting Started</h1>
+                                <br>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <a data-toggle="collapse" href="#faq6" class="faq-question"><span class="fa fa-angle-down"></span>&nbsp; How do I start tracking?</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div id="faq6" class="panel-collapse collapse">
+                                    <div class="faq-answer">
+                                        <p>For website tracking, you must first create a project and then paste the tracking script onto the pages you want data on.  To manage projects and to
+                                            get the tracking script, go to <a href="/setup/projects">Setup/Projects</a>.  For each project, there is a button called 'Web Script' that displays
+                                            the tracking script for the project.
+                                        <br><br><strong>Important:</strong> Each project has a unique tracking script.  The project id is placed within the script, so make sure to take care to use
+                                        the correct script for each project.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <a data-toggle="collapse" href="#faq7" class="faq-question"><span class="fa fa-angle-down"></span>&nbsp; How long does it take for data to show up in my reports?</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div id="faq7" class="panel-collapse collapse">
+                                    <div class="faq-answer">
+                                        <p>Data should show up immediately.  If it does not, see the items below to diagnose the problem.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <a data-toggle="collapse" href="#faq8" class="faq-question"><span class="fa fa-angle-down"></span>&nbsp; I put the script on my pages, but I don't see any data.  What reasons could cause this?</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div id="faq8" class="panel-collapse collapse">
+                                    <div class="faq-answer">
+                                        <p>First check to make sure you have the proper tracking script included on your web pages.
+                                            <br><br>
+                                            One easy way to verify if the script is installed is to visit a page on your site and use the "Edit, View Source" option in your browser. If our script
+                                            is not found, you most likely have not inserted our tracking script on the page.
+                                            <br><br>
+                                            Then you must obtain the script (from the <a href="/setup/projects">Setup/Projects</a> page) and insert it on every page of your site that you wish
+                                            to track data on.  To get the most accurate reporting the script should be placed on every web page of your site.  The script must stand by itself and
+                                            is most effective when placed with in the opening "head" and closing "/head" tags.  These tags are located toward the top of the html code above the "body" tags of each page.
+                                            <br><br>
+                                            Please note that tracking events or people requires additional tracking code.  For full details, see our <a href="/developer/web/gettingstarted">tracking</a> page.
+                                            <br><br>
+                                            If you are still not tracking, check the section on the use of frames.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <a data-toggle="collapse" href="#faq9" class="faq-question"><span class="fa fa-angle-down"></span>&nbsp; Can I track multiple projects on the same page?</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div id="faq9" class="panel-collapse collapse">
+                                    <div class="faq-answer">
+                                        <p>
+                                        Yes.  Simply create multiple instances of the tracking class, like this:
+<pre>
+//  first project
+var gator = new Gator({
+    "projectId": "71518208"
+});
+gator.logPageview();
+
+//  second project created called 'gator2'
+var gator2 = new Gator({
+    "projectId": "22323223"
+});
+gator2.logPageview();
+</pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <a data-toggle="collapse" href="#faq10" class="faq-question"><span class="fa fa-angle-down"></span>&nbsp; Can I track SPA (single page applications) or dynamically generated pages?</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div id="faq10" class="panel-collapse collapse">
+                                    <div class="faq-answer">
+                                        <p>
+                                        Yes. In order to differentiate between pages, you can identify pages as such:
+                                        <pre>gator.logPageview('<b>your page name</b>');</pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <a data-toggle="collapse" href="#faq11" class="faq-question"><span class="fa fa-angle-down"></span>&nbsp; Can your product track secure sites (starting with https:)?</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div id="faq11" class="panel-collapse collapse">
+                                    <div class="faq-answer">
+                                        <p>
+                                        Yes.  The tracking script automatically handles secure pages without modification.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <% include ../partials/master/footer %>
+    </div>
+</div>
+
+<% include ../partials/master/footerScripts %>
+
+</body>
+</html>

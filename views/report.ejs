@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include partials/report/header %>
+    <% include partials/master/header %>
+    <link href="/query-builder/css/query-builder.default.css" rel="stylesheet">
+
+    <style>
+        #filter-builder .rules-group-container {
+            background-color:white !important;
+            border:none !important;
+            padding:0 !important;
+        }
+    </style>
+</head>
+<body class="fixed-navigation">
+
+<div id="wrapper">
+
+    <% include partials/master/leftPanel %>
+
+    <div id="page-wrapper" class="gray-bg">
+
+        <% include partials/master/topPanel %>
+
+        <div id="content" class="wrapper wrapper-content" style="padding-right: 15px;">
+
+            <div class="row white-bg">
+                <% include partials/master/message %>
+
+                <div class="col-md-4">
+                    <h1 id="page-title"></h1>
+                    <h2 class="visible-print">Project: <%- application.api.currentProject(req).name %></h2>
+                </div>
+                <div class="col-md-8">
+                    <% include partials/report/toolbar %>
+                </div>
+            </div>
+            <div class="row white-bg hidden-print">
+                <div class="col-md-6">
+                    <h4 class="text-navy">Show Metrics:</h4>
+                    <input class="form-control" id="metrics" data-placeholder="Choose metrics, like sessions or page views..." type="text">
+                    <h4 class="text-navy">By:</h4>
+                    <input class="form-control" id="elements" data-placeholder="Choose elements, like browser or platform..." type="text">
+                    <h4 class="text-navy">With Segments:</h4>
+                    <div class="input-group">
+                        <input class="form-control" id="segments" data-placeholder="Choose segments..." type="text">
+                        <span class="input-group-btn hidden-print">
+                            <button title="Build your own custom segment" class="btn btn-primary" type="button" onclick="newSegment()" data-toggle="modal" data-target="#segmentModal">
+                                <i class="fa fa-plus" style="font-size:.8em"></i>
+                            </button>
+                        </span>
+                    </div>
+                    <br />
+                </div>
+                <div class="col-md-6">
+                    <h4 class="text-navy">Filter:</h4>
+                    <div id="filter-builder"></div>
+                </div>
+            </div>
+            <div class="row white-bg">
+                <div class="col-lg-12">
+                    <div id="results-chart"></div>
+                </div>
+            </div>
+            <div class="row white-bg">
+                <span id="results-table-container" style="visibility: hidden">
+                    <div class="col-lg-12">
+                        <div id="results-table" style="margin-top:15px">&nbsp;</div>
+                    </div>
+                </span>
+            </div>
+        </div>
+
+        <% include partials/master/footer %>
+
+    </div>
+</div>
+
+<div class="modal inmodal fade" id="segmentModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h2 class="modal-title">Define Segment</h2>
+            </div>
+            <div class="modal-body">
+                <div class="form-group"><label>Segment Name</label>
+                    <input name="segmentName" id="segmentName" placeholder="Enter segment name..." class="form-control" autocomplete="off">
+                </div>
+                <div id="segment-builder"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <a onclick="addSegment(); return false" id="modal-create-ok" class="btn btn-primary btn-ok">OK</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<% include partials/master/footerScripts %>
+<% include partials/report/footerScripts %>
+<script src="/query-builder/js/query-builder.standalone.min.js"></script>
+<script src="/js/query-builder.custom.js"></script>
+<script src="/typeahead/typeahead.jquery.min.js"></script>
+
+<script>
+    var segmentsSelectize, customCount = 0, customSegments, suppressUpdates = false, title;
+    var report = new Report();
+    var definition = <%- JSON.stringify(definition) %>;
+
+    //  set up default page options based on the data view (sessions, events or pages)
+    switch (definition.view) {
+        case 'events':
+            definition.title = definition.title || 'Events';
+            definition.attributes = definition.attributes || 'eventCount';
+            definition.group = definition.group || 'eventName';
+            break;
+        case 'pages':
+            definition.title  = definition.title || 'Pages';
+            definition.attributes = definition.attributes || 'pageViews';
+            definition.group = definition.group || 'page';
+            break;
+        default:
+            definition.title = definition.title || 'Sessions';
+            definition.attributes = definition.attributes || 'sessions';
+            break;
+    }
+
+    $('#page-title').html(definition.title);
+
+    var metricSelectize = $('#metrics').selectize({
+        options: <%- JSON.stringify(metricOptions) %>,
+        items: Utils.replaceAll(definition.attributes, ' ', '').split(','),
+        plugins: ['drag_drop','remove_button'],
+        delimiter: ',',
+        closeAfterSelect: true,
+        onItemAdd: function () {
+            this.blur();
+        },
+        optgroups:[{ id: 'Custom', name: 'Custom Attributes' }, { id: 'Standard', name: 'Standard Attributes' }],
+        optgroupField: 'optgroup',
+        optgroupLabelField: 'name',
+        optgroupValueField: 'id'
+    });
+
+    var elementSelectize = $('#elements').selectize({
+        options: <%- JSON.stringify(elementOptions) %>,
+        items: definition.group ? Utils.replaceAll(definition.group, ' ', '').split(',') : [],
+        plugins: ['drag_drop','remove_button'],
+        delimiter: ',',
+        closeAfterSelect: true,
+        onItemAdd: function () {
+            this.blur();
+        },
+        optgroups:[{ id: 'Custom', name: 'Custom Attributes' }, { id: 'Standard', name: 'Standard Attributes' }],
+        optgroupField: 'optgroup',
+        optgroupLabelField: 'name',
+        optgroupValueField: 'id'
+    });
+
+    function setupSegmentSelect(items) {
+
+        var segments = <%- JSON.stringify(segmentOptions) %>;
+
+        segmentsSelectize = $('#segments').selectize({
+            options: segments,
+            items: items,
+            maxItems: 6,
+            dropdownParent: "body",
+            plugins: ['drag_drop','remove_button'],
+            delimiter: ',',
+            closeAfterSelect: true,
+            onItemAdd: function () {
+                this.blur();
+            }
+        });
+    }
+
+    setupSegmentSelect([ -1000 ]);
+
+    function newSegment() {
+        $('#segment-builder').queryBuilder('reset');
+        $('#segmentName').val('Custom ' + ++customCount);
+    }
+
+    function editSegment(value) {
+
+        if (value && value.substr(0, 6) == 'custom') {
+            $('#segmentName').val(customSegments[value].text);
+            $('#segmentModal').modal('show');
+            $('#segment-builder').queryBuilder('setRulesFromMongo', customSegments[value].query);
+        }
+    }
+
+    function addSegment() {
+
+        //  validate form data
+        if (!$('#segment-builder').queryBuilder('validate'))
+            return;
+
+        customSegments = customSegments || {};
+
+        var value = 'custom-' + customCount;
+        customSegments[value] = {
+            text: $('#segmentName').val(),
+            query: $('#segment-builder').queryBuilder('getMongo')
+        };
+
+        segmentsSelectize[0].selectize.addOption({ value: value, text: $('#segmentName').val() });
+        segmentsSelectize[0].selectize.updateOption(value, { value: value, text: customSegments[value].text });
+        segmentsSelectize[0].selectize.refreshItems();
+        segmentsSelectize[0].selectize.addItem(value);
+        $('#segmentModal').modal('hide');
+        runQuery();
+    }
+
+    function runQuery() {
+
+        if (suppressUpdates)
+            return;
+
+        if (!Filter.validate('filter-builder'))
+            return;
+
+        if (!$('#projects').val()) {
+            Page.showMessage('Please select a project.&nbsp; <a href="/setup/projects/form">Click here</a> to create a new project.');
+            return;
+        }
+
+        if (!$('#metrics').val()) {
+            Page.showMessage('You must select at least one metric to report on.');
+        } else {
+
+            //  set options for both chart and table
+            report.pageOptions = {
+                projectId: $('#projects').val(),
+                timezone: '<%- req.session.user.timezoneId %>',
+                chartContainer: 'results-chart',
+                tableContainer: 'results-table',
+                legendContainer: 'results-legend',
+                onStateChange: pushState
+            }
+
+            setState();
+
+            report.run(function(err) {
+
+                if (!err)
+                    pushState();
+                else
+                    Page.doneLoading();
+
+                //  if being exported, notify service that rendering is done
+                if (typeof window.callPhantom === 'function')
+                    window.callPhantom({ status: 'complete' });
+
+            });
+        }
+    }
+
+    function pushState() {
+        if (history.pushState) {
+            history.pushState( { options: report.state, tableData: report.tableData, chartData: report.chartData }, '',
+                    window.location.href.split('?')[0] + '?options=' + encodeURIComponent(JSON.stringify(report.state)))
+        }
+    }
+
+    window.onpopstate = function(settings) {
+
+        if (settings && settings.state) {
+            restoreState(settings.state.options);
+            report.tableData = settings.state.tableData;
+            report.chartData = settings.state.chartData;
+            report.render();
+        }
+    };
+
+    function setState() {
+        report.state.view = definition.view || 'sessions';
+        report.state.title =  $('#page-title').html();
+        report.state.renderView = definition.renderView || 'report';
+        report.state.dateLabel = Toolbar.dateLabel;
+        report.state.dateInterval = $("#reportIntervalTitle").html();
+        report.state.attributes = $("#metrics").val();
+
+        if (definition.hiddenSeries)
+            report.state.hiddenSeries = definition.hiddenSeries;
+
+        if (definition.tableOrder)
+            report.state.tableOrder = definition.tableOrder;
+
+        if ($("#elements").val())
+            report.state.group = $("#elements").val();
+        else
+            delete report.state.group;
+
+        if ($("#segments").val())
+            report.state.segments = $("#segments").val();
+        else
+            delete report.state.segments;
+
+        if ($("#filter-builder").queryBuilder('validate'))
+            report.state.filter = $("#filter-builder").queryBuilder('getMongo');
+        else
+            delete report.state.filter;
+
+        if (customCount >0) {
+            report.state.customSegments = customSegments;
+            report.state.customCount = customCount;
+        } else {
+            delete report.state.customSegments;
+            delete report.state.customCount;
+        }
+
+        if (Toolbar.dateLabel == 'Custom') {
+            report.state.dateStart = Toolbar.dateStart;
+            report.state.dateEnd = Toolbar.dateEnd;
+        } else {
+            delete report.state.dateStart;
+            delete report.state.dateEnd;
+        }
+
+        if (!report.state.plotKeys)
+            delete report.state.plotKeys;
+
+        if (!report.state.tableOrder)
+            delete report.state.tableOrder;
+
+    }
+
+    function restoreState(state) {
+
+        suppressUpdates = true;
+
+        report.state = state;
+
+        if (report.state.title)
+            $('#page-title').html(report.state.title);
+
+        Toolbar.setDateRange(state.dateLabel, state.dateStart, state.dateEnd, state.dateInterval);
+
+        metricSelectize[0].selectize.clear();
+        state.attributes.split(',').forEach(function(item) {metricSelectize[0].selectize.addItem(item.trim());});
+
+        elementSelectize[0].selectize.clear();
+
+        if (state.group)
+            state.group.split(',').forEach(function(item) {elementSelectize[0].selectize.addItem(item.trim());});
+
+        segmentsSelectize[0].selectize.clear();
+
+        if (state.segments)
+            state.segments.split(',').forEach(function(item) {segmentsSelectize[0].selectize.addItem(item.trim());});
+
+        if (state.customSegments) {
+            customSegments = state.customSegments;
+
+            for (var key in customSegments) {
+
+                if (customSegments.hasOwnProperty(key)) {
+                    var segment = customSegments[key];
+                    segmentsSelectize[0].selectize.addOption({ value: key, text: segment.text });
+                    segmentsSelectize[0].selectize.addItem(key);
+                }
+            }
+        }
+
+        if (state.filter)
+            Filter.setRules('filter-builder', state.filter);
+
+        if (state.customCount)
+            customCount = state.customCount;
+
+        suppressUpdates = false;
+    }
+
+    var filterOptions = <%- JSON.stringify(filterOptions) %>;
+
+    $(document).ready(function() {
+
+        try {
+
+            Toolbar.init();
+
+            if (definition.dateLabel || definition.dateInterval)
+                Toolbar.setDateRange(definition.dateLabel, null, null, definition.dateInterval);
+
+            Filter.init('filter-builder', '<%- settings.apiUrl %>', <%- req.session.currentProjectId %>, null, filterOptions);
+            Filter.init('segment-builder', '<%- settings.apiUrl %>', <%- req.session.currentProjectId %>, null, filterOptions);
+
+            //  'filter-builder' is part of the page and can cause updates
+            Filter.configureEmbeddedFilter('filter-builder');
+
+            //  Get options first by query string, then by definition, then by default
+            var options = Utils.getParam('options', window.location.search);
+
+            if (options) {
+                restoreState(JSON.parse(options));
+            } else {
+                setState();     //  set defaults
+            }
+
+            runQuery();
+
+            $('body').on('click', 'div.items', function (e) {
+                editSegment($(e.target).attr('data-value'));
+            });
+
+            //  Run query when form values are changed by the user - make sure they actually changed, since the change event fires for other reasons
+            var oldElements = $("#elements").val(), oldMetrics = $("#metrics").val(), oldSegments = $("#segments").val();
+
+            elementSelectize[0].selectize.on('change', function() {
+
+                if ($("#elements").val() != oldElements) {
+                    oldElements = $("#elements").val();
+                    delete report.state.plotKeys;
+                    runQuery();
+                }
+            });
+
+            metricSelectize[0].selectize.on('change', function() {
+
+                if ($("#metrics").val() != oldMetrics) {
+                    oldMetrics = $("#metrics").val();
+                    runQuery();
+                }
+            });
+
+            segmentsSelectize[0].selectize.on('change', function() {
+
+                if ($("#segments").val() != oldSegments) {
+                    oldSegments = $("#segments").val();
+                    runQuery();
+                }
+            });
+        } catch(err) {
+            Page.showMessage(err.message);
+        }
+    });
+</script>
+</body>
+</html>
+	

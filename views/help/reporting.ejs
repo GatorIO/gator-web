@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <% include ../partials/master/header %>
+    <title>Reporting Concepts</title>
+</head>
+
+<body class="fixed-navigation">
+
+<div id="wrapper">
+
+    <% include partials/leftPanel %>
+
+    <div id="page-wrapper" class="white-bg">
+
+        <% include partials/topPanel %>
+
+        <div class="wrapper wrapper-content animated fadeInRight">
+            <div class="row white-bg" style="margin-top:-20px">
+                <div class="col-md-12">
+                    <div class="faq-item">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h1>Reporting Concepts</h1>
+                                <br>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <a data-toggle="collapse" href="#faq6" class="faq-question"><span class="fa fa-angle-down"></span>&nbsp; Define the major types of tracking - sessions, events, users and people.</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div id="faq6" class="panel-collapse collapse">
+                                    <div class="faq-answer">
+                                        <h3>Data Categories Tracked:</h3>
+                                        <table class="table">
+                                            <tr><td><label>Sessions</label></td>
+                                                <td>
+                                                    Sessions are defined as:
+                                                    <li>A new user visits your app or site.</li>
+                                                    <li>30 minutes elapses from the user's last interaction.</li>
+                                                    <li>For web tracking, the user re-enters the site or app from a different source (campaign, referrer, or search engine)</li>
+                                                </td>
+                                            </tr>
+                                            <tr><td><label>Events</label></td><td>An event is an activity performed by a user, like 'App Launch', or 'Signup'.  Events are tracked via API calls.  Events
+                                                    can track any extra data.  For example, a signup event can also pass in the user's name and other info.</td></tr>
+                                            <tr><td><label>Pageviews</label></td><td>For web tracking, pageviews and page navigation can be tracked.</td></tr>
+                                            <tr><td><label>Users</label></td><td>Users are visitors to your website or app.</td></tr>
+                                            <tr><td><label>People</label></td><td>A person is a known user, which means you have identified the user with the 'setPerson' API call.  Generally, a person
+                                                    is known to you when they log in or identify themselves in some other way.  People can be tracked across devices, however, users cannot be..</td></tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <a data-toggle="collapse" href="#faq3" class="faq-question"><span class="fa fa-angle-down"></span>&nbsp; What's the difference between metrics and elements?</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div id="faq3" class="panel-collapse collapse">
+                                    <div class="faq-answer">
+                                        <p>
+                                            Tracking records data called 'attributes'.  We collect a large number of attributes per session and these can be reported on immediately.  Attributes can be either elements
+                                            or metrics:
+                                            <br><br><h3>Definitions of attribute types:</h3>
+                                        <table class="table">
+                                            <tr><td><label>Attribute</label></td><td>A generic term for either an element or a metric. Attributes are also known as 'fields' or 'properties'.  Example attributes are 'sessions' and 'platform'.</td></tr>
+                                            <tr><td><label>Element</label></td><td>An attribute (generally a string or date) that reports can be grouped on.  For example, 'Event Name' or 'Campaign'.</td></tr>
+                                            <tr><td><label>Metric</label></td><td>A numeric attribute that can have summary operations computed on, like totals, averages, etc.  For example, 'Average Session Length'.</td></tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <a data-toggle="collapse" href="#faq1" class="faq-question"><span class="fa fa-angle-down"></span>&nbsp; What attributes are automatically tracked?</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div id="faq1" class="panel-collapse collapse">
+                                    <div class="faq-answer">
+                                        <p>
+                                        <h3>Attributes</h3>
+                                        The following attributes are available for reporting.
+                                        <br><br>
+                                        <table class="table">
+                                            <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Title</th>
+                                                <th>Description</th>
+                                                <th>Type</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <% for (var i=0; i < attributes.length; i++) { %>
+                                            <tr>
+                                                <td><%=attributes[i].name %></td>
+                                                <td><%=attributes[i].title %></td>
+                                                <td><%=attributes[i].description %></td>
+                                                <td><%=attributes[i].dataType %></td>
+                                            </tr>
+                                            <% } %>
+                                            </tbody>
+                                        </table>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <a data-toggle="collapse" href="#faq4" class="faq-question"><span class="fa fa-angle-down"></span>&nbsp; What's the difference between a segment and a filter?</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div id="faq4" class="panel-collapse collapse">
+                                    <div class="faq-answer">
+                                        <p>
+                                        Segments and filters are very similar, as they both create a subset of your data on reports.  The primary difference is the segments are used for comparing
+                                        different data sets within a report.  Also, a filter applies to the whole report, including all segments.  So, you can define a report
+                                        with 'Mobile' and 'Desktop' segments that both appear on the report.  Then, you can create an overall filter that applies to both segments.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <a data-toggle="collapse" href="#faq7" class="faq-question"><span class="fa fa-angle-down"></span>&nbsp; Can I use your product and Google Analytics at the same time?</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div id="faq7" class="panel-collapse collapse">
+                                    <div class="faq-answer">
+                                        <p>
+                                        Yes.  The tracking scripts for each do not interfere with each other.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <a data-toggle="collapse" href="#faq8" class="faq-question"><span class="fa fa-angle-down"></span>&nbsp; Do you automatically track Google's UTM parameters?</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div id="faq8" class="panel-collapse collapse">
+                                    <div class="faq-answer">
+                                        <p>
+                                        Yes.  We automatically track utm_source, utm_campaign, utm_medium, utm_content and utm_term.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <a data-toggle="collapse" href="#faq9" class="faq-question"><span class="fa fa-angle-down"></span>&nbsp; How do I track users across devices?</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div id="faq9" class="panel-collapse collapse">
+                                    <div class="faq-answer">
+                                        <p>
+                                        Known users can be tracked across devices if they are known to you, via a login or some other means.  Once you know the user, use the 'setPerson' API call.  Then,
+                                        you can view the user's profile for every device they are known on.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <a data-toggle="collapse" href="#faq10" class="faq-question"><span class="fa fa-angle-down"></span>&nbsp; How long do you retain data?</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div id="faq10" class="panel-collapse collapse">
+                                    <div class="faq-answer">
+                                        <p>
+                                        We retain all data for as long as the account is in good standing.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <a data-toggle="collapse" href="#faq11" class="faq-question"><span class="fa fa-angle-down"></span>&nbsp; Are events editable?</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div id="faq11" class="panel-collapse collapse">
+                                    <div class="faq-answer">
+                                        <p>
+                                        Yes, and so are session and person data.  See our <a href="/developer/web/javascriptapi">API</a>.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <a data-toggle="collapse" href="#faq12" class="faq-question"><span class="fa fa-angle-down"></span>&nbsp; Can I set up custom attributes in reports?</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div id="faq12" class="panel-collapse collapse">
+                                    <div class="faq-answer">
+                                        <p>
+                                        Yes.  You can create custom attributes on sessions, event and people.  In addition, this attributes can be defined to behave like standard attributes, including
+                                        how they are displayed, totaled, etc.  See the 'Setup / Custom Attributes' menu item on your account.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <a data-toggle="collapse" href="#faq13" class="faq-question"><span class="fa fa-angle-down"></span>&nbsp; Do reports consider timezone?</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div id="faq13" class="panel-collapse collapse">
+                                    <div class="faq-answer">
+                                        <p>
+                                        Yes.  Reports are displayed in the timezone of the account holder.  This can be modified at any time.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <a data-toggle="collapse" href="#faq14" class="faq-question"><span class="fa fa-angle-down"></span>&nbsp; Do you track device data?</a>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div id="faq14" class="panel-collapse collapse">
+                                    <div class="faq-answer">
+                                        <p>
+                                        We track 22,000 (and growing) separate devices and their manufacturers.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <% include ../partials/master/footer %>
+    </div>
+</div>
+
+<% include ../partials/master/footerScripts %>
+
+</body>
+</html>

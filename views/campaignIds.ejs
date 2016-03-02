@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <% include partials/report/header %>
+    <% include partials/master/header %>
+</head>
+<body class="fixed-navigation">
+
+<div id="wrapper">
+
+    <% include partials/master/leftPanel %>
+
+    <div id="page-wrapper" class="gray-bg">
+
+        <% include partials/master/topPanel %>
+
+        <div class="wrapper wrapper-content">
+            <div class="row white-bg">
+
+                <% include partials/master/message %>
+
+                <div class="col-lg-12">
+                    <h1>Campaign Identifiers</h1>
+                    <br />
+                    From this page, you can setup your campaign identifiers.  Campaign identifiers designate what you want the query string parameter name to be for campaign tracking.
+                    The ids 'source' and 'utm-campaign' are automatically tracked.  For example, if you have an Google AdWords account, you may have the following URL setup:
+                    <br><br>
+                    <code>http://www.mysite.com?<strong>mysource</strong>=google</code>
+                    <br /><br />
+                    The campaign identifier in this case is <code>mysource</code>.<br /><br />
+                    Type in your list of campaign identifiers (up to 100):
+                    <br />
+                    <input id="campaignIds" data-placeholder="Add campaign ids..." type="text" value="<%- campaignIds %>">
+                    <br /><br />
+                    <button onclick="submitForm(); return false" class="btn btn-sm btn-primary m-t-n-xs"><strong>Update campaign identifiers</strong></button>
+                    <br /><br /><br /><br />
+                </div>
+            </div>
+        </div>
+
+        <% include partials/master/footer %>
+    </div>
+</div>
+
+<% include partials/master/footerScripts %>
+<% include partials/report/footerScripts %>
+
+<script>
+
+    function getFormData() {
+        return { campaignIds: $('#campaignIds').val() };
+    }
+
+    function validateForm() {
+        var vals = $('#campaignIds').val().split(',');
+
+        for (var v = 0; v < vals.length; v++) {
+            var val = vals[v];
+
+            if (val.indexOf('\'') > -1 || val.indexOf('"') > -1 || val.indexOf('&') > -1 || val.indexOf('<') > -1 || val.indexOf('>') > -1) {
+                Page.alert('Campaign ids cannot contain \' " & < >.');
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function submitForm() {
+
+        if (!validateForm())
+            return;
+
+        $.ajax({
+            type: "PUT",    //  if the data object has an id, PUT the update
+            url: '/setup/campaignids/',
+            data: getFormData(),
+            success: function (data, status) {
+                Page.alert("Success", "Campaign ids successfully updated.", "success");
+            },
+            error: function (request, status, error) {
+                Data.showError(request, status, error);
+            }
+        });
+    }
+
+    $('#campaignIds').selectize({
+        plugins: ['drag_drop','remove_button'],
+        persist: false,
+        maxItems: 100,
+        hideSelected: true,
+        create: function(input) {
+            return {
+                value: input,
+                text: input
+            }
+        }
+    });
+
+    $(document).ready(function() {
+
+    });
+</script>
+</body>
+</html>

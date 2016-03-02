@@ -29,8 +29,9 @@ declare module 'gator-web' {
 
     export class Dashboard {
         createdDate: any;
-        pods: Array<Pod>;
+        pods: Array<string>;
     }
 
     export function flash(type, msg);
+    export function renderError(req, res, message);
 }
