@@ -73,5 +73,7 @@ declare module 'gator-web' {
         enforceSecure(req, res, next: Function);
         reports: Reports;
     }
+
+    export var trackingProjectId: number;
 }
 

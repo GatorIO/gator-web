@@ -11,7 +11,6 @@ var bookmarkRoutes = require('./bookmarks');
 var scheduledReportsRoutes = require('./scheduledReports');
 var developerRoutes = require('./developer');
 var attributeRoutes = require('./attributes');
-var helpRoutes = require('./help');
 var accessTokenRoutes = require('./accessTokens');
 function setup(app, application, callback) {
     try {

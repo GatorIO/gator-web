@@ -12,7 +12,7 @@
     }}
 
     var gator = new Gator({
-        "projectId": "64178176"
+        "projectId": "<%- application.trackingProjectId %>"
     });
     //gator.logPageview();
 <% } else { %>
@@ -28,7 +28,7 @@
     }}
 
     var gator = new Gator({
-        "projectId": "64178176"
+        "projectId": "<%- application.trackingProjectId %>"
     });
     gator.logPageview();
 <% } %>

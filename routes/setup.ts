@@ -20,7 +20,6 @@ import bookmarkRoutes = require('./bookmarks');
 import scheduledReportsRoutes = require('./scheduledReports');
 import developerRoutes = require('./developer');
 import attributeRoutes = require('./attributes');
-import helpRoutes = require('./help');
 import accessTokenRoutes = require('./accessTokens');
 
 export function setup(app: express.Application, application: IApplication, callback) {
