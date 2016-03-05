@@ -114,6 +114,12 @@ var Page = {
     menuLogoSmall: '',
     intro: null,
 
+    startIntro: function() {
+        var intro = introJs();
+        intro.setOptions(Page.intro);
+        intro.start();
+    },
+
     renderMenu: function(logo, logoSmall) {
 
         //  build html for menu
@@ -132,12 +138,14 @@ var Page = {
                 html += menuItemHtml(Page.menuItems[m])
             }
 
-            html += '</ul>';
-
             if (Page.intro)
-                html += '<br><a href="" onclick="return false;">Tour page</a>';
+                html +=  menuItemHtml({
+                    title: 'Tour Page',
+                    icon: 'fa fa-play-circle',
+                    url: 'javascript:Page.startIntro();'
+                });
 
-            return html;
+            return html + '</ul>';
         };
 
         var menuItemHtml = function(item) {

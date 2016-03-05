@@ -448,10 +448,69 @@
                 element: document.querySelector('#metrics + div'),
                 intro: "These are metrics to display on the table below, which are numeric attributes that can have summary operations computed on, like totals, averages, etc. For example, 'Average Session Length'." +
                 "<br><br>You can drag and drop the metrics to customize the order in which they are displayed.  Also, you can click on the 'x' to remove them."
-
+            },
+            {
+                element: document.querySelector('#elements + div'),
+                intro: "These are attributes (generally a string or date) that reports can be grouped on. For example, 'Event Name' or 'Campaign'.  The table below will show grouping based on what you have selected here." +
+                "<br><br>You can drag and drop the elements to customize the order in which they are displayed.  Also, you can click on the 'x' to remove them."
+            },
+            {
+                element: document.querySelector('#segments + div'),
+                intro: "Segments are used to compare subsets of data on the report.  For example, you may want to compare mobile sessions vs. tablet sessions.  By selecting a segment, it will be added side by side to the table and chart below."
+            },
+            {
+                element: document.querySelector('#filter-builder'),
+                intro: "This is used to filter all the data on the report.  For example, you can filter for all sessions from iPhones.  Multiple filters can be created and grouped together by logical ANDs and ORs."
+            },
+            {
+                element: document.querySelector('#toolbar-prior'),
+                intro: "By clicking on this, the report will change the timeframe one unit back.  For example, if the report is for the month of June, it will move to May and refresh."
+            },
+            {
+                element: document.querySelector('#reportRange'),
+                intro: "This lets you pick predefined timeframes, like 'Today', or 'Last 7 days'.  It also lets you select custom timeframes from the 'Custom' menu option."
+            },
+            {
+                element: document.querySelector('#toolbar-next'),
+                intro: "By clicking on this, the report will change the timeframe one unit forward.  For example, if the report is for the month of May, it will move to June and refresh."
+            },
+            {
+                element: document.querySelector('#toolbar-interval'),
+                intro: "This defines the time interval the report will be grouped on.  For example, hourly, daily or monthly.  " +
+                "If the timeframe and interval match (like 'today' and 'daily'), the report will show a snapshot of the data using pie charts.  Otherwise, the report will show a trend line.",
+                position: 'left'
+            },
+            {
+                element: document.querySelector('#toolbar-refresh'),
+                intro: "This button refreshes the report without reloading the whole page.",
+                position: 'left'
+            },
+            {
+                element: document.querySelector('#toolbar-dashboard'),
+                intro: "This adds the current report to an existing dashboard.  The report will show up as a pod on the dashboard you select.",
+                position: 'left'
+            },
+            {
+                element: document.querySelector('#toolbar-bookmark'),
+                intro: "This creates a bookmark for the current report.  The bookmark will show up on the menu's 'Bookmark' item.",
+                position: 'left'
+            },
+            {
+                element: document.querySelector('#toolbar-export'),
+                intro: "This exports the report to a specific format you select, like PDF or CSV.",
+                position: 'left'
             }
         ]
     };
+
+    if (!localStorage.reportIntroPlayed)
+        Page.confirm('Take a tour?', 'Would you like a guided tour of this page?  You can always take the tour later by clicking on the "Tour Page" menu item at the bottom of the page', function() {
+            Page.startIntro();
+        });
+
+    localStorage.reportIntroPlayed = true;
+
+
 </script>
 </body>
 </html>
