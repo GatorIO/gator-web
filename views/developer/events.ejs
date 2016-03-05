@@ -30,7 +30,7 @@
                             <br /><br /><h2>Tracking an event on a website</h2>
                             Add the following javascript code anywhere on your page:
                             <br /><br />
-                            <pre>gator.logEvent(<i>eventName</i>, <i>[ data ]</i>);</pre>
+                            <pre><%- application.branding.scriptName %>.logEvent(<i>eventName</i>, <i>[ data ]</i>);</pre>
 
                             <br>Parameters:
                             <table class="table">
@@ -41,11 +41,11 @@
 
                             <br /><h3>Examples:</h3>
                             <br />
-                            <pre>gator.logEvent('Signup');</pre>
+                            <pre><%- application.branding.scriptName %>.logEvent('Signup');</pre>
                             <br />
                             or if you want to add data to the event, use this example call instead:
                             <br /><br />
-                            <pre>gator.logEvent('Signup', { firstName: 'Jerry', lastName: 'Smith' } );</pre>
+                            <pre><%- application.branding.scriptName %>.logEvent('Signup', { firstName: 'Jerry', lastName: 'Smith' } );</pre>
 
                             <br /><br /><h3>Ecommerce:</h3>
                             If you are tracking ecommerce events, like purchases, see our section on <a href="/developer/web/ecommerce">ecommerce</a>.

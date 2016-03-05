@@ -40,7 +40,7 @@
 <pre>
 &lt;head&gt;
 &nbsp; &lt;script&gt;
-&nbsp;&nbsp;&nbsp; gator.logEvent('Contact');
+&nbsp;&nbsp;&nbsp; <%- application.branding.scriptName %>.logEvent('Contact');
 &nbsp; &lt;/script&gt;
 &lt;/head&gt;
 </pre>
@@ -50,21 +50,21 @@
                             Tracking directly from the form submission requires a litte more effort.&nbsp; When a user clicks on a submit button, the standard way to track the event will not work consistently.&nbsp; This is because browsers will sometimes abort all processing before
                             the event can be recorded.
                             <br /><br />
-                            In order to prevent this problem, intercept the onclick event on the form submit button and call the gator.logOutbound function.&nbsp; For example, to track a form post and
+                            In order to prevent this problem, intercept the onclick event on the form submit button and call the <%- application.branding.scriptName %>.logOutbound function.&nbsp; For example, to track a form post and
                             collect form data (using jQuery):
                             <br />
 <pre>
 &lt;form id="contactForm" method="post"&gt;
 &nbsp;&nbsp;FirstName: &lt;input name="firstName" id="firstName" /&gt;
-&nbsp;&nbsp;&lt;input type="submit" onclick="gator.logOutbound('First Contact',
+&nbsp;&nbsp;&lt;input type="submit" onclick="<%- application.branding.scriptName %>.logOutbound('First Contact',
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;function() { $('#contactForm').submit() }, { firstName: $('#firstName').val() } ); return false" value="Submit" /&gt;
 &lt;/form&gt;
 </pre>
                             <br>Parameters:
                             <table class="table">
-                                <tr><td><code>First Contact</code></td><td>The name of the event you wish to track.&nbsp; This is the same as the gator.logEvent event name</td></tr>
+                                <tr><td><code>First Contact</code></td><td>The name of the event you wish to track.&nbsp; This is the same as the <%- application.branding.scriptName %>.logEvent event name</td></tr>
                                 <tr><td><code>$('#contactForm')</code></td><td>The form element (jQuery syntax).</td></tr>
-                                <tr><td><code>data</code></td><td>Data to attach to the event.&nbsp; This is the same as the gator.logEvent data parameter.</td></tr>
+                                <tr><td><code>data</code></td><td>Data to attach to the event.&nbsp; This is the same as the <%- application.branding.scriptName %>.logEvent data parameter.</td></tr>
                             </table>
 
                             <br /><br /><br /><br />

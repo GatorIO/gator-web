@@ -26,8 +26,8 @@
                             You can create multiple trackers, each with its own project.&nbsp; The standard tracking script has this code:
                             <br /><br />
 <pre>
-gator = new Gator(12345);
-gator.logPageview(location.pathname);
+<%- application.branding.scriptName %> = new Gator(12345);
+    <%- application.branding.scriptName %>.logPageview(location.pathname);
 </pre>
                             <br />
                             This creates a tracker for the project with id 12345 and posts a pageview to gator (see the Manage Projects menu item to get the tracking scripts and project ids).

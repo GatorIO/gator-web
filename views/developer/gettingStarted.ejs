@@ -39,22 +39,22 @@
                             <br /><br /><h3>Script setup</h3>
 
                             <br /><i>The script has some setup code on top.&nbsp; Look for the following lines at the bottom of the script:</i>
-                            <pre>var gator = new Gator(<b><i>your project id</i></b>);<br>gator.logPageview();</pre>
+                            <pre>var gator = new Gator(<b><i>your project id</i></b>);<br><%- application.branding.scriptName %>.logPageview();</pre>
                             <br />
                             You must make sure your project id is in the <b><i>project id</i></b> parameter.&nbsp; The best way to do this is to get the script from the
                             <a href="/setup/projects">Setup / Projects</a> menu and cut and paste it onto your pages.
                             <br /><br />
                             The part of the script that tracks a pageview is this:
                             <br /><br />
-                            <pre>gator.logPageview();</pre>
+                            <pre><%- application.branding.scriptName %>.logPageview();</pre>
                             <br />
                             By default, this logs the current page, but you can track custom page names, if needed, by passing in a page name.&nbsp; For example:
                             <br /><br />
-                            <pre>gator.logPageview(<b>'mypagename.html'</b>);</pre>
+                            <pre><%- application.branding.scriptName %>.logPageview(<b>'mypagename.html'</b>);</pre>
                             <br />
-                            To track an event, use the <b>gator.logEvent</b> call.&nbsp; For example::
+                            To track an event, use the <b><%- application.branding.scriptName %>.logEvent</b> call.&nbsp; For example::
                             <br /><br />
-                            <pre>gator.logEvent('Purchase', { amount: 19.95 } );</pre>
+                            <pre><%- application.branding.scriptName %>.logEvent('Purchase', { amount: 19.95 } );</pre>
                             <br />
                             For more details, see the topic on <a href="/developer/web/events">Tracking Events</a>.
 

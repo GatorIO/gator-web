@@ -47,10 +47,6 @@
     text-transform: uppercase;
 }
 
-body.subpage {
-    background-color: rgb(5, 35, 16) !important;
-}
-
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
@@ -484,7 +480,7 @@ h5 {
     background: url("patterns/header-profile.png") no-repeat;
 }
 .nav > li.active {
-    border-left: 4px solid #19aa8d;
+    border-left: 4px solid #408a59;
     background: #293846;
 }
 .nav.nav-second-level > li.active {

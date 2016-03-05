@@ -76,7 +76,7 @@
 
     function getScript(projectId) {
 
-        $.get(apiHost() + 'script/text/' + projectId, function(data) {
+        $.get(apiHost() + 'script/text/' + projectId + '?name=<%- application.branding.scriptName %>', function(data) {
             if (data)
                 //  this must be text/javascript to support older browsers
                 $('#scriptText').html('&lt;script type="text/javascript"&gt;<br>' + data + '<br>&lt;/script&gt;');

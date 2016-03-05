@@ -6,6 +6,7 @@ declare module 'gator-web' {
     export interface IBranding {
         productName: string;
         companyName: string;
+        scriptName: string;
         logoDarkBackground: string;
         logoLightBackground: string;
         logoMenu: string;

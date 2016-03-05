@@ -27,7 +27,7 @@
                             Ecommerce events are normal events where you specify attributes that define either a purchase transaction or an item detail. For example, the simplest
                             way to define a purchase is to pass in the <code>revenue</code> attribute:
                             <br><br>
-                            <pre>gator.logEvent('Purchase', { revenue: 119.95 } );</pre>
+                            <pre><%- application.branding.scriptName %>.logEvent('Purchase', { revenue: 119.95 } );</pre>
                             <br>This will automatically be added to all ecommerce reports that show revenue.  The name of the event (in this case, 'Purchase') is not relevant.  It could be 'Order' or 'Donation' or anything else.
                             <br /><br /><h3>Ecommerce attributes:</h3>
                             If you are tracking ecommerce events, like purchases, you can pass in the following attributes and they will be automatically included in our ecommerce reporting:
@@ -39,7 +39,7 @@
                                 <tr><td><code>shipping</code></td><td>The name of the item or product purchased.</td></tr>
                             </table>
                             For example:
-                            <br><pre>gator.logEvent('Order', { id: 'TX00001', revenue: 119.95, tax: 9.91, shipping: 18.41 });</pre>
+                            <br><pre><%- application.branding.scriptName %>.logEvent('Order', { id: 'TX00001', revenue: 119.95, tax: 9.91, shipping: 18.41 });</pre>
                             <br>You can also track items (products) independently from transactions.
                             <br><br><h4>For item level tracking, you can pass in (all are optional):</h4>
                             <table class="table">
@@ -54,7 +54,7 @@
                             Do not pass revenue in from both the transaction and the items, or else it will be double counted.
 
                             <br><br>For example:
-                            <pre>gator.logEvent('Item Sold', { id: 'TX00001', itemNo: 1, itemName: 'widget', itemCategory: 'widgets', itemPrice: 9.99, itemQuantity: 3 });</pre>
+                            <pre><%- application.branding.scriptName %>.logEvent('Item Sold', { id: 'TX00001', itemNo: 1, itemName: 'widget', itemCategory: 'widgets', itemPrice: 9.99, itemQuantity: 3 });</pre>
 
                             <br />The name of the event (in this case, 'Item Sold') is not relevant.  It could be anything.  The ecommerce attributes passed are what indicate that it is an item event.
                             <br /><br />
