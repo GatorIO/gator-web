@@ -39,7 +39,7 @@
                             <br /><br /><h3>Script setup</h3>
 
                             <br /><i>The script has some setup code on top.&nbsp; Look for the following lines at the bottom of the script:</i>
-                            <pre>var gator = new Gator(<b><i>your project id</i></b>);<br><%- application.branding.scriptName %>.logPageview();</pre>
+                            <pre>var <%- application.branding.scriptName %> = new Gator(<b><i>your project id</i></b>);<br><%- application.branding.scriptName %>.logPageview();</pre>
                             <br />
                             You must make sure your project id is in the <b><i>project id</i></b> parameter.&nbsp; The best way to do this is to get the script from the
                             <a href="/setup/projects">Setup / Projects</a> menu and cut and paste it onto your pages.
