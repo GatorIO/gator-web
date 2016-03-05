@@ -26,7 +26,7 @@
                             You can create multiple trackers, each with its own project.&nbsp; The standard tracking script has this code:
                             <br /><br />
 <pre>
-<%- application.branding.scriptName %> = new Gator(12345);
+<%- application.branding.scriptName %> = new Aggregator(12345);
 <%- application.branding.scriptName %>.logPageview(location.pathname);
 </pre>
                             <br />
@@ -35,7 +35,7 @@
                             To create another tracker, add this example code:
                             <br /><br />
 <pre>
-var project2 = new Gator(678910);
+var project2 = new Aggregator(678910);
 <br />project2.logPageview(location.pathname);
 </pre>
                             <br />
