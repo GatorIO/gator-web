@@ -112,6 +112,7 @@ var Page = {
     menuItems: {},
     menuLogo: '',
     menuLogoSmall: '',
+    intro: null,
 
     renderMenu: function(logo, logoSmall) {
 
@@ -130,7 +131,13 @@ var Page = {
             for (var m = 0; m < Page.menuItems.length; m++) {
                 html += menuItemHtml(Page.menuItems[m])
             }
-            return html + '</ul>';
+
+            html += '</ul>';
+
+            if (Page.intro)
+                html += '<br><a href="" onclick="return false;">Tour page</a>';
+
+            return html;
         };
 
         var menuItemHtml = function(item) {

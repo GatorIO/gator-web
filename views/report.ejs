@@ -438,6 +438,20 @@
             Page.showMessage(err.message);
         }
     });
+
+    Page.intro = {
+        steps: [
+            {
+                intro: "This is a tour of a report page.  It will guide you through the elements on the page and what they are for.  <br><br>Click 'next' to start."
+            },
+            {
+                element: document.querySelector('#metrics + div'),
+                intro: "These are metrics to display on the table below, which are numeric attributes that can have summary operations computed on, like totals, averages, etc. For example, 'Average Session Length'." +
+                "<br><br>You can drag and drop the metrics to customize the order in which they are displayed.  Also, you can click on the 'x' to remove them."
+
+            }
+        ]
+    };
 </script>
 </body>
 </html>
