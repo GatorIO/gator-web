@@ -983,8 +983,16 @@ Report.prototype.renderMap = function () {
 
         for (var c = 0; c < columns.length; c++) {
 
-            if (columns[c]['name'] != 'longitude' && columns[c]['name'] != 'latitude')
-                tooltip += '<tr><td>' + columns[c]['title'] + '</td><td>' + Report.formatValue(this.dotValue(row, columns[c]['name']), columns[c].dataType, columns[c].format) + '</td></tr>';
+            if (columns[c]['name'] != 'longitude' && columns[c]['name'] != 'latitude') {
+                tooltip += '<tr><td>' + columns[c]['title'] + '</td><td>';
+
+                if (typeof this.formatters[columns[c]['name']] == 'function')
+                    tooltip += this.formatters[columns[c]['name']](this.dotValue(row, columns[c]['name']));
+                else
+                    tooltip += Report.formatValue(this.dotValue(row, columns[c]['name']), columns[c].dataType, columns[c].format);
+
+                tooltip += '</td></tr>';
+            }
         }
         tooltip += '</table>';
 
