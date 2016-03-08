@@ -1940,7 +1940,7 @@ var Toolbar = {
             case 'Custom':
                 if (moment(Toolbar.dateStart).hour() == 0 && moment(Toolbar.dateStart).minute() == 0 && moment(Toolbar.dateEnd).hour() == 0 && moment(Toolbar.dateEnd).minute() == 0) {
                     diff = moment(Toolbar.dateEnd).diff(moment(Toolbar.dateStart), 'days') + 1;
-                    Toolbar.setDateRange('Custom', moment(Toolbar.dateStart).subtract(diff, 'days').format('YYYY-MM-DD'), moment(Toolbar.dateEnd).subtract(diff, 'days').format('YYYY-MM-DD'));
+                    Toolbar.setDateRange('Custom', moment(Toolbar.dateStart).add(diff, 'days').format('YYYY-MM-DD'), moment(Toolbar.dateEnd).add(diff, 'days').format('YYYY-MM-DD'));
                 } else {
                     diff = moment(Toolbar.dateEnd).diff(moment(Toolbar.dateStart), 'minutes');
                     Toolbar.setDateRange('Custom', moment(Toolbar.dateStart).add(diff, 'minutes').format('YYYY-MM-DD h:mm A'), moment(Toolbar.dateEnd).add(diff, 'minutes').format('YYYY-MM-DD h:mm A'));
