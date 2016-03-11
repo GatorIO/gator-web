@@ -21,6 +21,19 @@ function setup(app, application, callback) {
                 req.flash('error', err.message);
             else
                 req['session'].projects = result.data.projects;
+            var found = false;
+            if (req['session'].currentProjectId && req['session'].projects) {
+                for (var p = 0; p < req['session'].projects.length; p++) {
+                    if (req['session'].projects[p].id == req['session'].currentProjectId) {
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            if (!found) {
+                if (req['session'].projects.length > 0)
+                    req['session'].currentProjectId = req['session'].projects[0].id;
+            }
             res.render('projects', {
                 application: application,
                 settings: utils.config.settings(),
@@ -84,31 +97,6 @@ function setup(app, application, callback) {
     });
     app.delete('/setup/projects/:id/', application.enforceSecure, api.authenticate, function (req, res) {
         api.REST.client.del('/v1/projects/' + req.params['id'] + '?accessToken=' + req['session'].accessToken, function (err, apiRequest, apiResponse) {
-            api.REST.sendConditional(res, err);
-        });
-    });
-    app.get('/setup/projects/link', application.enforceSecure, api.authenticate, function (req, res) {
-        utils.noCache(res);
-        if (!req['session'].projects)
-            req['session'].projects = [];
-        res.render('projectsLink', {
-            settings: utils.config.settings(),
-            application: application,
-            dev: utils.config.dev(),
-            req: req
-        });
-    });
-    app.post('/setup/projects/link', application.enforceSecure, api.authenticate, function (req, res) {
-        utils.noCache(res);
-        var params = {
-            accessToken: req['session'].accessToken,
-            accountId: req['session'].account.id,
-            linkAccount: req.body.account,
-            linkPassword: req.body.password
-        };
-        api.REST.client.post('/v1/projects/link', params, function (err, apiRequest, apiResponse, result) {
-            if (!err)
-                req['session'].currentProjectId = result.data.project.id;
             api.REST.sendConditional(res, err);
         });
     });

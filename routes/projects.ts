@@ -45,6 +45,25 @@ export function setup(app: express.Application, application: IApplication, callb
             else
                 req['session'].projects = result.data.projects;
 
+            //  make sure the default project exists in the project list
+            var found = false;
+
+            if (req['session'].currentProjectId && req['session'].projects) {
+
+                for (var p = 0; p < req['session'].projects.length; p++) {
+                    if (req['session'].projects[p].id == req['session'].currentProjectId) {
+                        found = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!found) {
+
+                if (req['session'].projects.length > 0)
+                    req['session'].currentProjectId = req['session'].projects[0].id;
+            }
+
             res.render('projects',{
                 application: application,
                 settings: utils.config.settings(),
@@ -128,41 +147,6 @@ export function setup(app: express.Application, application: IApplication, callb
     app.delete('/setup/projects/:id/', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
 
         api.REST.client.del('/v1/projects/' + req.params['id'] + '?accessToken=' + req['session'].accessToken, function(err: Error, apiRequest: restify.Request, apiResponse: restify.Response) {
-            api.REST.sendConditional(res, err);
-        });
-    });
-
-    //  display form to link legacy account
-    app.get('/setup/projects/link', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
-        utils.noCache(res);
-
-        if (!req['session'].projects)
-            req['session'].projects = [];
-
-        res.render('projectsLink', {
-            settings: utils.config.settings(),
-            application: application,
-            dev: utils.config.dev(),
-            req: req
-        });
-    });
-
-    //  link a new project
-    app.post('/setup/projects/link', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
-        utils.noCache(res);
-
-        var params = {
-            accessToken: req['session'].accessToken,
-            accountId: req['session'].account.id,
-            linkAccount: req.body.account,
-            linkPassword: req.body.password
-        };
-
-        api.REST.client.post('/v1/projects/link', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
-
-            if (!err)
-                req['session'].currentProjectId = result.data.project.id;
-
             api.REST.sendConditional(res, err);
         });
     });
