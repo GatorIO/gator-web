@@ -27,6 +27,13 @@ export function setup(app: express.Application, application: IApplication, callb
 
     app.get('/login', application.enforceSecure, function (req: express.Request, res: express.Response) {
 
+        //  check for a remote login
+        if (req.query.accessToken) {
+            api.setSessionCookie(res, req.query.accessToken);
+            res.redirect(application.branding.postLoginUrl);
+            return;
+        }
+
         res.render('./api/login', {
             req: req,
             application: application,

@@ -10,6 +10,11 @@ function setup(app, application, callback) {
         });
     });
     app.get('/login', application.enforceSecure, function (req, res) {
+        if (req.query.accessToken) {
+            api.setSessionCookie(res, req.query.accessToken);
+            res.redirect(application.branding.postLoginUrl);
+            return;
+        }
         res.render('./api/login', {
             req: req,
             application: application,
