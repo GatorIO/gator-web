@@ -20,15 +20,17 @@ export function setup(app: express.Application, application: IApplication, callb
         Campaign referrers
      */
 
-    //  get all campaign referrers for account and show list of them
+    //  get all campaign referrers for project and show list of them
     app.get('/setup/campaignreferrers', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
         utils.noCache(res);
 
-        //  always refresh the account here, since all edits redir back here
-        api.REST.client.get('/v1/accounts/' + req['session'].account.id + '?accessToken=' + req['session']['accessToken'], function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
+        //  always refresh the project list here, since all edits redir back here
+        api.REST.client.get('/v1/projects/account/' + req['session'].account.id + '?accessToken=' + req['session']['accessToken'], function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
 
-            if (!err)
-                req['session'].account = result.data.account;
+            if (err)
+                req.flash('error', err.message);
+            else
+                req['session'].projects = result.data.projects;
 
             res.render('campaignReferrers', {
                 application: application,
