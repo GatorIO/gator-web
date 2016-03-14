@@ -21,7 +21,7 @@ export function setup(app: express.Application, application: IApplication, callb
      */
 
     //  get all campaign referrers for project and show list of them
-    app.get('/setup/campaignreferrers', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
+    app.get('/setup/campaignreferrers/:projectId', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
         utils.noCache(res);
 
         //  always refresh the project list here, since all edits redir back here
@@ -32,21 +32,25 @@ export function setup(app: express.Application, application: IApplication, callb
             else
                 req['session'].projects = result.data.projects;
 
+            var project = api.getProject(req, +req.params.projectId);
+
             res.render('campaignReferrers', {
                 application: application,
                 settings: utils.config.settings(),
-                campaignReferrers: req['session'].account.data && req['session'].account.data.campaignReferrers ? req['session'].account.data.campaignReferrers : [],
+                campaignReferrers: project.data && project.data.campaignReferrers ? project.data.campaignReferrers : [],
                 req: req
             });
         });
     });
 
     //  update existing data
-    app.put('/setup/campaignreferrers', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
+    app.put('/setup/campaignreferrers/:projectId', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
+
+        var project = api.getProject(req, +req.params.projectId);
 
         var params = {
             accessToken: req['session'].accessToken,
-            accountId: req['session'].account.id,
+            projectId: project.id,
             campaignReferrers: req.body.campaignReferrers
         };
 
@@ -61,30 +65,35 @@ export function setup(app: express.Application, application: IApplication, callb
       */
 
     //  get all campaign ids for account and show list of them
-    app.get('/setup/campaignids', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
+    app.get('/setup/campaignids/:projectId', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
         utils.noCache(res);
 
-        //  always refresh the account here, since all edits redir back here
-        api.REST.client.get('/v1/accounts/' + req['session'].account.id + '?accessToken=' + req['session']['accessToken'], function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
+        //  always refresh the project list here, since all edits redir back here
+        api.REST.client.get('/v1/projects/account/' + req['session'].account.id + '?accessToken=' + req['session']['accessToken'], function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
 
-            if (!err)
-                req['session'].account = result.data.account;
+            if (err)
+                req.flash('error', err.message);
+            else
+                req['session'].projects = result.data.projects;
+
+            var project = api.getProject(req, +req.params.projectId);
 
             res.render('campaignIds',{
                 application: application,
                 settings: utils.config.settings(),
-                campaignIds: req['session'].account.data && req['session'].account.data.campaignIds ? req['session'].account.data.campaignIds.join(',') : '',
+                campaignIds: project.data && project.data.campaignIds ? project.data.campaignIds.join(',') : '',
                 req: req
             });
         });
     });
 
     //  update existing data
-    app.put('/setup/campaignids', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
+    app.put('/setup/campaignids/:projectId', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
+        var project = api.getProject(req, +req.params.projectId);
 
         var params = {
             accessToken: req['session'].accessToken,
-            accountId: req['session'].account.id,
+            projectId: project.id,
             campaignIds: req.body.campaignIds.split(',')
         };
 

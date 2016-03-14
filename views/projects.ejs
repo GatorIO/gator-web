@@ -102,8 +102,8 @@
     }
 
     function configButtonsHtml(project) {
-        var ret = '<button onclick="window.location=(\'/setup/campaignreferrers?projectId=' + project.id + '\')" type="button" class="btn btn-primary btn-xs">Campaign Referrers</button>';
-        ret += '&nbsp;<button onclick="window.location=(\'/setup/campaignids?projectId=' + project.id + '\')" type="button" class="btn btn-primary btn-xs">Campaign Ids</button>';
+        var ret = '<button onclick="window.location=(\'/setup/campaignreferrers/' + project.id + '\')" type="button" class="btn btn-primary btn-xs">Campaign Referrers</button>';
+        ret += '&nbsp;<button onclick="window.location=(\'/setup/campaignids/' + project.id + '\')" type="button" class="btn btn-primary btn-xs">Campaign Ids</button>';
 
         ret += '&nbsp;<div class="dropdown" style="display:inline-block"><button class="btn btn-primary btn-xs dropdown-toggle" type="button" data-toggle="dropdown">Attributes <span class="caret"></span></button>' +
                 '<ul class="dropdown-menu">' +

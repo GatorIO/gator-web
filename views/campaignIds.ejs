@@ -72,7 +72,6 @@
 
         $.ajax({
             type: "PUT",    //  if the data object has an id, PUT the update
-            url: '/setup/campaignids/',
             data: getFormData(),
             success: function (data, status) {
                 Page.alert("Success", "Campaign ids successfully updated.", "success");
