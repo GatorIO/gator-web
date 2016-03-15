@@ -192,7 +192,7 @@ export function setup(app: express.Application, application: IApplication, callb
         if (utils.config.dev())
             reportUrl = 'http://127.0.0.9:8080';
 
-        reportUrl += '/report?accessToken=' + req['session'].accessToken + '&options=' + encodeURIComponent(req.query.options);
+        reportUrl += '/report?format=pdf&accessToken=' + req['session'].accessToken + '&options=' + encodeURIComponent(req.query.options);
 
         const child = exec('cd phantomjs && ' + phantomBin + ' ../node_modules/gator-web/lib/renderpdf.js "' + reportUrl + '" ' + file,
             (err, stdout, stderr) => {
