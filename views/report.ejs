@@ -395,6 +395,9 @@
             //  Get options first by query string, then by definition, then by default
             var options = Utils.getParam('options', window.location.search);
 
+            if (definition.filter)
+                Filter.setRules('filter-builder', definition.filter);
+
             if (options) {
                 restoreState(JSON.parse(options));
             } else {
