@@ -1,3 +1,4 @@
+"use strict";
 var utils = require("gator-utils");
 var api = require('gator-api');
 function setup(app, application, callback) {

@@ -1,3 +1,4 @@
+"use strict";
 var apiRoutes = require('./api');
 var projectRoutes = require('./projects');
 var reportingRoutes = require('./reporting');
