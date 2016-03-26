@@ -22,7 +22,7 @@ export function setup(app: express.Application, application: IApplication, callb
         utils.noCache(res);
 
         //  refresh the project list
-        api.REST.client.get('/v1/projects/account/' + req['session'].account.id + '?accessToken=' + req['session']['accessToken'], function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
+        api.REST.client.get('/v1/projects?accessToken=' + req['session']['accessToken'], function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
 
             if (err)
                 req.flash('error', err.message);
@@ -47,7 +47,7 @@ export function setup(app: express.Application, application: IApplication, callb
         utils.noCache(res);
 
         //  refresh the project list
-        api.REST.client.get('/v1/projects/account/' + req['session'].account.id + '?accessToken=' + req['session']['accessToken'], function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
+        api.REST.client.get('/v1/projects?accessToken=' + req['session']['accessToken'], function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
             var dataObj = null, project: any = null;
 
             if (err)
