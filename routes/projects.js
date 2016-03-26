@@ -17,7 +17,7 @@ function setup(app, application, callback) {
     });
     app.get('/setup/projects', application.enforceSecure, api.authenticate, function (req, res) {
         utils.noCache(res);
-        api.REST.client.get('/v1/projects/account/' + req['session'].account.id + '?accessToken=' + req['session']['accessToken'], function (err, apiRequest, apiResponse, result) {
+        api.REST.client.get('/v1/projects?accessToken=' + req['session']['accessToken'], function (err, apiRequest, apiResponse, result) {
             if (err)
                 req.flash('error', err.message);
             else

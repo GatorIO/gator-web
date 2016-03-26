@@ -5,7 +5,7 @@ function setup(app, application, callback) {
     app.get('/accesstokens', application.enforceSecure, api.authenticate, function (req, res) {
         utils.noCache(res);
         var projectFilter = req.query.projectId ? '&projectId=' + req.query.projectId : '';
-        api.REST.client.get('/v1/accesstokens/' + req['session'].user.id + '?accessToken=' + req['session'].accessToken + '&accountId=' + req['session'].account.id +
+        api.REST.client.get('/v1/accesstokens?accessToken=' + req['session'].accessToken +
             '&type=api' + projectFilter, function (err, apiRequest, apiResponse, result) {
             var tokens = [];
             if (err) {

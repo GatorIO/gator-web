@@ -21,7 +21,7 @@ export function setup(app: express.Application, application: IApplication, callb
 
         var projectFilter = req.query.projectId ? '&projectId=' + req.query.projectId : '';
 
-        api.REST.client.get('/v1/accesstokens/' + req['session'].user.id + '?accessToken=' + req['session'].accessToken + '&accountId=' + req['session'].account.id +
+        api.REST.client.get('/v1/accesstokens?accessToken=' + req['session'].accessToken + 
             '&type=api' + projectFilter, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
 
             var tokens = [];
