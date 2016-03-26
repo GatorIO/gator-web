@@ -64,7 +64,7 @@ declare module 'gator-api' {
         }
     }
 
-    export module modules {
+    export module applications {
 
         export class Permission {
             public id:number;
@@ -74,32 +74,15 @@ declare module 'gator-api' {
             constructor(id:number, name:string, description?:string);
         }
 
-        export class Module {
+        export class Application {
 
-            //  module attributes
+            //  app attributes
             public id:number;
             public name:string;
-            public permissions:Array<Permission>;     //  the available permissions for the module
+            public permissions:Array<Permission>;     //  the available permissions for the app
         }
 
-        export function getAll(callback:(err?:errors.APIError, result?:Array<Module>) => void);
-    }
-
-    export module roles {
-
-        export class Role {
-
-            //  role attributes
-            public id:number;
-
-            public moduleId:number;        //  ---------------
-            public accountId:number;       //  unique index
-            public name:string;            //  ---------------
-
-            public createdByUserId:number;
-            public description:string;
-            public permissions:Array<modules.Permission>;
-        }
+        export function getAll(callback:(err?:errors.APIError, result?:Array<Application>) => void);
     }
 
     export module users {
@@ -119,7 +102,6 @@ declare module 'gator-api' {
             public createdDate:Date;
             public lastUpdated:Date;
             public ipAddress:string;
-            public roles:Array<roles.Role>;
         }
 
         export function create(params:any, callback:(err?:errors.APIError, result?:any) => void);
@@ -138,7 +120,7 @@ declare module 'gator-api' {
             public name:string;
             public createdDate:Date;
             public userId:string;
-            public moduleId:string;
+            public appId:string;
             public status:number;
             public ipAddress:string;
             public data:any;
@@ -199,7 +181,7 @@ declare module 'gator-api' {
     export interface ISettings {
         domain: string;
         appName: string;
-        moduleId: number;
+        appId: number;
 
         nodeHost: string;
         nodePort: number;
@@ -209,12 +191,9 @@ declare module 'gator-api' {
         apiVersion: string;
     }
 
-    export function login(name:string, password:string, moduleId:number, callback:(err?:errors.APIError, result?:Authorization) => void);
+    export function login(name:string, password:string, appId:number, callback:(err?:errors.APIError, result?:Authorization) => void);
     export function logout(res:any);
     export function authorize(params:any, callback:(err?:errors.APIError, result?:Authorization) => void);
-    export function hasPermission(accessToken:string, moduleId:number, permission:string | number, callback:(err?:errors.APIError, result?:boolean) => void);
-    export function forgotPassword(email:string, host:string, callback:(err?:errors.APIError, result?:boolean)=>void);
-    export function resetPassword(accessToken:string, password:string, callback:(err?:errors.APIError, result?:boolean)=>void);
     export function log(a1?:any, a2?:any, a3?:any, a4?:any, a5?:any);
 
     export module logs {
@@ -226,6 +205,8 @@ declare module 'gator-api' {
     export function signup(params:any, callback:(err?:errors.APIError, result?:Authorization) => void);
     export function setSessionCookie(res:any, accessToken:string);
     export function machineId():string;
+    export function isSysAdmin(req): boolean;
+    export function hasAdminPermission(req, permission: string): boolean;
 
     export function getProject(req, id);
     export function currentProject(req);
