@@ -44,7 +44,6 @@ function setup(app, application, callback) {
     app.post('/setup/segments', application.enforceSecure, api.authenticate, function (req, res) {
         var params = {
             accessToken: req['session'].accessToken,
-            accountId: req['session'].account.id,
             name: req.body.name,
             query: req.body.query || {}
         };
@@ -59,7 +58,6 @@ function setup(app, application, callback) {
         var params = {
             id: +req.body.id,
             accessToken: req['session'].accessToken,
-            accountId: req['session'].account.id,
             name: req.body.name,
             query: req.body.query || {}
         };

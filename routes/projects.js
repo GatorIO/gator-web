@@ -7,8 +7,6 @@ function setup(app, application, callback) {
         req['session']['currentProjectId'] = req.params.id;
         var params = {
             accessToken: req['session']['accessToken'],
-            userId: req['session'].user.id,
-            accountId: req['session'].account.id,
             projectId: req.params.id
         };
         api.REST.client.post('/v1/users/defaultproject', params, function (err, apiRequest, apiResponse, result) {
@@ -62,7 +60,6 @@ function setup(app, application, callback) {
         utils.noCache(res);
         var params = {
             accessToken: req['session'].accessToken,
-            accountId: req['session'].account.id,
             name: req.body.name,
             type: +req.body.type
         };
@@ -87,7 +84,6 @@ function setup(app, application, callback) {
         var params = {
             id: +req.body.id,
             accessToken: req['session'].accessToken,
-            accountId: req['session'].account.id,
             name: req.body.name,
             type: +req.body.type,
             enabled: req.body.enabled

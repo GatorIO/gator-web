@@ -23,8 +23,6 @@ export function setup(app: express.Application, application: IApplication, callb
 
         var params = {
             accessToken: req['session']['accessToken'],
-            userId: req['session'].user.id,
-            accountId: req['session'].account.id,
             projectId: req.params.id
         };
 
@@ -101,7 +99,6 @@ export function setup(app: express.Application, application: IApplication, callb
 
         var params = {
             accessToken: req['session'].accessToken,
-            accountId: req['session'].account.id,
             name: req.body.name,
             type: +req.body.type
         };
@@ -133,7 +130,6 @@ export function setup(app: express.Application, application: IApplication, callb
         var params = {
             id: +req.body.id,
             accessToken: req['session'].accessToken,
-            accountId: req['session'].account.id,
             name: req.body.name,
             type: +req.body.type,
             enabled: req.body.enabled

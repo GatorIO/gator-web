@@ -17,7 +17,6 @@ import segmentRoutes = require('./segments');
 import campaignRoutes = require('./campaigns');
 import dashboardRoutes = require('./dashboards');
 import bookmarkRoutes = require('./bookmarks');
-import scheduledReportsRoutes = require('./scheduledReports');
 import developerRoutes = require('./developer');
 import attributeRoutes = require('./attributes');
 import helpRoutes = require('./help');
@@ -39,23 +38,20 @@ export function setup(app: express.Application, application: IApplication, callb
 
                     attributeRoutes.setup(app, application, function(){
 
-                        scheduledReportsRoutes.setup(app, application, function(){
+                        bookmarkRoutes.setup(app, application, function() {
 
-                            bookmarkRoutes.setup(app, application, function() {
+                            dashboardRoutes.setup(app, application, function() {
 
-                                dashboardRoutes.setup(app, application, function() {
+                                campaignRoutes.setup(app, application, function() {
 
-                                    campaignRoutes.setup(app, application, function() {
+                                    projectRoutes.setup(app, application, function() {
 
-                                        projectRoutes.setup(app, application, function() {
+                                        reportingRoutes.setup(app, application, function() {
 
-                                            reportingRoutes.setup(app, application, function() {
+                                            developerRoutes.setup(app, application, function() {
 
-                                                developerRoutes.setup(app, application, function() {
-
-                                                    segmentRoutes.setup(app, application, function() {
-                                                        callback();
-                                                    });
+                                                segmentRoutes.setup(app, application, function() {
+                                                    callback();
                                                 });
                                             });
                                         });

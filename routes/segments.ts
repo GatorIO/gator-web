@@ -76,7 +76,6 @@ export function setup(app: express.Application, application: IApplication, callb
 
         var params: any = {
             accessToken: req['session'].accessToken,
-            accountId: req['session'].account.id,
             name: req.body.name,
             query: req.body.query || {}
         };
@@ -96,7 +95,6 @@ export function setup(app: express.Application, application: IApplication, callb
         var params: any = {
             id: +req.body.id,
             accessToken: req['session'].accessToken,
-            accountId: req['session'].account.id,
             name: req.body.name,
             query: req.body.query || {}
         };

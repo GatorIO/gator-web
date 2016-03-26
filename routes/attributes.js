@@ -73,7 +73,6 @@ function setup(app, application, callback) {
             project.data.attributes[type][req.body.name] = attrib;
             var params = {
                 accessToken: req['session'].accessToken,
-                accountId: req['session'].account.id,
                 projectId: project.id,
                 attributes: project.data.attributes
             };
@@ -91,7 +90,6 @@ function setup(app, application, callback) {
         delete project.data.attributes[req.query['type']][req.query['name']];
         var params = {
             accessToken: req['session'].accessToken,
-            accountId: req['session'].account.id,
             projectId: project.id,
             attributes: project.data.attributes
         };
