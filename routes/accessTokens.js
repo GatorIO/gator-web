@@ -39,6 +39,7 @@ function setup(app, application, callback) {
             permissions.push('query');
         var params = {
             accessToken: req['session']['accessToken'],
+            accountId: req['session'].account.id,
             permissions: permissions,
             expiration: req.body.expires,
             type: 'api'

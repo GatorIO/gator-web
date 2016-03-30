@@ -84,36 +84,49 @@
         });
     }
 
-    function scriptButtonHtml(id, name, type) {
+    function scriptButtonHtml(project) {
         var ret = '';
 
-        if (type == 0)
-            ret += '<button onclick="getScript(' + id + ')" type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#scriptModal">Web Script</button>';
+        if (project.type == 0)
+            ret += '<button onclick="getScript(' + project.id + ')" type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#scriptModal">Web Script</button>';
 
-        ret += '&nbsp; <button type="button" class="btn btn-primary btn-xs" onclick="window.location=\'/accesstokens?projectName=' + encodeURIComponent(name) + '&projectId=' + id + '\'">Access Tokens</button>';
+        if (!project.sharedByUserId)
+            ret += '&nbsp; <button type="button" class="btn btn-primary btn-xs" onclick="window.location=\'/accesstokens?projectName=' + encodeURIComponent(project.name) + '&projectId=' + project.id + '\'">Access Tokens</button>';
 
         return ret;
     }
 
     function actionButtonsHtml(project) {
-        return '<button onclick="window.location=(\'/setup/projectshares?projectId=' + project.id + '\')" type="button" class="btn btn-primary btn-xs">Share</button>' +
+
+        if (project.sharedByUserId)
+            return '';
+        else
+            return '<button onclick="window.location=(\'/setup/projectshares?projectId=' + project.id + '\')" type="button" class="btn btn-primary btn-xs">Share</button>' +
                 '&nbsp;<button onclick="window.location=(\'/setup/projects/form?id=' + project.id + '\')" type="button" class="btn btn-primary btn-xs">Edit</button>' +
                 '&nbsp;<button onclick="deleteObject(' + project.id + ', \'' + project.name + '\')" type="button" class="btn btn-delete btn-xs" data-toggle="modal" data-target="#modal-confirm">Delete</button>';
     }
 
     function configButtonsHtml(project) {
-        var ret = '<button onclick="window.location=(\'/setup/campaignreferrers/' + project.id + '\')" type="button" class="btn btn-primary btn-xs">Campaign Referrers</button>';
-        ret += '&nbsp;<button onclick="window.location=(\'/setup/campaignids/' + project.id + '\')" type="button" class="btn btn-primary btn-xs">Campaign Ids</button>';
 
-        ret += '&nbsp;<div class="dropdown" style="display:inline-block"><button class="btn btn-primary btn-xs dropdown-toggle" type="button" data-toggle="dropdown">Attributes <span class="caret"></span></button>' +
-                '<ul class="dropdown-menu">' +
-                ' <li><a href="/setup/attributes/' + project.id + '?type=session" style="color:#676a6c">On sessions</a></li>';
+        var ret = '';
 
-        if (project.type == 0)
-            ret += ' <li><a href="/setup/attributes/' + project.id + '?type=event" style="color:#676a6c">On Events</a></li>' +
-                    ' <li><a href="/setup/attributes/' + project.id + '?type=person" style="color:#676a6c">On People</a></li>';
+        if (!project.sharedByUserId || project.permissions == 'manage') {
 
-        return ret + '</ul></div>';
+            ret += '<button onclick="window.location=(\'/setup/campaignreferrers/' + project.id + '\')" type="button" class="btn btn-primary btn-xs">Campaign Referrers</button>';
+            ret += '&nbsp;<button onclick="window.location=(\'/setup/campaignids/' + project.id + '\')" type="button" class="btn btn-primary btn-xs">Campaign Ids</button>';
+            ret += '&nbsp;<div class="dropdown" style="display:inline-block"><button class="btn btn-primary btn-xs dropdown-toggle" type="button" data-toggle="dropdown">Attributes <span class="caret"></span></button>' +
+                    '<ul class="dropdown-menu">' +
+                    ' <li><a href="/setup/attributes/' + project.id + '?type=session" style="color:#676a6c">On sessions</a></li>';
+
+            if (project.type == 0)
+                ret += ' <li><a href="/setup/attributes/' + project.id + '?type=event" style="color:#676a6c">On Events</a></li>' +
+                        ' <li><a href="/setup/attributes/' + project.id + '?type=person" style="color:#676a6c">On People</a></li>';
+
+            return ret + '</ul></div>';
+        } else {
+            return '';
+        }
+
     }
 
     function deleteObject(id, name) {
@@ -138,7 +151,7 @@
         var tableRows = [];
 
         <%  for (var r = 0; r < existingProjects.length; r++) {
-                var scriptButton = 'scriptButtonHtml(' + existingProjects[r].id + ', "' + existingProjects[r].name + '", "' + existingProjects[r].type + '")';
+                var scriptButton = 'scriptButtonHtml(' + JSON.stringify(existingProjects[r]) + ')';
                 var actionButton = 'actionButtonsHtml(' + JSON.stringify(existingProjects[r]) + ')';
                 var customizeButton = 'configButtonsHtml(' + JSON.stringify(existingProjects[r]) + ')';
         %>

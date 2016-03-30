@@ -65,6 +65,7 @@ export function setup(app: express.Application, application: IApplication, callb
 
         var params: any = {
             accessToken: req['session']['accessToken'],
+            accountId: req['session'].account.id,
             permissions: permissions,
             expiration: req.body.expires,
             type: 'api'
