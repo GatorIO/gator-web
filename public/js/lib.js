@@ -365,4 +365,9 @@ function JSONForm(data, target) {
 //  Global setup function after document is ready
 $(document).ready(function() {
     $('[data-toggle="tooltip"]').tooltip();
+    
+    //  check for partnerid
+    if (localStorage && Utils.getParam('partnerid')) 
+        localStorage['partnerId'] = Utils.getParam('partnerid');
+    
 });
