@@ -32,11 +32,11 @@ export function setup(app: express.Application, application: IApplication, callb
 
         accessTokenRoutes.setup(app, application, function() {
 
-            helpRoutes.setup(app, application, function(){
+            helpRoutes.setup(app, application, function() {
 
-                apiRoutes.setup(app, application, function(){
+                apiRoutes.setup(app, application, function() {
 
-                    attributeRoutes.setup(app, application, function(){
+                    attributeRoutes.setup(app, application, function() {
 
                         bookmarkRoutes.setup(app, application, function() {
 
