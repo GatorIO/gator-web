@@ -566,6 +566,9 @@ body.mini-navbar .navbar-default .nav > li > .nav-second-level li a {
 .fixed-nav .slimScrollDiv #side-menu {
     padding-bottom: 60px;
 }
+#side-menu {
+    font-size:13px;
+}
 .mini-navbar .nav-second-level li a {
     padding: 10px 10px 10px 15px;
 }
