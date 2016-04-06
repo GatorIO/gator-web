@@ -2166,10 +2166,14 @@ label.error {
 body {
     font-family: "open sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
     background-color: #2f4050;
-    font-size: 14px;
+    font-size: 13px;
     color: #474a4c;
     overflow-x: hidden;
 }
+.landing-page {
+    font-size: 14px;
+}
+
 html,
 body {
     height: 100%;
