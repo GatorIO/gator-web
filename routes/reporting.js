@@ -125,10 +125,10 @@ function setup(app, application, callback) {
         if (os.platform().substr(0, 3) == 'win') {
             phantomBin = '"../node_modules/gator-web/bin/phantomjs-win"';
         }
-        var reportUrl = 'http://localhost';
+        var reportUrl = 'http://' + application.settings.domain;
         if (utils.config.dev())
             reportUrl = application.settings.nodeUrl;
-        reportUrl += '/report?format=pdf&accessToken=' + req['session'].accessToken + '&options=' + encodeURIComponent(req.query.options);
+        reportUrl += '/report?httpok=1&format=pdf&accessToken=' + req['session'].accessToken + '&options=' + encodeURIComponent(req.query.options);
         var child = exec('cd phantomjs && ' + phantomBin + ' ../node_modules/gator-web/lib/renderpdf.js "' + reportUrl + '" ' + file, function (err, stdout, stderr) {
             if (err !== null) {
                 api.log(err, "PDF download");

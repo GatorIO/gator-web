@@ -187,12 +187,12 @@ export function setup(app: express.Application, application: IApplication, callb
             phantomBin = '"../node_modules/gator-web/bin/phantomjs-win"'
         }
 
-        var reportUrl = 'http://localhost';
+        var reportUrl = 'http://' + application.settings.domain;
 
         if (utils.config.dev())
             reportUrl = application.settings.nodeUrl;
 
-        reportUrl += '/report?format=pdf&accessToken=' + req['session'].accessToken + '&options=' + encodeURIComponent(req.query.options);
+        reportUrl += '/report?httpok=1&format=pdf&accessToken=' + req['session'].accessToken + '&options=' + encodeURIComponent(req.query.options);
 
         const child = exec('cd phantomjs && ' + phantomBin + ' ../node_modules/gator-web/lib/renderpdf.js "' + reportUrl + '" ' + file,
             (err, stdout, stderr) => {
