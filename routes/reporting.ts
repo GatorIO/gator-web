@@ -187,10 +187,10 @@ export function setup(app: express.Application, application: IApplication, callb
             phantomBin = '"../node_modules/gator-web/bin/phantomjs-win"'
         }
 
-        var reportUrl = 'https://' + application.settings.domain;
+        var reportUrl = 'http://localhost';
 
         if (utils.config.dev())
-            reportUrl = 'http://127.0.0.9:8080';
+            reportUrl = application.settings.nodeUrl;
 
         reportUrl += '/report?format=pdf&accessToken=' + req['session'].accessToken + '&options=' + encodeURIComponent(req.query.options);
 

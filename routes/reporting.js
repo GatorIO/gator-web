@@ -125,9 +125,9 @@ function setup(app, application, callback) {
         if (os.platform().substr(0, 3) == 'win') {
             phantomBin = '"../node_modules/gator-web/bin/phantomjs-win"';
         }
-        var reportUrl = 'https://' + application.settings.domain;
+        var reportUrl = 'http://localhost';
         if (utils.config.dev())
-            reportUrl = 'http://127.0.0.9:8080';
+            reportUrl = application.settings.nodeUrl;
         reportUrl += '/report?format=pdf&accessToken=' + req['session'].accessToken + '&options=' + encodeURIComponent(req.query.options);
         var child = exec('cd phantomjs && ' + phantomBin + ' ../node_modules/gator-web/lib/renderpdf.js "' + reportUrl + '" ' + file, function (err, stdout, stderr) {
             if (err !== null) {
