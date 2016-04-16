@@ -65,15 +65,8 @@
     </nav>
 </div>
 
-<% if (req.session && req.session.user && req.session.user.isDemo) { %>
-<div class="row hidden-print">
-    <div class="alert alert-info alert-dismissable" style="margin-bottom: 0">
-        <button aria-hidden="true" data-dismiss="alert" class="close" type="button"><span style="font-size:16px">x</span></button>
-        You are logged into the <a href="/demo/features">demo account</a>.  When you're ready:
-        &nbsp; <button onclick="window.location=('/register')" type="button" class="btn btn-info btn-xs">Signup for a free trial</button>
-    </div>
-</div>
-<% } %>
+<%- typeof application.promoHtml === "function" ? application.promoHtml(req) : '' %>
+
 <script>
 
 //  a page can set this to a function that will be called upon the project being changed
