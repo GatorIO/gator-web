@@ -100,7 +100,7 @@
   color: #F99 !important;
 }
 
-.query-builder .filter-description {
+.query-builder p.filter-description {
   margin: 5px 0 0 0;
   background: #D9EDF7;
   border: 1px solid #BCE8F1;
