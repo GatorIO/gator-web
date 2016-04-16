@@ -36,6 +36,7 @@ function setup(app, application, callback) {
         };
         api.REST.client.post('/v1/payments/methods', params, function (err, apiRequest, apiResponse, result) {
             if (!err) {
+                req['session'].account.status = 0;
                 res.redirect('/billing/paymentmethods');
             }
             else {

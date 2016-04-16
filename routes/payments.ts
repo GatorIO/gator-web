@@ -60,6 +60,8 @@ export function setup(app: express.Application, application: IApplication, callb
         api.REST.client.post('/v1/payments/methods', params, function(err, apiRequest, apiResponse, result) {
 
             if (!err) {
+                //  update account status to active with new payment method
+                req['session'].account.status = 0;
                 res.redirect('/billing/paymentmethods');
             } else {
 
