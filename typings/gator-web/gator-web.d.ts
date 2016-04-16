@@ -66,6 +66,7 @@ declare module 'gator-web' {
     export interface IApplication {
         settings: api.ISettings;
         api: any;
+        current: any;
         branding: IBranding;
         projectTypes: Object;
         projectDesc(type): string;

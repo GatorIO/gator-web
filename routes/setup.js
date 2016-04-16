@@ -8,6 +8,7 @@ var dashboardRoutes = require('./dashboards');
 var bookmarkRoutes = require('./bookmarks');
 var developerRoutes = require('./developer');
 var attributeRoutes = require('./attributes');
+var paymentRoutes = require('./payments');
 var accessTokenRoutes = require('./accessTokens');
 function setup(app, application, callback) {
     try {
@@ -21,7 +22,9 @@ function setup(app, application, callback) {
                                     reportingRoutes.setup(app, application, function () {
                                         developerRoutes.setup(app, application, function () {
                                             segmentRoutes.setup(app, application, function () {
-                                                callback();
+                                                paymentRoutes.setup(app, application, function () {
+                                                    callback();
+                                                });
                                             });
                                         });
                                     });

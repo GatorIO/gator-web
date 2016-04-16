@@ -19,6 +19,7 @@ import dashboardRoutes = require('./dashboards');
 import bookmarkRoutes = require('./bookmarks');
 import developerRoutes = require('./developer');
 import attributeRoutes = require('./attributes');
+import paymentRoutes = require('./payments');
 import accessTokenRoutes = require('./accessTokens');
 
 export function setup(app: express.Application, application: IApplication, callback) {
@@ -48,7 +49,10 @@ export function setup(app: express.Application, application: IApplication, callb
                                         developerRoutes.setup(app, application, function() {
 
                                             segmentRoutes.setup(app, application, function() {
-                                                callback();
+
+                                                paymentRoutes.setup(app, application, function() {
+                                                    callback();
+                                                });
                                             });
                                         });
                                     });
