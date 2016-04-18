@@ -39,73 +39,70 @@ export function setup(app: express.Application, application: IApplication, callb
 
     app.get('/report', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
 
-        api.reporting.initialize(function(err) {
+        //  if trying to run a report with no projects, redirect to the new login destination
+        if (!req['session'].projects || utils.empty(req['session'].projects)) {
+            res.redirect(application.branding.postSignupUrl);
+            return;
+        }
 
-            //  if trying to run a report with no projects, redirect to the new login destination
-            if (!req['session'].projects || utils.empty(req['session'].projects)) {
-                res.redirect(application.branding.postSignupUrl);
-                return;
-            }
+        //  set default report definition
+        var definition: any = { view: 'sessions', renderView: 'report'};
+        var options, metricOptions, elementOptions, filterOptions, attribOptions;
 
-            //  set default report definition
-            var definition: any = { view: 'sessions', renderView: 'report'};
-            var options, metricOptions, elementOptions, filterOptions, attribOptions;
+        if (req.query.id) {
+            if (utils.isNumeric(req.query.id))
+                definition = application.reports.definitions[+req.query.id].options;
+            else
+                definition = application.reports.definitions[application.reports.Types[req.query.id]].options;
+        }
 
-            if (req.query.id) {
-                if (utils.isNumeric(req.query.id))
-                    definition = application.reports.definitions[+req.query.id].options;
-                else
-                    definition = application.reports.definitions[application.reports.Types[req.query.id]].options;
-            }
+        if (req.query.options) {
+            options = JSON.parse(req.query.options);
 
-            if (req.query.options) {
-                options = JSON.parse(req.query.options);
+            if (options.renderView)
+                definition.renderView = options.renderView;
 
-                if (options.renderView)
-                    definition.renderView = options.renderView;
+            if (options.view)
+                definition.view = options.view;
+        }
 
-                if (options.view)
-                    definition.view = options.view;
-            }
+        var project: any = api.currentProject(req);
 
-            var project: any = api.currentProject(req);
+        if (!project)
+            project = {};
 
-            if (!project)
-                project = {};
+        if (!project.data)
+            project.data = {};
 
-            if (!project.data)
-                project.data = {};
+        if (!project.data.attributes)
+            project.data.attributes = {};
 
-            if (!project.data.attributes)
-                project.data.attributes = {};
+        var customAttribs = project.data.attributes;
 
-            var customAttribs = project.data.attributes;
+        metricOptions = api.reporting.getAttributeOptions(definition.view, api.reporting.AttributeTypes.metrics, customAttribs);
+        elementOptions = api.reporting.getAttributeOptions(definition.view, api.reporting.AttributeTypes.elements, customAttribs);
+        filterOptions = api.reporting.getFilterOptions(definition.view, customAttribs, false);
+        attribOptions = api.reporting.getAttributeOptions(definition.view, api.reporting.AttributeTypes.all, customAttribs, true);
 
-            metricOptions = api.reporting.getAttributeOptions(definition.view, api.reporting.AttributeTypes.metrics, customAttribs);
-            elementOptions = api.reporting.getAttributeOptions(definition.view, api.reporting.AttributeTypes.elements, customAttribs);
-            filterOptions = api.reporting.getFilterOptions(definition.view, customAttribs, false);
-            attribOptions = api.reporting.getAttributeOptions(definition.view, api.reporting.AttributeTypes.all, customAttribs, true);
+        utils.noCache(res);
 
-            utils.noCache(res);
+        //  any route that requires segments should call this first
+        api.reporting.getSegments(req, false, function(err) {
 
-            //  any route that requires segments should call this first
-            api.reporting.getSegments(req, false, function(err) {
+            if (err)
+                req.flash('error', err.message);
 
-                if (err)
-                    req.flash('error', err.message);
-
-                res.render(definition.renderView || 'report', {
-                    settings: utils.config.settings(),
-                    application: application,
-                    dev: utils.config.dev(),
-                    req: req,
-                    definition: definition,
-                    segmentOptions: api.reporting.getSegmentOptions(req),
-                    metricOptions: metricOptions,
-                    elementOptions: elementOptions,
-                    filterOptions: filterOptions,
-                    attribOptions: attribOptions
-                });
+            res.render(definition.renderView || 'report', {
+                settings: utils.config.settings(),
+                application: application,
+                dev: utils.config.dev(),
+                req: req,
+                definition: definition,
+                segmentOptions: api.reporting.getSegmentOptions(req),
+                metricOptions: metricOptions,
+                elementOptions: elementOptions,
+                filterOptions: filterOptions,
+                attribOptions: attribOptions
             });
         });
     });
