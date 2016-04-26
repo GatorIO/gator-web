@@ -53,6 +53,37 @@ export function setup(app: express.Application, application: IApplication, callb
         });
     });
 
+    //  reset password
+    app.get('/reset', application.enforceSecure, function(req, res) {
+        res.render('./api/reset', {
+            req: req,
+            application: application,
+            dev: utils.config.dev()
+        });
+    });
+
+    app.post('/reset', application.enforceSecure, function(req, res) {
+        
+        api.REST.client.get('/v1/reset/' + application.settings.appId + '/' + req.body.username, function(err, apiRequest: restify.Request, apiResponse: restify.Response) {
+            api.REST.sendConditional(res, err, null, 'success');         
+        });
+    });
+
+    app.get('/reset/change', application.enforceSecure, function(req, res) {
+        res.render('./api/resetChange', {
+            req: req,
+            application: application,
+            dev: utils.config.dev()
+        });
+    });
+
+    app.post('/reset/change', application.enforceSecure, function(req, res) {
+
+        api.REST.client.post('/v1/reset', req.body, function(err, apiRequest: restify.Request, apiResponse: restify.Response) {
+            api.REST.sendConditional(res, err, null, 'success');
+        });
+    });
+
     app.get('/register', application.enforceSecure, function(req, res) {
         res.render('./api/register', {
             req: req,
