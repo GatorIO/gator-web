@@ -2,7 +2,7 @@
 var utils = require("gator-utils");
 var api = require('gator-api');
 function setup(app, application, callback) {
-    app.get('/email/unsubscribe', application.enforceSecure, api.authenticate, function (req, res) {
+    app.get('/email/unsubscribe', function (req, res) {
         res.render('unsubscribe', {
             application: application,
             settings: utils.config.settings(),

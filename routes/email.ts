@@ -16,7 +16,7 @@ import {IApplication} from "gator-web";
 
 export function setup(app: express.Application, application: IApplication, callback) {
 
-    app.get('/email/unsubscribe', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
+    app.get('/email/unsubscribe', function (req: express.Request, res: express.Response) {
 
         res.render('unsubscribe', {
             application: application,

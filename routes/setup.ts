@@ -53,8 +53,7 @@ export function setup(app: express.Application, application: IApplication, callb
 
                                                 paymentRoutes.setup(app, application, function() {
 
-                                                    emailRoutes.setup(app, application, function() {
-                                                        
+                                                    emailRoutes.setup(app, application, function() {                                                        
                                                         callback();
                                                     });
                                                 });
