@@ -18,7 +18,7 @@ export function setup(app: express.Application, application: IApplication, callb
 
     app.get('/email/unsubscribe', function (req: express.Request, res: express.Response) {
 
-        res.render('unsubscribe', {
+        res.render('./api/unsubscribe', {
             application: application,
             settings: utils.config.settings(),
             req: req
