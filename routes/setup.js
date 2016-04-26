@@ -9,6 +9,7 @@ var bookmarkRoutes = require('./bookmarks');
 var developerRoutes = require('./developer');
 var attributeRoutes = require('./attributes');
 var paymentRoutes = require('./payments');
+var emailRoutes = require('./email');
 var accessTokenRoutes = require('./accessTokens');
 function setup(app, application, callback) {
     try {
@@ -23,7 +24,9 @@ function setup(app, application, callback) {
                                         developerRoutes.setup(app, application, function () {
                                             segmentRoutes.setup(app, application, function () {
                                                 paymentRoutes.setup(app, application, function () {
-                                                    callback();
+                                                    emailRoutes.setup(app, application, function () {
+                                                        callback();
+                                                    });
                                                 });
                                             });
                                         });

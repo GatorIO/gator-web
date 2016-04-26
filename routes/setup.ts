@@ -20,6 +20,7 @@ import bookmarkRoutes = require('./bookmarks');
 import developerRoutes = require('./developer');
 import attributeRoutes = require('./attributes');
 import paymentRoutes = require('./payments');
+import emailRoutes = require('./email');
 import accessTokenRoutes = require('./accessTokens');
 
 export function setup(app: express.Application, application: IApplication, callback) {
@@ -51,7 +52,10 @@ export function setup(app: express.Application, application: IApplication, callb
                                             segmentRoutes.setup(app, application, function() {
 
                                                 paymentRoutes.setup(app, application, function() {
-                                                    callback();
+
+                                                    emailRoutes.setup(app, application, function() {
+                                                        callback();
+                                                    });
                                                 });
                                             });
                                         });

@@ -2,6 +2,13 @@
 var utils = require("gator-utils");
 var api = require('gator-api');
 function setup(app, application, callback) {
+    app.get('/email/unsubscribe', application.enforceSecure, api.authenticate, function (req, res) {
+        res.render('unsubscribe', {
+            application: application,
+            settings: utils.config.settings(),
+            req: req
+        });
+    });
     app.post('/email/unsubscribe', function (req, res) {
         utils.noCache(res);
         var params = {
