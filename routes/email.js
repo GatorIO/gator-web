@@ -12,8 +12,9 @@ function setup(app, application, callback) {
     app.post('/email/unsubscribe', function (req, res) {
         utils.noCache(res);
         var params = {
-            email: req.body.email,
-            listId: req.body.listId
+            lid: req.body.lid,
+            cid: req.body.cid,
+            sid: req.body.sid
         };
         api.REST.client.post('/v1/email/unsubscribe', params, function (err, apiRequest, apiResponse, result) {
             api.REST.sendConditional(res, err, result);

@@ -29,8 +29,9 @@ export function setup(app: express.Application, application: IApplication, callb
         utils.noCache(res);
 
         var params: any = {
-            email: req.body.email,
-            listId: req.body.listId
+            lid: req.body.lid,
+            cid: req.body.cid,
+            sid: req.body.sid
         };
 
         api.REST.client.post('/v1/email/unsubscribe', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
