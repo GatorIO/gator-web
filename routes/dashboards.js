@@ -1,7 +1,9 @@
 "use strict";
 var utils = require("gator-utils");
 var api = require('gator-api');
+var lib = require('../lib/index');
 function setup(app, application, callback) {
+    var statusCheck = typeof application.statusCheck == 'function' ? application.statusCheck : lib.statusCheckPlaceholder;
     app.get('/setup/dashboards', application.enforceSecure, api.authenticate, function (req, res) {
         utils.noCache(res);
         api.REST.client.get('/v1/projects?accessToken=' + req['session']['accessToken'], function (err, apiRequest, apiResponse, result) {
@@ -75,7 +77,7 @@ function setup(app, application, callback) {
             api.REST.sendConditional(res, err);
         });
     });
-    app.get('/dashboard', application.enforceSecure, api.authenticate, function (req, res) {
+    app.get('/dashboard', application.enforceSecure, api.authenticate, statusCheck, function (req, res) {
         utils.noCache(res);
         var name = req.query.name, dashboard = {};
         var dashboards = api.reporting.currentDashboards(req);

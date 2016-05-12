@@ -40,7 +40,7 @@ export function setup(app: express.Application, application: IApplication, callb
         });
     });
 
-    app.get('/report', statusCheck, application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
+    app.get('/report', application.enforceSecure, api.authenticate, statusCheck, function (req: express.Request, res: express.Response) {
 
         //  if trying to run a report with no projects, redirect to the new login destination
         if (!req['session'].projects || utils.empty(req['session'].projects)) {
@@ -240,7 +240,7 @@ export function setup(app: express.Application, application: IApplication, callb
         }
     });
 
-    app.get('/visualizations/badtraffic', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
+    app.get('/visualizations/badtraffic', application.enforceSecure, api.authenticate, statusCheck, function (req: express.Request, res: express.Response) {
         utils.noCache(res);
 
         //  any route that requires segments should call this first
@@ -258,7 +258,7 @@ export function setup(app: express.Application, application: IApplication, callb
         });
     });
 
-    app.get('/person/profile', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
+    app.get('/person/profile', application.enforceSecure, api.authenticate, statusCheck, function (req: express.Request, res: express.Response) {
         utils.noCache(res);
 
         var params = {

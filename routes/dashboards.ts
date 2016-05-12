@@ -9,12 +9,15 @@ import express = require('express');
 import restify = require('restify');
 import api = require('gator-api');
 import {IApplication} from "gator-web";
+import lib = require('../lib/index');
 
 /*
  Set up routes - this script handles functions required for managing dashboards
  */
 
 export function setup(app: express.Application, application: IApplication, callback) {
+
+    var statusCheck: any = typeof application.statusCheck == 'function' ? application.statusCheck : lib.statusCheckPlaceholder;
 
     //  get all dashboards for project and show list of them
     app.get('/setup/dashboards', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
@@ -122,7 +125,7 @@ export function setup(app: express.Application, application: IApplication, callb
     });
 
     //  display a dashboard
-    app.get('/dashboard', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
+    app.get('/dashboard', application.enforceSecure, api.authenticate, statusCheck, function (req: express.Request, res: express.Response) {
         utils.noCache(res);
 
         var name = req.query.name, dashboard = {};

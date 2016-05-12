@@ -20,7 +20,7 @@ function setup(app, application, callback) {
             api.REST.sendConditional(res, err, result.data);
         });
     });
-    app.get('/report', statusCheck, application.enforceSecure, api.authenticate, function (req, res) {
+    app.get('/report', application.enforceSecure, api.authenticate, statusCheck, function (req, res) {
         if (!req['session'].projects || utils.empty(req['session'].projects)) {
             res.redirect(application.branding.postSignupUrl);
             return;
@@ -165,7 +165,7 @@ function setup(app, application, callback) {
                 res.end();
         }
     });
-    app.get('/visualizations/badtraffic', application.enforceSecure, api.authenticate, function (req, res) {
+    app.get('/visualizations/badtraffic', application.enforceSecure, api.authenticate, statusCheck, function (req, res) {
         utils.noCache(res);
         api.reporting.getSegments(req, false, function (err) {
             if (err)
@@ -178,7 +178,7 @@ function setup(app, application, callback) {
             });
         });
     });
-    app.get('/person/profile', application.enforceSecure, api.authenticate, function (req, res) {
+    app.get('/person/profile', application.enforceSecure, api.authenticate, statusCheck, function (req, res) {
         utils.noCache(res);
         var params = {
             accessToken: req['session'].accessToken,
