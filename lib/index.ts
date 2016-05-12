@@ -10,6 +10,11 @@ export function renderError(req, res, message) {
     res.render('errorPage', { req: req, message: message ? message : 'Unknown error'});
 }
 
+//  An application can have a custom middleware.  If it doesn't, it uses this placeholder.
+export function middlewarePlaceholder(req, res, next: Function) {
+    return next();
+}
+
 export class MenuLink {
     public title: string;
     public url: string;
