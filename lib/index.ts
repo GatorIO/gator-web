@@ -11,7 +11,7 @@ export function renderError(req, res, message) {
 }
 
 //  An application can have a custom middleware.  If it doesn't, it uses this placeholder.
-export function middlewarePlaceholder(req, res, next: Function) {
+export function statusCheckPlaceholder(req, res, next: Function) {
     return next();
 }
 

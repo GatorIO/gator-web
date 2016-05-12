@@ -73,6 +73,7 @@ declare module 'gator-web' {
         defaultDashboard(type): Object;
         menuItems(user, account, project): Array<MenuItem>;
         enforceSecure(req, res, next: Function);
+        statusCheck(req, res, next: Function);
         reports: Reports;
     }
 

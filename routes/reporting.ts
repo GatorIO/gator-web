@@ -9,6 +9,7 @@ import utils = require("gator-utils");
 import express = require('express');
 import api = require('gator-api');
 import projectRoutes = require('./projects');
+import lib = require('../lib/index');
 var http = require('http');
 var fs = require('fs');
 var os = require('os');
@@ -18,6 +19,8 @@ import {IApplication} from "gator-web";
  Set up routes - this script handles functions required reporting
  */
 export function setup(app: express.Application, application: IApplication, callback) {
+
+    var statusCheck: any = typeof application.statusCheck == 'function' ? application.statusCheck : lib.statusCheckPlaceholder;
 
     app.post('/query', application.enforceSecure, api.authenticateNoRedirect, function (req: express.Request, res: express.Response) {
 
@@ -37,7 +40,7 @@ export function setup(app: express.Application, application: IApplication, callb
         });
     });
 
-    app.get('/report', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
+    app.get('/report', statusCheck, application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
 
         //  if trying to run a report with no projects, redirect to the new login destination
         if (!req['session'].projects || utils.empty(req['session'].projects)) {

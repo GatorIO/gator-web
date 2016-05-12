@@ -1,10 +1,12 @@
 "use strict";
 var utils = require("gator-utils");
 var api = require('gator-api');
+var lib = require('../lib/index');
 var http = require('http');
 var fs = require('fs');
 var os = require('os');
 function setup(app, application, callback) {
+    var statusCheck = typeof application.statusCheck == 'function' ? application.statusCheck : lib.statusCheckPlaceholder;
     app.post('/query', application.enforceSecure, api.authenticateNoRedirect, function (req, res) {
         if (!req['session']) {
             api.REST.sendError(res, new api.errors.AuthenticationTimeoutError('Your session has timed out.'));
@@ -18,7 +20,7 @@ function setup(app, application, callback) {
             api.REST.sendConditional(res, err, result.data);
         });
     });
-    app.get('/report', application.enforceSecure, api.authenticate, function (req, res) {
+    app.get('/report', statusCheck, application.enforceSecure, api.authenticate, function (req, res) {
         if (!req['session'].projects || utils.empty(req['session'].projects)) {
             res.redirect(application.branding.postSignupUrl);
             return;
