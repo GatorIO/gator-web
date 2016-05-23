@@ -457,6 +457,8 @@
 
         try {
 
+            suppressUpdates = true;
+
             Toolbar.init();
 
             if (definition.dateLabel || definition.dateInterval)
@@ -475,6 +477,8 @@
             } else {
                 setState();     //  set defaults
             }
+
+            suppressUpdates = false;
 
             runQuery();
             setActiveStep(report.state.activeStep || 0);

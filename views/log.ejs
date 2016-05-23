@@ -231,6 +231,8 @@
     $(document).ready(function() {
         try {
 
+            suppressUpdates = true;
+
             Toolbar.initLog();
 
             if (definition.dateLabel || definition.dateInterval)
@@ -254,6 +256,7 @@
             } else {
                 setState();     //  set defaults
             }
+            suppressUpdates = false;
 
             runQuery();
 

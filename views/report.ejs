@@ -380,6 +380,7 @@
     $(document).ready(function() {
 
         try {
+            suppressUpdates = true;
 
             Toolbar.init();
 
@@ -403,6 +404,7 @@
             } else {
                 setState();     //  set defaults
             }
+            suppressUpdates = false;
 
             runQuery();
 
