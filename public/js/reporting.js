@@ -718,7 +718,7 @@ Report.prototype.renderSnapshot = function () {
         var metric = chartMetrics[c];
 
         if (!this.state.hiddenSeries || !this.state.hiddenSeries[metric.baseName]) {
-            html += '<div class="col-xs-12 col-sm-6 col-md-6 col-lg-' + colSize + '"><h2 class="text-center">' + metric.title + '</h2>' +
+            html += '<div class="col-xs-12 col-sm-12 col-md-12 col-lg-' + colSize + '"><h2 class="text-center">' + metric.title + '</h2>' +
                 '<div class="flot-container flot-container-pie"><div id="' + this.pageOptions.chartContainer + '-' + c + '" class="flot-placeholder"></div></div>' +
                 '</div>';
 
