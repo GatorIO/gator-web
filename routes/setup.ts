@@ -24,17 +24,17 @@ import _emailRoutes = require('./email');
 import _accessTokenRoutes = require('./accessTokens');
 
 export var apiRoutes = require('./api');
-export var  projectRoutes = require('./projects');
-export var  reportingRoutes = require('./reporting');
-export var  segmentRoutes = require('./segments');
-export var  campaignRoutes = require('./campaigns');
-export var  dashboardRoutes = require('./dashboards');
-export var  bookmarkRoutes = require('./bookmarks');
-export var  developerRoutes = require('./developer');
-export var  attributeRoutes = require('./attributes');
-export var  paymentRoutes = require('./payments');
-export var  emailRoutes = require('./email');
-export var  accessTokenRoutes = require('./accessTokens');
+export var projectRoutes = require('./projects');
+export var reportingRoutes = require('./reporting');
+export var segmentRoutes = require('./segments');
+export var campaignRoutes = require('./campaigns');
+export var dashboardRoutes = require('./dashboards');
+export var bookmarkRoutes = require('./bookmarks');
+export var developerRoutes = require('./developer');
+export var attributeRoutes = require('./attributes');
+export var paymentRoutes = require('./payments');
+export var emailRoutes = require('./email');
+export var accessTokenRoutes = require('./accessTokens');
 
 export function setup(app: express.Application, application: IApplication, callback) {
 
