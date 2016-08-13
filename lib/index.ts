@@ -1,10 +1,6 @@
 import _routes = require('../routes/setup');
-import _apiRoutes = require('../routes/api');
-import _accessTokenRoutes = require('../routes/accessTokens');
 
 export var routes = _routes;
-export var apiRoutes = _apiRoutes;
-export var accessTokenRoutes = _accessTokenRoutes;
 
 var _flash = require('./flash');
 

@@ -1,30 +1,30 @@
 "use strict";
-var apiRoutes = require('./api');
-var projectRoutes = require('./projects');
-var reportingRoutes = require('./reporting');
-var segmentRoutes = require('./segments');
-var campaignRoutes = require('./campaigns');
-var dashboardRoutes = require('./dashboards');
-var bookmarkRoutes = require('./bookmarks');
-var developerRoutes = require('./developer');
-var attributeRoutes = require('./attributes');
-var paymentRoutes = require('./payments');
-var emailRoutes = require('./email');
-var accessTokenRoutes = require('./accessTokens');
+exports.apiRoutes = require('./api');
+exports.projectRoutes = require('./projects');
+exports.reportingRoutes = require('./reporting');
+exports.segmentRoutes = require('./segments');
+exports.campaignRoutes = require('./campaigns');
+exports.dashboardRoutes = require('./dashboards');
+exports.bookmarkRoutes = require('./bookmarks');
+exports.developerRoutes = require('./developer');
+exports.attributeRoutes = require('./attributes');
+exports.paymentRoutes = require('./payments');
+exports.emailRoutes = require('./email');
+exports.accessTokenRoutes = require('./accessTokens');
 function setup(app, application, callback) {
     try {
-        accessTokenRoutes.setup(app, application, function () {
-            apiRoutes.setup(app, application, function () {
-                attributeRoutes.setup(app, application, function () {
-                    bookmarkRoutes.setup(app, application, function () {
-                        dashboardRoutes.setup(app, application, function () {
-                            campaignRoutes.setup(app, application, function () {
-                                projectRoutes.setup(app, application, function () {
-                                    reportingRoutes.setup(app, application, function () {
-                                        developerRoutes.setup(app, application, function () {
-                                            segmentRoutes.setup(app, application, function () {
-                                                paymentRoutes.setup(app, application, function () {
-                                                    emailRoutes.setup(app, application, function () {
+        exports.accessTokenRoutes.setup(app, application, function () {
+            exports.apiRoutes.setup(app, application, function () {
+                exports.attributeRoutes.setup(app, application, function () {
+                    exports.bookmarkRoutes.setup(app, application, function () {
+                        exports.dashboardRoutes.setup(app, application, function () {
+                            exports.campaignRoutes.setup(app, application, function () {
+                                exports.projectRoutes.setup(app, application, function () {
+                                    exports.reportingRoutes.setup(app, application, function () {
+                                        exports.developerRoutes.setup(app, application, function () {
+                                            exports.segmentRoutes.setup(app, application, function () {
+                                                exports.paymentRoutes.setup(app, application, function () {
+                                                    exports.emailRoutes.setup(app, application, function () {
                                                         callback();
                                                     });
                                                 });
