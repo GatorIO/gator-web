@@ -82,5 +82,13 @@ declare module 'gator-web' {
     module routes {
         export function setup(app, application, callback);
     }
+
+    module apiRoutes {
+        export function setup(app, application, callback);
+    }
+
+    module accessTokenRoutes {
+        export function setup(app, application, callback);
+    }
 }
 
