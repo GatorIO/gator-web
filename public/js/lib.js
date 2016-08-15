@@ -86,7 +86,7 @@ var Page = {
                 confirmButtonClass: "btn-danger",
                 confirmButtonText: 'Confirm'
             },
-            okCallback
+            function() {setTimeout(okCallback, 100)}  // delay is for multiple dialogs
         );
     },
 

@@ -10,18 +10,31 @@ import express = require('express');
 import api = require('gator-api');
 import {IApplication} from "gator-web";
 
-import apiRoutes = require('./api');
-import projectRoutes = require('./projects');
-import reportingRoutes = require('./reporting');
-import segmentRoutes = require('./segments');
-import campaignRoutes = require('./campaigns');
-import dashboardRoutes = require('./dashboards');
-import bookmarkRoutes = require('./bookmarks');
-import developerRoutes = require('./developer');
-import attributeRoutes = require('./attributes');
-import paymentRoutes = require('./payments');
-import emailRoutes = require('./email');
-import accessTokenRoutes = require('./accessTokens');
+import _apiRoutes = require('./api');
+import _projectRoutes = require('./projects');
+import _reportingRoutes = require('./reporting');
+import _segmentRoutes = require('./segments');
+import _campaignRoutes = require('./campaigns');
+import _dashboardRoutes = require('./dashboards');
+import _bookmarkRoutes = require('./bookmarks');
+import _developerRoutes = require('./developer');
+import _attributeRoutes = require('./attributes');
+import _paymentRoutes = require('./payments');
+import _emailRoutes = require('./email');
+import _accessTokenRoutes = require('./accessTokens');
+
+export var apiRoutes = require('./api');
+export var projectRoutes = require('./projects');
+export var reportingRoutes = require('./reporting');
+export var segmentRoutes = require('./segments');
+export var campaignRoutes = require('./campaigns');
+export var dashboardRoutes = require('./dashboards');
+export var bookmarkRoutes = require('./bookmarks');
+export var developerRoutes = require('./developer');
+export var attributeRoutes = require('./attributes');
+export var paymentRoutes = require('./payments');
+export var emailRoutes = require('./email');
+export var accessTokenRoutes = require('./accessTokens');
 
 export function setup(app: express.Application, application: IApplication, callback) {
 
