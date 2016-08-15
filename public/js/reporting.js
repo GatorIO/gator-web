@@ -958,6 +958,11 @@ Report.prototype.configureColumn = function(newCol, column) {
                 }
             };
             break;
+        case Report.dataTypes.date:
+            newCol.render = function(data, type, row) {
+                return Report.formatValue(data, Report.dataTypes.date, column.format);
+            };
+            break;
     }
 };
 
@@ -1480,6 +1485,21 @@ Report.formatValue = function(value, dataType, format) {
             return value.toLocaleString();
 
             break;
+        case Report.dataTypes.date:
+        case "date":
+            //  format ISO dates only to local string
+            if (value && value.substr(value.length - 1, 1) == 'Z') {
+                var ret = new Date(value);
+
+                var yyyy = ret.getFullYear().toString();
+                var mm = (ret.getMonth()+1).toString(); // getMonth() is zero-based
+                var dd  = ret.getDate().toString();
+                var hh  = ret.getHours().toString();
+                var min  = ret.getMinutes().toString();
+                var ss  = ret.getSeconds().toString();
+                return yyyy + '-' + (mm[1]?mm:"0"+mm[0]) + '-' + (dd[1]?dd:"0"+dd[0]) + ' ' + (hh[1]?hh:"0"+hh[0]) + ':' + (min[1]?min:"0"+min[0]) + ':' + (ss[1]?ss:"0"+ss[0]);
+
+            }
         default:
             return value || '(not set)';
     }
