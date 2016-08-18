@@ -19,7 +19,7 @@
 
     <% include partials/master/leftPanel %>
 
-    <div id="page-wrapper" class="gray-bg">
+    <div id="page-wrapper" class="white-bg">
 
         <% include partials/master/topPanel %>
 
@@ -39,9 +39,9 @@
             <div class="row white-bg hidden-print">
                 <div class="col-md-6">
                     <h4 class="text-navy">Show Metrics:</h4>
-                    <input class="form-control" id="metrics" data-placeholder="Choose metrics, like sessions or page views..." type="text">
+                    <input class="form-control" id="metrics" data-placeholder="Choose metrics to display..." type="text">
                     <h4 class="text-navy">By:</h4>
-                    <input class="form-control" id="elements" data-placeholder="Choose elements, like browser or platform..." type="text">
+                    <input class="form-control" id="elements" data-placeholder="Choose what to group on..." type="text">
                     <h4 class="text-navy">With Segments:</h4>
                     <div class="input-group">
                         <input class="form-control" id="segments" data-placeholder="Choose segments..." type="text">
@@ -108,24 +108,6 @@
     var segmentsSelectize, customCount = 0, customSegments, suppressUpdates = false, title;
     var report = new Report();
     var definition = <%- JSON.stringify(definition) %>;
-
-    //  set up default page options based on the data view (sessions, events or pages)
-    switch (definition.view) {
-        case 'events':
-            definition.title = definition.title || 'Events';
-            definition.attributes = definition.attributes || 'eventCount';
-            definition.group = definition.group || 'eventName';
-            break;
-        case 'pages':
-            definition.title  = definition.title || 'Pages';
-            definition.attributes = definition.attributes || 'pageViews';
-            definition.group = definition.group || 'page';
-            break;
-        default:
-            definition.title = definition.title || 'Sessions';
-            definition.attributes = definition.attributes || 'sessions';
-            break;
-    }
 
     $('#page-title').html(definition.title);
 

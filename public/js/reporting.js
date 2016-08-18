@@ -15,6 +15,7 @@ function Report(pageOptions) {
 
     //  The report configuration options and the UI state (selected series, sort order, etc.).  This is what should be persisted on a push state call.
     this.state = {
+        map: null,
         view: null,     //  the data view (sessions, events, users or pages)
         isLog: null,    //  if it's a log report, don't group results
         title: null,

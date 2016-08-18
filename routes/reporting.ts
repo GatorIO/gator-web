@@ -96,10 +96,10 @@ export function setup(app: express.Application, application: IApplication, callb
 
         var customAttribs = project.data.attributes;
 
-        metricOptions = api.reporting.getAttributeOptions(definition.view, api.reporting.AttributeTypes.metrics, customAttribs);
-        elementOptions = api.reporting.getAttributeOptions(definition.view, api.reporting.AttributeTypes.elements, customAttribs);
-        filterOptions = api.reporting.getFilterOptions(definition.view, customAttribs, false);
-        attribOptions = api.reporting.getAttributeOptions(definition.view, api.reporting.AttributeTypes.all, customAttribs, true);
+        metricOptions = api.reporting.getAttributeOptions(definition.view, api.reporting.AttributeTypes.metrics, customAttribs, options.isLog);
+        elementOptions = api.reporting.getAttributeOptions(definition.view, api.reporting.AttributeTypes.elements, customAttribs, options.isLog);
+        filterOptions = api.reporting.getFilterOptions(definition.view, customAttribs, options.isLog);
+        attribOptions = api.reporting.getAttributeOptions(definition.view, api.reporting.AttributeTypes.all, customAttribs, options.isLog);
 
         utils.noCache(res);
 

@@ -4,10 +4,7 @@
     <% include partials/report/header %>
     <% include partials/master/header %>
     <link href="/query-builder/css/query-builder.default.css" rel="stylesheet">
-
-    <% if (definition.map) { %>
-        <link rel="stylesheet" href="/jvectormap/jquery-jvectormap-2.0.4.css" type="text/css" media="screen"/>
-    <% } %>
+    <link rel="stylesheet" href="/jvectormap/jquery-jvectormap-2.0.4.css" type="text/css" media="screen"/>
 
     <style>
         #filter-builder .rules-group-container {
@@ -49,12 +46,10 @@
                     <br><h4 class="text-navy">Filter:</h4>
                     <div id="filter-builder"></div>
                 </div>
-                <% if (definition.map) { %>
-                    <div class="col-md-6">
-                        <!-- map goes here -->
-                        <div id="world-map" style="width:100%; height: 270px; margin-top: 15px"></div>
-                    </div>
-                <% } %>
+                <div class="col-md-6">
+                    <!-- map goes here -->
+                    <div id="world-map" style="width:100%; height: 270px; margin-top: 15px"></div>
+                </div>
             </div>
             <div class="row white-bg">
                 <span id="results-table-container" style="visibility: hidden">
@@ -75,11 +70,8 @@
 <script src="/query-builder/js/query-builder.standalone.min.js"></script>
 <script src="/js/query-builder.custom.js"></script>
 <script src="/typeahead/typeahead.jquery.min.js"></script>
-
-<% if (definition.map) { %>
-    <script src="/jvectormap/jquery-jvectormap-2.0.4.min.js"></script>
-    <script src="/jvectormap/jquery-jvectormap-world-mill.js"></script>
-<% } %>
+<script src="/jvectormap/jquery-jvectormap-2.0.4.min.js"></script>
+<script src="/jvectormap/jquery-jvectormap-world-mill.js"></script>
 <script type="text/javascript" src="/js/yaml.min.js"></script>
 
 <script>
@@ -127,7 +119,7 @@
                 onStateChange: pushState
             }
 
-            if (definition.map)
+            if (report.state.map)
                 report.pageOptions.mapContainer = 'world-map';
 
             setState();
@@ -167,6 +159,9 @@
 
         if (definition.sort)
             report.state.sort = definition.sort;
+
+        if (definition.map)
+            report.state.map = definition.map;
 
         report.state.title =  $('#page-title').html();
         report.state.renderView = definition.renderView || 'report';
