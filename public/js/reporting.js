@@ -144,7 +144,7 @@ function Report(pageOptions) {
                             runningQueries--;
                             Page.doneLoading();
 
-                            if (result && result.status == 419) {
+                            if (result && (result.status == 419 || result.status == 401)) {
                                 window.location = '/login';
                             } else if (result && result.responseJSON && result.responseJSON.message) {
                                 Page.alert('Error', result.responseJSON.message, 'error');
@@ -177,7 +177,7 @@ function Report(pageOptions) {
                 runningQueries--;
                 Page.doneLoading();
 
-                if (result && result.status == 419) {
+                if (result && (result.status == 419 || result.status == 401)) {
                     window.location = '/login';
                 } else if (result && result.responseJSON && result.responseJSON.message) {
                     Page.alert('Error', result.responseJSON.message, 'error');
