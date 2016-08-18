@@ -274,11 +274,14 @@ Report.prototype.getTableQuery = function() {
         query.limit = 100;
 
         //  make sure coordinates are returned for map on log reports
-        if (query.attributes.indexOf('longitude') == -1)
-            query.attributes += ',longitude';
+        if (this.pageOptions.mapContainer) {
 
-        if (query.attributes.indexOf('latitude') == -1)
-            query.attributes += ',latitude';
+            if (query.attributes.indexOf('longitude') == -1)
+                query.attributes += ',longitude';
+
+            if (query.attributes.indexOf('latitude') == -1)
+                query.attributes += ',latitude';
+        }
     }
 
     if (!state.isLog && state.hasOwnProperty('group')) {
@@ -1580,8 +1583,7 @@ var Filter = {
                 if (rule.filter.searchable && (rule.operator.type == 'equal' || rule.operator.type == 'not_equal')) {
 
                     var matcher = function(query, sync, async) {
-                        var url = apiUrl + '/v1/analytics/attributes/search?attribute=' + rule.filter.id +
-                            '&projectId=' + projectId + '&value=' + encodeURIComponent(query);
+                        var url = '/search?attribute=' + rule.filter.id + '&projectId=' + projectId + '&value=' + encodeURIComponent(query);
 
                         $.ajax(url, {
                                 success: function(data, status){

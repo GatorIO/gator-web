@@ -4,7 +4,10 @@
     <% include partials/report/header %>
     <% include partials/master/header %>
     <link href="/query-builder/css/query-builder.default.css" rel="stylesheet">
-    <link rel="stylesheet" href="/jvectormap/jquery-jvectormap-2.0.4.css" type="text/css" media="screen"/>
+
+    <% if (definition.map) { %>
+        <link rel="stylesheet" href="/jvectormap/jquery-jvectormap-2.0.4.css" type="text/css" media="screen"/>
+    <% } %>
 
     <style>
         #filter-builder .rules-group-container {
@@ -20,7 +23,7 @@
 
     <% include partials/master/leftPanel %>
 
-    <div id="page-wrapper" class="gray-bg">
+    <div id="page-wrapper" class="white-bg">
 
         <% include partials/master/topPanel %>
 
@@ -41,15 +44,17 @@
                 <div class="col-md-6">
 
                     <h4 class="text-navy">Show Attributes:</h4>
-                    <input class="form-control" id="attribs" data-placeholder="Choose attributes, like location, browser, page views..." type="text">
+                    <input class="form-control" id="attribs" data-placeholder="Choose attributes to display..." type="text">
+
                     <br><h4 class="text-navy">Filter:</h4>
                     <div id="filter-builder"></div>
-                    <br />
                 </div>
-                <div class="col-md-6">
-                    <!-- map goes here -->
-                    <div id="world-map" style="width:100%; height: 270px; margin-top: 15px"></div>
-                </div>
+                <% if (definition.map) { %>
+                    <div class="col-md-6">
+                        <!-- map goes here -->
+                        <div id="world-map" style="width:100%; height: 270px; margin-top: 15px"></div>
+                    </div>
+                <% } %>
             </div>
             <div class="row white-bg">
                 <span id="results-table-container" style="visibility: hidden">
@@ -70,8 +75,11 @@
 <script src="/query-builder/js/query-builder.standalone.min.js"></script>
 <script src="/js/query-builder.custom.js"></script>
 <script src="/typeahead/typeahead.jquery.min.js"></script>
-<script src="/jvectormap/jquery-jvectormap-2.0.4.min.js"></script>
-<script src="/jvectormap/jquery-jvectormap-world-mill.js"></script>
+
+<% if (definition.map) { %>
+    <script src="/jvectormap/jquery-jvectormap-2.0.4.min.js"></script>
+    <script src="/jvectormap/jquery-jvectormap-world-mill.js"></script>
+<% } %>
 <script type="text/javascript" src="/js/yaml.min.js"></script>
 
 <script>
@@ -79,25 +87,9 @@
     var report = new Report();
     var definition = <%- JSON.stringify(definition) %>;
 
-    //  set up page options based on the data view (sessions, events or pages)
-    switch (definition.view) {
-        case 'sessions':
-            definition.title = definition.title || 'Session Log';
-            definition.attributes = definition.attributes || 'lastAccess,sessionDateTime,sessionNumber';
-            break;
-        case 'events':
-            definition.title = definition.title || 'Event Log';
-            definition.attributes = definition.attributes || 'eventDateTime,eventName,uniqueId,organization,revenue,event';
-            break;
-        case 'people':
-            definition.title = definition.title || 'People Log';
-            definition.attributes = definition.attributes || 'sessions';
-            break;
-    }
-
     var attribSelectize = $('#attribs').selectize({
         options: <%- JSON.stringify(attribOptions) %>,
-        items: Utils.replaceAll(definition.attributes, ' ', '').split(','),
+        items: Utils.replaceAll(definition.attributes || '', ' ', '').split(','),
         plugins: ['drag_drop','remove_button'],
         delimiter: ',',
         closeAfterSelect: true,
@@ -132,9 +124,11 @@
                 projectId: $('#projects').val(),
                 timezone: '<%- req.session.user.timezoneId %>',
                 tableContainer: 'results-table',
-                mapContainer: 'world-map',
                 onStateChange: pushState
             }
+
+            if (definition.map)
+                report.pageOptions.mapContainer = 'world-map';
 
             setState();
 
@@ -169,23 +163,15 @@
     };
 
     function setState() {
-        report.state.view = definition.view || 'sessions';
+        report.state.view = definition.view;
+
+        if (definition.sort)
+            report.state.sort = definition.sort;
+
         report.state.title =  $('#page-title').html();
         report.state.renderView = definition.renderView || 'report';
         report.state.isLog = true;
         report.state.pageLength = 100;
-
-        switch (report.state.view) {
-            case 'sessions':
-                report.state.sort = { 'lastAccess': -1 };
-                break;
-            case 'events':
-                report.state.sort = { 'eventDateTime': -1 };
-                break;
-            case 'people':
-                report.state.sort = { 'pageDateTime': -1 };
-                break;
-        }
         report.state.dateLabel = Toolbar.dateLabel;
         report.state.attributes = $("#attribs").val();
 

@@ -35,8 +35,22 @@ export function setup(app: express.Application, application: IApplication, callb
             query: req.body
         };
 
-        api.REST.client.post('/v1/analytics/query', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
+        api.REST.client.post(api.reporting.API_ENDPOINT + 'query', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
             api.REST.sendConditional(res, err, result.data);
+        });
+    });
+
+    //  typeahead support
+    app.get('/search', application.enforceSecure, api.authenticateNoRedirect, function (req: express.Request, res: express.Response) {
+
+        //  This function manually checks auth status in order to send the proper status to the client ajax call.
+        if (!req['session']) {
+            api.REST.sendError(res, new api.errors.AuthenticationTimeoutError('Your session has timed out.'));
+            return;
+        }
+
+        api.REST.client.get(api.reporting.API_ENDPOINT + 'attributes/search?attribute=' + encodeURIComponent(req.query.attribute) + '&projectId=' + req.query.projectId + '&value=' + encodeURIComponent(req.query.value), function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
+            res.json(result || []);
         });
     });
 
@@ -139,7 +153,7 @@ export function setup(app: express.Application, application: IApplication, callb
 
             running = true;
 
-            api.REST.client.post('/v1/analytics/query', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
+            api.REST.client.post(api.reporting.API_ENDPOINT + 'query', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
 
                 if (err) {
                     clearInterval(interval);

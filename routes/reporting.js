@@ -16,8 +16,17 @@ function setup(app, application, callback) {
             accessToken: req['session'].accessToken,
             query: req.body
         };
-        api.REST.client.post('/v1/analytics/query', params, function (err, apiRequest, apiResponse, result) {
+        api.REST.client.post(api.reporting.API_ENDPOINT + 'query', params, function (err, apiRequest, apiResponse, result) {
             api.REST.sendConditional(res, err, result.data);
+        });
+    });
+    app.get('/search', application.enforceSecure, api.authenticateNoRedirect, function (req, res) {
+        if (!req['session']) {
+            api.REST.sendError(res, new api.errors.AuthenticationTimeoutError('Your session has timed out.'));
+            return;
+        }
+        api.REST.client.get(api.reporting.API_ENDPOINT + 'attributes/search?attribute=' + encodeURIComponent(req.query.attribute) + '&projectId=' + req.query.projectId + '&value=' + encodeURIComponent(req.query.value), function (err, apiRequest, apiResponse, result) {
+            res.json(result || []);
         });
     });
     app.get('/report', application.enforceSecure, api.authenticate, statusCheck, function (req, res) {
@@ -89,7 +98,7 @@ function setup(app, application, callback) {
             if (running)
                 return;
             running = true;
-            api.REST.client.post('/v1/analytics/query', params, function (err, apiRequest, apiResponse, result) {
+            api.REST.client.post(api.reporting.API_ENDPOINT + 'query', params, function (err, apiRequest, apiResponse, result) {
                 if (err) {
                     clearInterval(interval);
                     res.write('ERROR: ' + err.message);

@@ -67,19 +67,21 @@ declare module 'gator-api' {
     export module applications {
 
         export class Permission {
-            public id:number;
-            public name:string;
+            public id:string;
             public description:string;
 
-            constructor(id:number, name:string, description?:string);
+            constructor(id:string, description?:string);
         }
 
         export class Application {
 
             //  app attributes
-            public id:number;
-            public name:string;
-            public permissions:Array<Permission>;     //  the available permissions for the app
+            public id: number;
+            public name: string;
+            public description: string;
+            public host: string;
+            public commissions: boolean;
+            public permissions: Array<Permission>;     //  the available permissions for the module
         }
 
         export function getAll(callback:(err?:errors.APIError, result?:Array<Application>) => void);
@@ -213,6 +215,7 @@ declare module 'gator-api' {
 
     export module reporting {
 
+        export var API_ENDPOINT;
         export function currentDashboards(req);
         export function currentBookmarks(req);
         export function getCustomAttributes(req, projectId);
@@ -273,7 +276,7 @@ declare module 'gator-api' {
         export function addFilterView(filterOptions, view:string, customAttribs:any);
         export function getFilterOptions(view:string, customAttribs:any, isLog:boolean):Array<FilterOptions>;
         export function getFilterOption(attrib:any):FilterOptions;
-        export function initialize(callback:Function);
+        export function initialize(apiEndpoint: string, callback:Function);
         export function getSegmentOptions(req);
         export function getSegments(req, useCache: boolean, callback: (err: errors.APIError, segments?: Array<Segment>) => void);
     }
