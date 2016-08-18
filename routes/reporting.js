@@ -25,7 +25,7 @@ function setup(app, application, callback) {
             api.REST.sendError(res, new api.errors.AuthenticationTimeoutError('Your session has timed out.'));
             return;
         }
-        api.REST.client.get(api.reporting.API_ENDPOINT + 'attributes/search?attribute=' + encodeURIComponent(req.query.attribute) + '&projectId=' + req.query.projectId + '&value=' + encodeURIComponent(req.query.value), function (err, apiRequest, apiResponse, result) {
+        api.REST.client.get(api.reporting.API_ENDPOINT + 'attributes/search?accessToken=' + req['session'].accessToken + '&attribute=' + encodeURIComponent(req.query.attribute) + '&projectId=' + req.query.projectId + '&value=' + encodeURIComponent(req.query.value), function (err, apiRequest, apiResponse, result) {
             res.json(result || []);
         });
     });

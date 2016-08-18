@@ -49,7 +49,7 @@ export function setup(app: express.Application, application: IApplication, callb
             return;
         }
 
-        api.REST.client.get(api.reporting.API_ENDPOINT + 'attributes/search?attribute=' + encodeURIComponent(req.query.attribute) + '&projectId=' + req.query.projectId + '&value=' + encodeURIComponent(req.query.value), function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
+        api.REST.client.get(api.reporting.API_ENDPOINT + 'attributes/search?accessToken=' + req['session'].accessToken + '&attribute=' + encodeURIComponent(req.query.attribute) + '&projectId=' + req.query.projectId + '&value=' + encodeURIComponent(req.query.value), function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
             res.json(result || []);
         });
     });
