@@ -266,6 +266,9 @@
         report.state.dateInterval = $("#reportIntervalTitle").html();
         report.state.attributes = $("#metrics").val();
 
+        if (definition.key)
+            report.state.key = definition.key;
+
         if (definition.hiddenSeries)
             report.state.hiddenSeries = definition.hiddenSeries;
 
@@ -364,7 +367,7 @@
         try {
             suppressUpdates = true;
 
-            Toolbar.init();
+            Toolbar.init(definition.intervals);
 
             if (definition.dateLabel || definition.dateInterval)
                 Toolbar.setDateRange(definition.dateLabel, null, null, definition.dateInterval);

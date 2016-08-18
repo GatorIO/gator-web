@@ -164,6 +164,10 @@
             report.state.map = definition.map;
             $('#world-map').removeClass('hidden');
         }
+
+        if (definition.key)
+            report.state.key = definition.key;
+
         report.state.title =  $('#page-title').html();
         report.state.renderView = definition.renderView || 'report';
         report.state.isLog = true;

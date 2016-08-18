@@ -15,6 +15,7 @@ function Report(pageOptions) {
 
     //  The report configuration options and the UI state (selected series, sort order, etc.).  This is what should be persisted on a push state call.
     this.state = {
+        key: null,      //  the definition key for the report
         map: null,
         view: null,     //  the data view (sessions, events, users or pages)
         isLog: null,    //  if it's a log report, don't group results
@@ -916,7 +917,7 @@ Report.prototype.configureColumn = function(newCol, column) {
         case Report.dataTypes.string:
             newCol.render = function(data, type, row) {
 
-                if (data.length > 100)
+                if (data && data.length > 100)
                     return data.substr(0, 97) + '<a href="#" onclick="return false" title="' + data + '">...</a>';
                 else
                     return data;
@@ -1698,13 +1699,16 @@ var Filter = {
 };
 
 var Toolbar = {
+    intervals: null,
     dateStart: 0,
     dateEnd: 0,
     dateLabel: '',
     dateInterval: '',
 
-    init: function() {
+    init: function(intervals) {
 
+        Toolbar.intervals = intervals;
+    
         $('#reportRange').daterangepicker({
             linkedCalendars: false,
             startDate: moment().subtract(29, 'days'),
@@ -1766,7 +1770,10 @@ var Toolbar = {
             Toolbar.setDateRange(Toolbar.dateLabel, Toolbar.dateStart, Toolbar.dateEnd, Toolbar.dateInterval);
         });
 
-        Toolbar.setDateRange('Last 30 Days');
+        if (Toolbar.intervals && Toolbar.intervals.defaultRange)
+            Toolbar.setDateRange(Toolbar.intervals.defaultRange, null, null, Toolbar.intervals.defaultOption);
+        else
+            Toolbar.setDateRange('Last 30 Days');
     },
 
     initLog: function() {
@@ -2044,18 +2051,18 @@ var Toolbar = {
     },
 
     intervalAttribute: function(interval) {
-        switch (interval) {
-            case 'Hourly':
-                return 'sessionHour';
-            case 'Daily':
-                return 'sessionDate';
-            case 'Weekly':
-                return 'sessionWeek';
-            case 'Monthly':
-                return 'sessionMonth';
-            default:
-                return 'sessionDate';
+
+        if (Toolbar.intervals && Toolbar.intervals.options) {
+            var options = Toolbar.intervals.options;
+            
+            if (options[interval])
+                return options[interval];
+            else if (Toolbar.intervals.defaultOption && options[Toolbar.intervals.defaultOption])
+                return options[Toolbar.intervals.defaultOption];
         }
+
+        if (Toolbar.intervals && Toolbar.intervals.defaultAttribute)
+            return Toolbar.intervals.defaultAttribute;
     }
 };
 

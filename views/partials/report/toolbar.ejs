@@ -20,13 +20,30 @@
 
         <span id="toolbar-interval" class="input-group-btn hideAt480">
             <button id="reportInterval" type="button" data-toggle="dropdown" class="btn btn-white dropdown-toggle">
-                <span id="reportIntervalTitle">Daily</span>&nbsp;<span class="caret"></span>
+                <span id="reportIntervalTitle">
+                    <% if (definition && definition.intervals && definition.intervals.defaultOption) { %>
+                        <%- definition.intervals.defaultOption %>
+                    <% } else { %>
+                        Daily
+                    <% } %>
+                </span>&nbsp;<span class="caret"></span>
             </button>
             <ul class="dropdown-menu">
-                <li><a href="#" onclick="Toolbar.updateInterval('Hourly'); runQuery(); return false">Hourly</a></li>
-                <li><a href="#" onclick="Toolbar.updateInterval('Daily'); runQuery(); return false">Daily</a></li>
-                <li><a href="#" onclick="Toolbar.updateInterval('Weekly'); runQuery(); return false">Weekly</a></li>
-                <li><a href="#" onclick="Toolbar.updateInterval('Monthly'); runQuery(); return false">Monthly</a></li>
+                <% if (definition && definition.intervals && definition.intervals.Hourly) { %>
+                    <li><a href="#" onclick="Toolbar.updateInterval('Hourly'); runQuery(); return false">Hourly</a></li>
+                <% } %>
+
+                <% if (definition && definition.intervals && definition.intervals.Daily) { %>
+                    <li><a href="#" onclick="Toolbar.updateInterval('Daily'); runQuery(); return false">Daily</a></li>
+                <% } %>
+
+                <% if (definition && definition.intervals && definition.intervals.Weekly) { %>
+                    <li><a href="#" onclick="Toolbar.updateInterval('Weekly'); runQuery(); return false">Weekly</a></li>
+                <% } %>
+
+                <% if (definition && definition.intervals && definition.intervals.Monthly) { %>
+                    <li><a href="#" onclick="Toolbar.updateInterval('Monthly'); runQuery(); return false">Monthly</a></li>
+                <% } %>
             </ul>
         </span>
 
