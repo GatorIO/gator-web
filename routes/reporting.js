@@ -41,9 +41,17 @@ function setup(app, application, callback) {
                 definition = application.reports.definitions[+req.query.id].options;
             else
                 definition = application.reports.definitions[application.reports.Types[req.query.id]].options;
+            definition.key = req.query.id;
         }
         if (req.query.options) {
             options = JSON.parse(req.query.options);
+            if (options.key) {
+                if (utils.isNumeric(options.key))
+                    definition = application.reports.definitions[+options.key].options;
+                else
+                    definition = application.reports.definitions[application.reports.Types[options.key]].options;
+                definition.key = options.key;
+            }
             if (options.renderView)
                 definition.renderView = options.renderView;
             if (options.view)
