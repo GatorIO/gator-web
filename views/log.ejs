@@ -48,7 +48,7 @@
                 </div>
                 <div class="col-md-6">
                     <!-- map goes here -->
-                    <div id="world-map" style="width:100%; height: 270px; margin-top: 15px"></div>
+                    <div id="world-map" class="hidden" style="width:100%; height: 270px; margin-top: 15px"></div>
                 </div>
             </div>
             <div class="row white-bg">
@@ -160,9 +160,10 @@
         if (definition.sort)
             report.state.sort = definition.sort;
 
-        if (definition.map)
+        if (definition.map) {
             report.state.map = definition.map;
-
+            $('#world-map').removeClass('hidden');
+        }
         report.state.title =  $('#page-title').html();
         report.state.renderView = definition.renderView || 'report';
         report.state.isLog = true;
@@ -193,10 +194,13 @@
 
         report.state = state;
 
-        if (report.state.title)
+        if (state.title)
             $('#page-title').html(report.state.title);
 
-        Toolbar.setDateRange(state.dateLabel, state.dateStart, state.dateEnd, state.dateInterval);
+        if (state.map)
+            $('#world-map').removeClass('hidden');
+
+            Toolbar.setDateRange(state.dateLabel, state.dateStart, state.dateEnd, state.dateInterval);
 
         attribSelectize[0].selectize.clear();
         state.attributes.split(',').forEach(function(item) {attribSelectize[0].selectize.addItem(item.trim());});
