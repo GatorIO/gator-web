@@ -57,10 +57,11 @@ function setup(app, application, callback) {
         if (!project.data.attributes)
             project.data.attributes = {};
         var customAttribs = project.data.attributes;
-        metricOptions = api.reporting.getAttributeOptions(definition.view, api.reporting.AttributeTypes.metrics, customAttribs, options.isLog);
-        elementOptions = api.reporting.getAttributeOptions(definition.view, api.reporting.AttributeTypes.elements, customAttribs, options.isLog);
-        filterOptions = api.reporting.getFilterOptions(definition.view, customAttribs, options.isLog);
-        attribOptions = api.reporting.getAttributeOptions(definition.view, api.reporting.AttributeTypes.all, customAttribs, options.isLog);
+        var isLog = definition.renderView == 'log';
+        metricOptions = api.reporting.getAttributeOptions(definition.view, api.reporting.AttributeTypes.metrics, customAttribs, isLog);
+        elementOptions = api.reporting.getAttributeOptions(definition.view, api.reporting.AttributeTypes.elements, customAttribs, isLog);
+        filterOptions = api.reporting.getFilterOptions(definition.view, customAttribs, isLog);
+        attribOptions = api.reporting.getAttributeOptions(definition.view, api.reporting.AttributeTypes.all, customAttribs, isLog);
         utils.noCache(res);
         api.reporting.getSegments(req, false, function (err) {
             if (err)
