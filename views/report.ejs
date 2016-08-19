@@ -42,15 +42,19 @@
                     <input class="form-control" id="metrics" data-placeholder="Choose metrics to display..." type="text">
                     <h4 class="text-navy">By:</h4>
                     <input class="form-control" id="elements" data-placeholder="Choose what to group on..." type="text">
-                    <h4 class="text-navy">With Segments:</h4>
-                    <div class="input-group">
-                        <input class="form-control" id="segments" data-placeholder="Choose segments..." type="text">
-                        <span class="input-group-btn hidden-print">
-                            <button title="Build your own custom segment" class="btn btn-primary" type="button" onclick="newSegment()" data-toggle="modal" data-target="#segmentModal">
-                                <i class="fa fa-plus" style="font-size:.8em"></i>
-                            </button>
-                        </span>
+
+                    <div <%- (definition.segmentation ? '' : ' class="hidden"') %>">
+                        <h4 class="text-navy">With Segments:</h4>
+                        <div class="input-group">
+                            <input class="form-control" id="segments" data-placeholder="Choose segments..." type="text">
+                            <span class="input-group-btn hidden-print">
+                                <button title="Build your own custom segment" class="btn btn-primary" type="button" onclick="newSegment()" data-toggle="modal" data-target="#segmentModal">
+                                    <i class="fa fa-plus" style="font-size:.8em"></i>
+                                </button>
+                            </span>
+                        </div>
                     </div>
+
                     <br />
                 </div>
                 <div class="col-md-6">
@@ -311,7 +315,6 @@
 
         if (!report.state.tableOrder)
             delete report.state.tableOrder;
-
     }
 
     function restoreState(state) {
