@@ -99,7 +99,7 @@ function Report(pageOptions) {
                 this.pageOptions.apiUrl = '/query';
 
             if (!this.state.segments)
-                this.state.segments = '-1000';   //  default to all sessions
+                this.state.segments = '-1000';   //  default to all data
 
             runningQueries++;
             Page.showLoading();
@@ -322,12 +322,8 @@ Report.prototype.getChartQuery = function() {
                     $in.push(plotKeys[pk][state.group]);
             }
 
-            if ($in.length > 0) {
-                filter = {};
-                filter[state.group] = { $in: $in };
-            } else {
-                filter = { sessionNumber: -1 };       // this is always false
-            }
+            filter = {};
+            filter[state.group] = { $in: $in };
         } else {
 
             for (pk = 0; pk < plotKeys.length; pk++) {
@@ -336,10 +332,7 @@ Report.prototype.getChartQuery = function() {
                     $or.push(plotKeys[pk]);
             }
 
-            if ($or.length > 0)
-                filter = { $or: $or };
-            else
-                filter = { sessionNumber: -1 };       // this is always false
+            filter = { $or: $or };
         }
 
         //  if a filter has been created for plot keys, merge it with the existing filter, if it exists
@@ -433,9 +426,6 @@ Report.dataTypes[Report.dataTypes["array"] = 8] = "array";
 
 Report.prototype.render = function() {
 
-    if (!this.tableData.rows || this.tableData.rows.length == 0)
-        Page.showMessage('There is no data available for this query.');
-
     if (this.pageOptions.chartContainer)
         this.renderChart();
 
@@ -503,7 +493,7 @@ Report.prototype.renderTimeline = function () {
         if (!data.columns[c].baseName)
             data.columns[c].baseName = data.columns[c].name;
 
-        //  Hide 'All Sessions' column if user removed if from segments field
+        //  Hide 'All Data' column if user removed if from segments field
         if (this.visibleColumn(data.columns[c])) {
             if (data.columns[c].isMetric)
                 chartMetrics.push({ name: data.columns[c].name, baseName: data.columns[c].baseName, max: data.columns[c].max, yaxis: null });
@@ -699,7 +689,7 @@ Report.prototype.renderSnapshot = function () {
         if (!data.columns[c].baseName)
             data.columns[c].baseName = data.columns[c].name;
 
-        //  Hide 'All Sessions' column if user removed if from segments field
+        //  Hide 'All Data' column if user removed if from segments field
         if (this.visibleColumn(data.columns[c])) {
 
             if (!state.hiddenSeries || !state.hiddenSeries[data.columns[c].baseName]) {
@@ -1076,7 +1066,7 @@ Report.prototype.renderTable = function () {
 
         var data_color, col = columns[e];
 
-        //  Hide 'All Sessions' column if user removed if from segments field
+        //  Hide 'All Data' column if user removed if from segments field
         if (this.visibleColumn(col)) {
             numVisibleCols++;
 
@@ -1238,10 +1228,13 @@ Report.prototype.renderTable = function () {
         state.pageLength = 5;
     }
 
+    //  need to clone this in order to prevent reference errors when updating/destroying the report
+    var clonedCols = JSON.parse(JSON.stringify(tableCols));
+
     this.dataTablesObject = $('#' + tableId).dataTable({
         order: order,
         data: tableRows,
-        columns: tableCols,
+        columns: clonedCols,
         lengthMenu: [ 10, 25, 50, 100, 1000 ],
         pageLength: state.pageLength || 10,
         dom: dom,
