@@ -370,7 +370,7 @@
         try {
             suppressUpdates = true;
 
-            Toolbar.init(definition.intervals);
+            Toolbar.init(definition);
 
             if (definition.dateLabel || definition.dateInterval)
                 Toolbar.setDateRange(definition.dateLabel, null, null, definition.dateInterval);

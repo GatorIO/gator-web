@@ -1715,30 +1715,30 @@ var Filter = {
 
 var Toolbar = {
     intervals: null,
+    ranges: null,
     dateStart: 0,
     dateEnd: 0,
     dateLabel: '',
     dateInterval: '',
 
-    init: function(intervals) {
+    init: function(definition) {
 
-        Toolbar.intervals = intervals;
-    
+        Toolbar.intervals = definition.intervals;
+        Toolbar.ranges = definition.ranges || ['Today', 'Yesterday', 'Last 24 Hours', 'Last 7 Days', 'Last 30 Days', 'This Month', 'Last Month'];
+
+        var ranges = {};
+
+        for (var r = 0; r < Toolbar.ranges.length; r++) {
+            ranges[Toolbar.ranges[r]] = Toolbar.range(Toolbar.ranges[r]);
+        }
+
         $('#reportRange').daterangepicker({
             linkedCalendars: false,
             startDate: moment().subtract(29, 'days'),
             endDate: moment(),
             minDate: '1999-01-01',
             maxDate: '2100-01-01',
-            ranges: {
-                'Today': Toolbar.range('Today'),
-                'Yesterday': Toolbar.range('Yesterday'),
-                'Last 24 Hours': Toolbar.range('Last 24 Hours'),
-                'Last 7 Days': Toolbar.range('Last 7 Days'),
-                'Last 30 Days': Toolbar.range('Last 30 Days'),
-                'This Month': Toolbar.range('This Month'),
-                'Last Month': Toolbar.range('Last Month')
-            },
+            ranges: ranges,
             opens: 'left',
             drops: 'down',
             buttonClasses: ['btn', 'btn-sm'],
@@ -1765,17 +1765,18 @@ var Toolbar = {
             switch ($('#reportRange').val()) {
                 case 'This Month':
                 case 'Last Month':
-                    Toolbar.updateInterval('Monthly');
+                case 'Custom':
+                case 'Last 7 Days':
+                case 'Last 30 Days':
+                    Toolbar.updateInterval('Daily');
                     break;
                 case 'Today':
                 case 'Yesterday':
-                case 'Last 7 Days':
-                case 'Last 30 Days':
-                case 'Custom':
-                    Toolbar.updateInterval('Daily');
-                    break;
                 case 'Last 24 Hours':
                     Toolbar.updateInterval('Hourly');
+                    break;
+                case 'Last 60 Minutes':
+                    Toolbar.updateInterval('Minute');
                     break;
             }
             runQuery();
@@ -1944,6 +1945,7 @@ var Toolbar = {
             case 'Last 24 Hours':
             case 'Last 7 Days':
             case 'Last 30 Days':
+            case 'Last 60 Minutes':
             case 'This Month':
                 $('#nextPeriod').addClass('disabled');
                 break;
@@ -1998,9 +2000,37 @@ var Toolbar = {
         runQuery();
     },
 
+    momentInterval: function(interval) {
+
+        switch (interval) {
+            case 'Minute':
+                return 'minutes';
+            case 'Hourly':
+                return 'hours';
+            case 'Daily':
+                return 'days';
+            case 'Monthly':
+                return 'months';
+        }
+    },
+
     prior: function() {
         var diff;
 
+        switch (Toolbar.dateLabel) {
+            case 'Today':
+                Toolbar.setDateRange('Yesterday');
+                break;
+            case 'This Month':
+                Toolbar.setDateRange('Last Month');
+                break;
+            default:
+                var diffInterval = Toolbar.momentInterval(Toolbar.dateInterval);
+                diff = moment(Toolbar.dateEnd).diff(moment(Toolbar.dateStart), diffInterval) + 1;
+                Toolbar.setDateRange('Custom', moment(Toolbar.dateStart).subtract(diff, diffInterval).format('YYYY-MM-DD h:00'), moment(Toolbar.dateEnd).subtract(diff, diffInterval).format('YYYY-MM-DD h:00'));
+        }
+
+        /*
         switch (Toolbar.dateLabel) {
             case 'Today':
                 Toolbar.setDateRange('Yesterday');
@@ -2017,10 +2047,15 @@ var Toolbar = {
                     Toolbar.setDateRange('Custom', moment(Toolbar.dateStart).subtract(diff, 'minutes').format('YYYY-MM-DD h:mm A'), moment(Toolbar.dateEnd).subtract(diff, 'minutes').format('YYYY-MM-DD h:mm A'));
                 }
                 break;
+            case 'Last 60 Minutes':
+                diff = moment(Toolbar.dateEnd).diff(moment(Toolbar.dateStart), 'minutes') + 1;
+                Toolbar.setDateRange('Custom', moment(Toolbar.dateStart).subtract(diff, 'minutes').format('YYYY-MM-DD h:mm A'), moment(Toolbar.dateEnd).subtract(diff, 'minutes').format('YYYY-MM-DD h:mm A'));
+                break;
             default:
                 diff = moment(Toolbar.dateEnd).diff(moment(Toolbar.dateStart), 'days') + 1;
                 Toolbar.setDateRange('Custom', moment(Toolbar.dateStart).subtract(diff, 'days').format('YYYY-MM-DD'), moment(Toolbar.dateEnd).subtract(diff, 'days').format('YYYY-MM-DD'));
         }
+         */
 
         runQuery();
     },
@@ -2032,7 +2067,7 @@ var Toolbar = {
             case 'Yesterday':
                 return [moment().subtract(1, 'days').format('YYYY-MM-DD'), moment().subtract(1, 'days').format('YYYY-MM-DD')];
             case 'Last 24 Hours':
-                return [moment().subtract(24, 'hours').format('YYYY-MM-DD h:mm A'), moment().format('YYYY-MM-DD h:mm A')];
+                return [moment().subtract(24, 'hours').format('YYYY-MM-DD h:00'), moment().format('YYYY-MM-DD h:00')];
             case 'Last 7 Days':
                 return [moment().subtract(6, 'days').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
             case 'Last 30 Days':
@@ -2041,6 +2076,8 @@ var Toolbar = {
                 return [moment().startOf('month').format('YYYY-MM-DD'), moment().endOf('month').format('YYYY-MM-DD')];
             case 'Last Month':
                 return [moment().subtract(1, 'month').startOf('month').format('YYYY-MM-DD'), moment().subtract(1, 'month').endOf('month').format('YYYY-MM-DD')];
+            case 'Last 60 Minutes':
+                return [moment().subtract(60, 'minutes').format('YYYY-MM-DD h:mm A'), moment().format('YYYY-MM-DD h:mm A')];
         }
     },
 
@@ -2060,6 +2097,8 @@ var Toolbar = {
                 return 'thisMonth';
             case 'Last Month':
                 return 'lastMonth';
+            case 'Last 60 Minutes':
+                return 'last60Minutes';
             default:
                 return [ Toolbar.dateStart, Toolbar.dateEnd ];
         }

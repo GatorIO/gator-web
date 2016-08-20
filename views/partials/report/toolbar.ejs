@@ -29,6 +29,10 @@
                 </span>&nbsp;<span class="caret"></span>
             </button>
             <ul class="dropdown-menu">
+                <% if (definition && definition.intervals && definition.intervals.options && definition.intervals.options.Minute) { %>
+                <li><a href="#" onclick="Toolbar.updateInterval('Minute'); runQuery(); return false">Minute</a></li>
+                <% } %>
+
                 <% if (definition && definition.intervals && definition.intervals.options && definition.intervals.options.Hourly) { %>
                     <li><a href="#" onclick="Toolbar.updateInterval('Hourly'); runQuery(); return false">Hourly</a></li>
                 <% } %>
