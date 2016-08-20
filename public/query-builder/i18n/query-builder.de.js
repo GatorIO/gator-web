@@ -1,12 +1,12 @@
 /*!
- * jQuery QueryBuilder 2.3.0
+ * jQuery QueryBuilder 2.3.3
  * Locale: German (de)
  * Author: "raimu"
  * Licensed under MIT (http://opensource.org/licenses/MIT)
  */
 
 (function(root, factory) {
-    if (typeof define === 'function' && define.amd) {
+    if (typeof define == 'function' && define.amd) {
         define(['jquery', 'query-builder'], factory);
     }
     else {
@@ -37,6 +37,8 @@ QueryBuilder.regional['de'] = {
     "less_or_equal": "kleiner gleich",
     "greater": "größer",
     "greater_or_equal": "größer gleich",
+    "between": "zwischen",
+    "not_between": "nicht zwischen",
     "begins_with": "beginnt mit",
     "not_begins_with": "beginnt nicht mit",
     "contains": "enthält",

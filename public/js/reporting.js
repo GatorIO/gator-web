@@ -1605,7 +1605,7 @@ var Filter = {
                 var format = rule.filter.validation ? rule.filter.validation.format : 'YYYY-MM-DD';
                 var timePicker = format.indexOf('h') > -1;
 
-                $('input[name*="' + rule.id + '_value_"]').daterangepicker({
+                var drOptions = {
                     singleDatePicker: true,
                     autoUpdateInput: false,
                     timePicker: timePicker,
@@ -1614,16 +1614,32 @@ var Filter = {
                     locale: {
                         "format": format
                     }
-                },
-                function(start, end, label) {
-                    $('input[name*="' + rule.id + '_value_"]').val(start.format(format)).change();
-                });
+                };
 
-                $('input[name*="' + rule.id + '_value_"]').on('apply.daterangepicker', function(ev, picker) {
-                    $('input[name*="' + rule.id + '_value_"]').val(picker.startDate.format(format)).change();
+                $('input[name*="' + rule.id + '_value_0"]').daterangepicker(drOptions,
+                    function(start, end, label) {
+                        $('input[name*="' + rule.id + '_value_0"]').val(start.format(format)).change();
+                    }
+                );
+
+                $('input[name*="' + rule.id + '_value_0"]').on('apply.daterangepicker', function(ev, picker) {
+                    $('input[name*="' + rule.id + '_value_0"]').val(picker.startDate.format(format)).change();
                     runQuery();
                 });
 
+                //  if the second element exists (for betweens)
+                if ($('input[name*="' + rule.id + '_value_1"]').length) {
+                    $('input[name*="' + rule.id + '_value_1"]').daterangepicker(drOptions,
+                        function(start, end, label) {
+                            $('input[name*="' + rule.id + '_value_1"]').val(start.format(format)).change();
+                        }
+                    );
+
+                    $('input[name*="' + rule.id + '_value_1"]').on('apply.daterangepicker', function(ev, picker) {
+                        $('input[name*="' + rule.id + '_value_1"]').val(picker.startDate.format(format)).change();
+                        runQuery();
+                    });
+                }
                 break;
         }
     },
@@ -1655,6 +1671,12 @@ var Filter = {
 
             if (rule.value == undefined || rule.value == '' || (Utils.isArray(rule.value) && rule.value.length == 0))
                 return;
+
+            //  check 'between' values are blank
+            if (Utils.isArray(rule.value) && rule.value.length == 2) {
+                if (!rule.value[0] || !rule.value[1])
+                    return;
+            }
 
             runQuery();
         };

@@ -1,11 +1,11 @@
 /*!
- * jQuery QueryBuilder 2.3.0
+ * jQuery QueryBuilder 2.3.3
  * Locale: Russian (ru)
  * Licensed under MIT (http://opensource.org/licenses/MIT)
  */
 
 (function(root, factory) {
-    if (typeof define === 'function' && define.amd) {
+    if (typeof define == 'function' && define.amd) {
         define(['jquery', 'query-builder'], factory);
     }
     else {
@@ -69,7 +69,8 @@ QueryBuilder.regional['ru'] = {
     "datetime_exceed_max": "Должно быть, до {0}",
     "boolean_not_valid": "Не логическое",
     "operator_not_multiple": "Оператор {0} не поддерживает много значений"
-  }
+  },
+  "invert": "Инвертировать"
 };
 
 QueryBuilder.defaults({ lang_code: 'ru' });
