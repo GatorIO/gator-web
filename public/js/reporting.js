@@ -1734,8 +1734,8 @@ var Toolbar = {
 
         $('#reportRange').daterangepicker({
             linkedCalendars: false,
-            startDate: moment().subtract(29, 'days'),
-            endDate: moment(),
+            startDate: moment.utc().subtract(29, 'days'),
+            endDate: moment.utc(),
             minDate: '1999-01-01',
             maxDate: '2100-01-01',
             ranges: ranges,
@@ -1797,8 +1797,8 @@ var Toolbar = {
         $('#reportRange').daterangepicker({
             linkedCalendars: false,
             timePicker: true,
-            startDate: moment(),
-            endDate: moment(),
+            startDate: moment.utc(),
+            endDate: moment.utc(),
             minDate: '1999-01-01',
             maxDate: '2100-01-01',  // do not remove - dateRangePicker needs it
             ranges: {
@@ -2004,9 +2004,39 @@ var Toolbar = {
 
         switch (interval) {
             case 'Minute':
+                return 'minute';
+            case 'Hourly':
+                return 'hour';
+            case 'Daily':
+                return 'day';
+            case 'Monthly':
+                return 'month';
+        }
+    },
+
+    momentFormat: function(interval) {
+
+        switch (interval) {
+            case 'Minute':
+                return 'YYYY-MM-DD HH:mm';
+            case 'Hourly':
+                return 'YYYY-MM-DD HH:00';
+            case 'Daily':
+                return 'YYYY-MM-DD';
+            case 'Monthly':
+                return 'YYYY-MM';
+        }
+    },
+
+    //  calculate the end of a timeframe based on the end date and interval
+    endOfTimeframe: function() {
+        var dateEnd = Toolbar.dateEnd;
+
+        switch (Toolbar.dateInterval) {
+            case 'Minute':
                 return 'minutes';
             case 'Hourly':
-                return 'hours';
+                return moment(dateEnd).format('');
             case 'Daily':
                 return 'days';
             case 'Monthly':
@@ -2026,7 +2056,7 @@ var Toolbar = {
                 break;
             default:
                 var diffInterval = Toolbar.momentInterval(Toolbar.dateInterval);
-                diff = moment(Toolbar.dateEnd).diff(moment(Toolbar.dateStart), diffInterval) + 1;
+                diff = moment(Toolbar.endOfTimeframe(Toolbar.dateEnd)).diff(moment(Toolbar.dateStart), diffInterval) + 1;
                 Toolbar.setDateRange('Custom', moment(Toolbar.dateStart).subtract(diff, diffInterval).format('YYYY-MM-DD h:00'), moment(Toolbar.dateEnd).subtract(diff, diffInterval).format('YYYY-MM-DD h:00'));
         }
 
@@ -2067,7 +2097,7 @@ var Toolbar = {
             case 'Yesterday':
                 return [moment().subtract(1, 'days').format('YYYY-MM-DD'), moment().subtract(1, 'days').format('YYYY-MM-DD')];
             case 'Last 24 Hours':
-                return [moment().subtract(24, 'hours').format('YYYY-MM-DD h:00'), moment().format('YYYY-MM-DD h:00')];
+                return [moment().subtract(23, 'hours').format('YYYY-MM-DD h:00'), moment().format('YYYY-MM-DD h:00')];
             case 'Last 7 Days':
                 return [moment().subtract(6, 'days').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')];
             case 'Last 30 Days':
@@ -2077,7 +2107,7 @@ var Toolbar = {
             case 'Last Month':
                 return [moment().subtract(1, 'month').startOf('month').format('YYYY-MM-DD'), moment().subtract(1, 'month').endOf('month').format('YYYY-MM-DD')];
             case 'Last 60 Minutes':
-                return [moment().subtract(60, 'minutes').format('YYYY-MM-DD h:mm A'), moment().format('YYYY-MM-DD h:mm A')];
+                return [moment().subtract(59, 'minutes').format('YYYY-MM-DD h:mm A'), moment().format('YYYY-MM-DD h:mm A')];
         }
     },
 
