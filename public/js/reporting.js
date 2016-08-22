@@ -217,7 +217,6 @@ Report.prototype.getBaseQuery = function() {
     var query = {
         view: state.view,
         projectId: this.pageOptions.projectId,
-        timezone: this.pageOptions.timezone,
         attributes: state.attributes,
         timeframe: Toolbar.timeframe(state.dateLabel, state.dateStart, state.dateEnd)
     };
@@ -457,13 +456,16 @@ Report.prototype.groupByArray = function (data) {
 
 Report.prototype.snapshot = function () {
 
+    if ((this.state.dateLabel == 'This Month' || this.state.dateLabel == 'Last Month') && this.state.dateInterval == 'Monthly')
+        return true;
+
+    if ((this.state.dateLabel == 'Today' || this.state.dateLabel == 'Yesterday') && this.state.dateInterval == 'Daily')
+        return true;
+
     if (this.state.dateLabel.substr(0, 4) == 'Last' || this.state.dateLabel.substr(0, 4) == 'This')
         return false;
 
     if (this.state.dateStart == this.state.dateEnd && (this.state.dateInterval == 'Daily' || this.state.dateInterval == 'Weekly' || this.state.dateInterval == 'Monthly'))
-        return true;
-
-    if ((this.state.dateLabel == 'This Month' || this.state.dateLabel == 'Last Month') && this.state.dateInterval == 'Monthly')
         return true;
 
     return false;
@@ -1738,6 +1740,7 @@ var Toolbar = {
             endDate: moment(),
             minDate: '1999-01-01',
             maxDate: '2100-01-01',
+            timePicker: true,
             ranges: ranges,
             opens: 'left',
             drops: 'down',
@@ -1746,7 +1749,7 @@ var Toolbar = {
             cancelClass: 'btn-default',
             separator: ' to ',
             locale: {
-                format: 'YYYY-MM-DD',
+                format: 'YYYY-MM-DD HH:mm',
                 applyLabel: 'Apply',
                 cancelLabel: 'Cancel',
                 fromLabel: 'From',
@@ -1757,7 +1760,8 @@ var Toolbar = {
                 firstDay: 1
             }
         }, function(start, end, label) {
-            Toolbar.setDateRange(label, start.format('YYYY-MM-DD'), end.format('YYYY-MM-DD'));
+            var format = Toolbar.momentFormat(Toolbar.dateInterval);
+            Toolbar.setDateRange(label, start.format(format), end.format(format));
         });
 
         $('#reportRange').on('apply.daterangepicker', function(ev, picker) {
@@ -1907,7 +1911,20 @@ var Toolbar = {
     },
 
     updateInterval: function(interval) {
-        Toolbar.dateInterval = interval;
+
+        if (Toolbar.dateInterval != interval) {
+
+            //  move dateEnd to the end of the interval
+            Toolbar.dateEnd = moment(Toolbar.dateEnd).endOf(Toolbar.momentInterval(Toolbar.dateInterval)).format(Toolbar.momentFormat(interval));
+
+            Toolbar.dateInterval = interval;
+
+            var format = Toolbar.momentFormat(interval);
+
+            $('#reportRange').data('daterangepicker').setStartDate(moment(Toolbar.dateStart, format));
+            $('#reportRange').data('daterangepicker').setEndDate(moment(Toolbar.dateEnd, format));
+        }
+
         $('#reportIntervalTitle').html(interval);
         $('#reportTimeframe').html(Toolbar.dateStart + ' to ' + Toolbar.dateEnd);
     },
@@ -1915,10 +1932,6 @@ var Toolbar = {
     inSetDateRange: false,
 
     setDateRange: function(label, start, end, interval) {
-
-        Toolbar.dateStart = start;
-        Toolbar.dateEnd = end;
-        Toolbar.dateLabel = label;
 
         if (!interval)
             interval = Toolbar.dateInterval;
@@ -1928,10 +1941,24 @@ var Toolbar = {
 
         var format = Toolbar.momentFormat(interval);
 
+        Toolbar.dateStart = moment(start).format(format);
+        Toolbar.dateEnd = moment(end).format(format);
+        Toolbar.dateLabel = label;
+
         if (label && label != 'Custom')
             $('#reportRange').val(label);
-        else
-            $('#reportRange').val(moment(start).format(format) + ' to ' + moment(end).format(format));
+        else {
+
+            if (interval == 'Daily' && start == end)
+                $('#reportRange').val(moment(start).format(format));
+            else if (interval == 'Hourly')
+                $('#reportRange').val(moment(start).format('YYYY-MM-DD hA') + ' to ' + moment(end).format('YYYY-MM-DD hA'));
+            else if (interval == 'Minute')
+                $('#reportRange').val(moment(start).format('YYYY-MM-DD h:mmA') + ' to ' + moment(end).format('YYYY-MM-DD h:mmA'));
+            else
+                $('#reportRange').val(moment(start).format(format) + ' to ' + moment(end).format(format));
+        }
+
 
         switch (label) {
             case 'Today':
@@ -1940,10 +1967,12 @@ var Toolbar = {
             case 'Last 30 Days':
             case 'Last 60 Minutes':
             case 'This Month':
-                $('#nextPeriod').addClass('disabled');
+                $('#toolbar-next-btn').addClass('disabled');
+                $('#toolbar-next-btn').attr('disabled', true);
                 break;
             default:
-                $('#nextPeriod').removeClass('disabled');
+                $('#toolbar-next-btn').removeClass('disabled');
+                $('#toolbar-next-btn').attr('disabled', false);
         }
 
         if (Toolbar.range(label)) {
@@ -2053,9 +2082,9 @@ var Toolbar = {
     range: function(label) {
         switch (label) {
             case 'Today':
-                return [moment().format(Toolbar.momentFormat('day')), moment().format(Toolbar.momentFormat('day'))];
+                return [moment().startOf('day').format(Toolbar.momentFormat('hour')), moment().endOf('day').format(Toolbar.momentFormat('hour'))];
             case 'Yesterday':
-                return [moment().subtract(1, 'days').format(Toolbar.momentFormat('day')), moment().subtract(1, 'days').format(Toolbar.momentFormat('day'))];
+                return [moment().subtract(1, 'days').startOf('day').format(Toolbar.momentFormat('hour')), moment().subtract(1, 'days').endOf('day').format(Toolbar.momentFormat('hour'))];
             case 'Last 24 Hours':
                 return [moment().subtract(23, 'hours').format(Toolbar.momentFormat('hour')), moment().format(Toolbar.momentFormat('hour'))];
             case 'Last 7 Days':

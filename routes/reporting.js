@@ -84,7 +84,8 @@ function setup(app, application, callback) {
                 metricOptions: metricOptions,
                 elementOptions: elementOptions,
                 filterOptions: filterOptions,
-                attribOptions: attribOptions
+                attribOptions: attribOptions,
+                timezone: utils.epoch.getTimezone(req['session'].user.timezoneId)
             });
         });
     });

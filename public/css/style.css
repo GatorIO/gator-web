@@ -179,6 +179,12 @@ table.dataTable tbody td.dt-body-right {
     }
 }
 
+@media (max-width: 1200px) {
+    .expandAt1200{
+        width: 100% !important;
+    }
+}
+
 @media (max-width: 768px) {
     .projects {
         max-width: 200px;

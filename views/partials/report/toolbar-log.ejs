@@ -1,34 +1,34 @@
-<form class="form-inline pull-right" style="margin-top:15px" role="form">
+<form class="form-inline pull-right expandAt1200" style="margin-top:15px" role="form">
 
     <div id="reportTimeframe" class="visible-print"></div>
 
-    <div class="input-group hidden-print">
+    <div class="input-group hidden-print expandAt1200">
 
-        <span id="toolbar-prior" class="input-group-btn">
-            <button title="Prior period" class="btn btn-white" type="button" onclick="this.blur(); Toolbar.prior()">
+        <span id="toolbar-prior" class="input-group-btn" style="width:1%">
+            <button id="toolbar-prior-btn" title="Prior period" class="btn btn-white" type="button" onclick="this.blur(); Toolbar.prior()">
                 <i class="fa fa-step-backward"></i>
             </button>
         </span>
 
-        <input type="text" id="reportRange" class="form-control" style="min-width:325px;cursor:pointer;background-color:white" readonly />
+        <input type="text" id="reportRange" class="form-control expandAt1200" style="min-width:325px;cursor:pointer;background-color:white" readonly />
 
-        <span id="toolbar-next" class="input-group-btn">
-            <button title="Next period" class="btn btn-white form-control" type="button" onclick="this.blur(); Toolbar.next()">
+        <span id="toolbar-next" class="input-group-btn" style="width:1%">
+            <button id="toolbar-next-btn" title="Next period" class="btn btn-white form-control" type="button" onclick="this.blur(); Toolbar.next()">
                 <i class="fa fa-step-forward"></i>
             </button>
         </span>
 
-        <span id="toolbar-refresh" class="input-group-btn hideAt600">
+        <span id="toolbar-refresh" class="input-group-btn hideAt600" style="width:1%">
             <button type="button" class="btn btn-white" onclick="runQuery(); return false;"><i class="fa fa-refresh"></i></button>
         </span>
 
-        <span id="toolbar-dashboard" class="input-group-btn hideAt600">
+        <span id="toolbar-dashboard" class="input-group-btn hideAt600" style="width:1%">
             <button type="button" class="btn btn-white" data-toggle="modal" data-target="#dashboardModal" onclick="getSuggestedTitle()">
                 <i class="fa fa-th-large"></i>
             </button>
         </span>
 
-        <span id="toolbar-bookmark" class="input-group-btn hideAt600">
+        <span id="toolbar-bookmark" class="input-group-btn hideAt600" style="width:1%">
             <button type="button" class="btn btn-white" data-toggle="modal" data-target="#bookmarkCreateModal"><i class="fa fa-bookmark"></i></button>
             <div class="modal inmodal fade" id="bookmarkCreateModal" tabindex="-1" role="dialog" aria-hidden="true">
                 <div class="modal-dialog modal-md">
@@ -53,7 +53,7 @@
             </div>
         </span>
 
-        <span id="toolbar-export" class="input-group-btn hideAt600">
+        <span id="toolbar-export" class="input-group-btn hideAt600" style="width:1%">
             <button type="button" data-toggle="dropdown" class="btn btn-white dropdown-toggle"><i class="glyphicon glyphicon-share"></i></button>
             <ul class="dropdown-menu pull-right">
                 <!--

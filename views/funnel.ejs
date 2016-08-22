@@ -85,6 +85,10 @@
 <script src="/typeahead/typeahead.jquery.min.js"></script>
 
 <script>
+
+    //  set the timezone to the user's timezone
+    moment.tz.setDefault('<%- timezone.momentName %>');
+
     var i, maxSteps = 6, reports = [];
 
     var suppressUpdates = false, title;
