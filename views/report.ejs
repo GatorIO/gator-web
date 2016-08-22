@@ -38,11 +38,6 @@
             </div>
             <div class="row white-bg hidden-print">
                 <div class="col-md-12 col-lg-6">
-                    <h4 class="text-navy">Show Metrics:</h4>
-                    <input class="form-control" id="metrics" data-placeholder="Choose metrics to display..." type="text" />
-                    <h4 class="text-navy">By:</h4>
-                    <input class="form-control" id="elements" data-placeholder="Choose what to group on..." type="text" />
-
                     <div <%- (definition.segmentation ? '' : ' class="hidden"') %>">
                         <h4 class="text-navy">With Segments:</h4>
                         <div class="input-group">
@@ -57,8 +52,7 @@
 
                     <br />
                 </div>
-                <div class="col-md-12 col-lg-6">
-                    <h4 class="text-navy">Filter:</h4>
+                <div class="col-md-12 col-lg-12">
                     <div id="filter-builder"></div>
                 </div>
             </div>
@@ -404,24 +398,7 @@
             });
 
             //  Run query when form values are changed by the user - make sure they actually changed, since the change event fires for other reasons
-            var oldElements = $("#elements").val(), oldMetrics = $("#metrics").val(), oldSegments = $("#segments").val();
-
-            elementSelectize[0].selectize.on('change', function() {
-
-                if ($("#elements").val() != oldElements) {
-                    oldElements = $("#elements").val();
-                    delete report.state.plotKeys;
-                    runQuery();
-                }
-            });
-
-            metricSelectize[0].selectize.on('change', function() {
-
-                if ($("#metrics").val() != oldMetrics) {
-                    oldMetrics = $("#metrics").val();
-                    runQuery();
-                }
-            });
+            var oldSegments = $("#segments").val();
 
             segmentsSelectize[0].selectize.on('change', function() {
 

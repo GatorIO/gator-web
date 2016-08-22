@@ -1299,6 +1299,9 @@ Report.prototype.renderTable = function () {
             '<a href="#" onclick="report.nextClause = report.tableData.nextClause; runQuery(); return false">Show more...</a>' +
             '</div>');
     }
+
+    //  make search box more subdued
+    $('input[type=search]').css('border', '1px solid rgb(229, 230, 231)');
 };
 
 //  get the value of an attribute from a attribute name that may contain a dot (like event.firstName)
@@ -1798,6 +1801,8 @@ var Toolbar = {
 
     initLog: function() {
 
+        Toolbar.dateInterval = 'Minute';
+
         $('#reportRange').daterangepicker({
             linkedCalendars: false,
             timePicker: true,
@@ -1826,7 +1831,8 @@ var Toolbar = {
                 firstDay: 1
             }
         }, function(start, end, label) {
-            Toolbar.setDateRange(label, start.format('YYYY-MM-DD  h:mm A'), end.format('YYYY-MM-DD  h:mm A'));
+            var format = Toolbar.momentFormat('Minute');
+            Toolbar.setDateRange(label, start.format(format), end.format(format));
         });
 
         $('#reportRange').on('apply.daterangepicker', function(ev, picker) {
@@ -1948,13 +1954,15 @@ var Toolbar = {
         if (label && label != 'Custom')
             $('#reportRange').val(label);
         else {
+            var friendlyHour = 'YYYY-MM-DD hA';
+            var friendlyMinute = 'YYYY-MM-DD h:mmA';
 
             if (interval == 'Daily' && start == end)
                 $('#reportRange').val(moment(start).format(format));
             else if (interval == 'Hourly')
-                $('#reportRange').val(moment(start).format('YYYY-MM-DD hA') + ' to ' + moment(end).format('YYYY-MM-DD hA'));
+                $('#reportRange').val(moment(start, friendlyHour).format(friendlyHour) + ' to ' + moment(end, friendlyHour).format(friendlyHour));
             else if (interval == 'Minute')
-                $('#reportRange').val(moment(start).format('YYYY-MM-DD h:mmA') + ' to ' + moment(end).format('YYYY-MM-DD h:mmA'));
+                $('#reportRange').val(moment(start, friendlyMinute).format(friendlyMinute) + ' to ' + moment(end, 'YYYY-MM-DD h:mmA').format(friendlyMinute));
             else
                 $('#reportRange').val(moment(start).format(format) + ' to ' + moment(end).format(format));
         }
@@ -1975,9 +1983,11 @@ var Toolbar = {
                 $('#toolbar-next-btn').attr('disabled', false);
         }
 
-        if (Toolbar.range(label)) {
-            Toolbar.dateStart = Toolbar.range(label)[0];
-            Toolbar.dateEnd = Toolbar.range(label)[1];
+        var rangeLabels = Toolbar.range(label);
+
+        if (rangeLabels) {
+            Toolbar.dateStart = rangeLabels[0];
+            Toolbar.dateEnd = rangeLabels[1];
         }
 
         if (this.inSetDateRange)
@@ -2080,23 +2090,25 @@ var Toolbar = {
     },
 
     range: function(label) {
+        var format = Toolbar.momentFormat(Toolbar.dateInterval);
+
         switch (label) {
             case 'Today':
-                return [moment().startOf('day').format(Toolbar.momentFormat('hour')), moment().endOf('day').format(Toolbar.momentFormat('hour'))];
+                return [moment().startOf('day').format(format), moment().endOf('day').format(format)];
             case 'Yesterday':
-                return [moment().subtract(1, 'days').startOf('day').format(Toolbar.momentFormat('hour')), moment().subtract(1, 'days').endOf('day').format(Toolbar.momentFormat('hour'))];
+                return [moment().subtract(1, 'days').startOf('day').format(format), moment().subtract(1, 'days').endOf('day').format(format)];
             case 'Last 24 Hours':
-                return [moment().subtract(23, 'hours').format(Toolbar.momentFormat('hour')), moment().format(Toolbar.momentFormat('hour'))];
+                return [moment().subtract(23, 'hours').format(format), moment().format(format)];
             case 'Last 7 Days':
-                return [moment().subtract(6, 'days').format(Toolbar.momentFormat('day')), moment().format(Toolbar.momentFormat('day'))];
+                return [moment().subtract(6, 'days').format(format), moment().format(format)];
             case 'Last 30 Days':
-                return [moment().subtract(29, 'days').format(Toolbar.momentFormat('day')), moment().format(Toolbar.momentFormat('dat'))];
+                return [moment().subtract(29, 'days').format(format), moment().format(format)];
             case 'This Month':
-                return [moment().startOf('month').format(Toolbar.momentFormat('month')), moment().endOf('month').format(Toolbar.momentFormat('month'))];
+                return [moment().startOf('month').format(format), moment().endOf('month').format(format)];
             case 'Last Month':
-                return [moment().subtract(1, 'month').startOf('month').format(Toolbar.momentFormat('month')), moment().subtract(1, 'month').endOf('month').format(Toolbar.momentFormat('month'))];
+                return [moment().subtract(1, 'month').startOf('month').format(format), moment().subtract(1, 'month').endOf('month').format(format)];
             case 'Last 60 Minutes':
-                return [moment().subtract(59, 'minutes').format(Toolbar.momentFormat('minute')), moment().format(Toolbar.momentFormat('minute'))];
+                return [moment().subtract(59, 'minutes').format(format), moment().format(format)];
         }
     },
 

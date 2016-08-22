@@ -38,18 +38,23 @@
                 </div>
             </div>
             <div class="row white-bg hidden-print">
-                <div class="col-md-12 col-lg-6">
-
-                    <h4 class="text-navy">Show Attributes:</h4>
-                    <input class="form-control" id="attribs" data-placeholder="Choose attributes to display..." type="text">
-
-                    <br><h4 class="text-navy">Filter:</h4>
-                    <div id="filter-builder"></div>
-                </div>
-                <div class="col-md-12 col-lg-6">
-                    <!-- map goes here -->
-                    <div id="world-map" class="hidden" style="width:100%; height: 270px; margin-top: 15px"></div>
-                </div>
+                <% if (definition.map) { %>
+                    <div class="col-md-12 col-lg-8">
+                        <br><div id="filter-builder"></div>
+                    </div>
+                    <div class="col-md-12 col-lg-4">
+                        <!-- map goes here -->
+                        <div id="world-map" class="hidden" style="width:100%; height: 270px; margin-top: 15px"></div>
+                    </div>
+                <% } else { %>
+                    <div class="col-md-12">
+                        <br><div id="filter-builder"></div>
+                    </div>
+                    <div class="hidden">
+                        <!-- map goes here -->
+                        <div id="world-map" class="hidden" style="width:100%; height: 270px; margin-top: 15px"></div>
+                    </div>
+                <% } %>
             </div>
             <div class="row white-bg">
                 <span id="results-table-container" style="visibility: hidden">
@@ -251,17 +256,6 @@
             suppressUpdates = false;
 
             runQuery();
-
-            //  Run query when form values are changed by the user - make sure they actually changed, since the change event fires for other reasons
-            var oldAttribs = $("#attribs").val(), oldSegments = $("#segments").val();
-
-            attribSelectize[0].selectize.on('change', function() {
-
-                if ($("#attribs").val() != oldAttribs) {
-                    oldAttribs = $("#attribs").val();
-                    runQuery();
-                }
-            });
         } catch(err) {
             Page.showMessage(err.message);
         }

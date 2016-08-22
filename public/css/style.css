@@ -201,6 +201,16 @@ table.dataTable tbody td.dt-body-right {
         display: none;
     }
 }
+
+@media (max-width: 1024px) {
+    .hideAt1024 {
+        display: none;
+    }
+    .showCellAt1024 {
+        display: table-cell !important;
+    }
+}
+
 @media (max-width: 480px) {
     .hideAt480 {
         display: none;
