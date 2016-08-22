@@ -29,20 +29,20 @@
             <div class="row white-bg">
                 <% include partials/master/message %>
 
-                <div class="col-md-12 col-lg-6">
+                <div class="col-md-12 col-lg-7">
                     <h1 id="page-title"></h1>
                     <h2 class="visible-print">Project: <%- application.api.currentProject(req).name %></h2>
                 </div>
-                <div class="col-md-12 col-lg-6">
+                <div class="col-md-12 col-lg-5">
                     <% include partials/report/toolbar-log %>
                 </div>
             </div>
             <div class="row white-bg hidden-print">
                 <% if (definition.map) { %>
-                    <div class="col-md-12 col-lg-8">
+                    <div class="col-md-12 col-lg-6">
                         <br><div id="filter-builder"></div>
                     </div>
-                    <div class="col-md-12 col-lg-4">
+                    <div class="col-md-12 col-lg-6">
                         <!-- map goes here -->
                         <div id="world-map" class="hidden" style="width:100%; height: 270px; margin-top: 15px"></div>
                     </div>

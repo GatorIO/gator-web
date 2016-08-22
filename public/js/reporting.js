@@ -898,7 +898,7 @@ Report.prototype.configureColumn = function(newCol, column) {
     if (typeof this.formatters[column.name] == 'function') {
 
         newCol.render = function(data, type, row) {
-            return that.formatters[column.name](data);
+            return that.formatters[column.name](data, type, row);
         };
 
         return;
@@ -953,6 +953,7 @@ Report.prototype.configureColumn = function(newCol, column) {
                         return Report.formatValue(data, Report.dataTypes[column.dataType], column.format);
                     }
                 }
+                return data;
             };
             break;
         case Report.dataTypes.date:
@@ -988,7 +989,7 @@ Report.prototype.renderMap = function () {
             if (columns[c]['name'] != 'longitude' && columns[c]['name'] != 'latitude') {
                 tooltip += '<tr><td>' + columns[c]['title'] + '</td><td>';
 
-                if (typeof this.formatters[columns[c]['name']] == 'function')
+                if (this.formatters && typeof this.formatters[columns[c]['name']] == 'function')
                     tooltip += this.formatters[columns[c]['name']](this.dotValue(row, columns[c]['name']));
                 else
                     tooltip += Report.formatValue(this.dotValue(row, columns[c]['name']), columns[c].dataType, columns[c].format);
@@ -1099,7 +1100,7 @@ Report.prototype.renderTable = function () {
             if (col.hasOwnProperty('total')) {
                 var formattedTotal;
 
-                if (typeof this.formatters[col.name] == 'function')
+                if (this.formatters && typeof this.formatters[col.name] == 'function')
                     formattedTotal = this.formatters[col.name](col.total);
                 else
                     formattedTotal = Report.formatValue(col.total, col.dataType, col.format);
@@ -1230,17 +1231,21 @@ Report.prototype.renderTable = function () {
         state.pageLength = 5;
     }
 
-    //  need to clone this in order to prevent reference errors when updating/destroying the report
-    var clonedCols = JSON.parse(JSON.stringify(tableCols));
-
     this.dataTablesObject = $('#' + tableId).dataTable({
         order: order,
         data: tableRows,
-        columns: clonedCols,
+        columns: tableCols,
         lengthMenu: [ 10, 25, 50, 100, 1000 ],
         pageLength: state.pageLength || 10,
         dom: dom,
-        responsive: true
+        responsive: true,
+
+        //  hook into app-level create row
+        createdRow: function(row, data, dataIndex) {
+            if (typeof that.createdRow == 'function') {
+                that.createdRow(row, data, dataIndex, that.tableData);
+            }
+        }
     }).on('order.dt', function () {
         that.state.tableOrder = Utils.clone($('#' + tableId).DataTable().order());
 
@@ -1955,14 +1960,14 @@ var Toolbar = {
             $('#reportRange').val(label);
         else {
             var friendlyHour = 'YYYY-MM-DD hA';
-            var friendlyMinute = 'YYYY-MM-DD h:mmA';
+            var friendlyMinute = 'MM-DD h:mmA';
 
             if (interval == 'Daily' && start == end)
                 $('#reportRange').val(moment(start).format(format));
             else if (interval == 'Hourly')
                 $('#reportRange').val(moment(start, friendlyHour).format(friendlyHour) + ' to ' + moment(end, friendlyHour).format(friendlyHour));
             else if (interval == 'Minute')
-                $('#reportRange').val(moment(start, friendlyMinute).format(friendlyMinute) + ' to ' + moment(end, 'YYYY-MM-DD h:mmA').format(friendlyMinute));
+                $('#reportRange').val(moment(start).format(friendlyMinute) + ' to ' + moment(end).format(friendlyMinute));
             else
                 $('#reportRange').val(moment(start).format(format) + ' to ' + moment(end).format(format));
         }
@@ -2166,57 +2171,15 @@ Report.elapsedTime = function(seconds) {
 /*
     These functions format report data to HTML.  They are used for displaying formatted data in the table primarily, but can be used anywhere.
 
-    These are instance-specific, so they can be replaced on a report by report basis.
+    These are report specific, so they can be replaced on a report by report basis.
  */
 Report.prototype.formatters = {
 
-    completionTime: function(value) {
-
-        if (!value)
-            return 'N/A';
-
-        return Report.elapsedTime(value);
-    },
-
-    events: function(value) {
-
-        if (Utils.isArray(value)) {
-            var result = '';
-
-            for (var e = 0; e < value.length; e++) {
-                var event = value[e];
-                result += Report.elapsedTime(event.secondsFromStart) + ' - ' + event.name;
-
-                if (event.data)
-                    result += ' - ' + JSON.stringify(event.data);
-
-                result += '<br />';
+    /*
+        add formatting functions, like:
+            
+            columnName: function(value) {
+                return value + '%';
             }
-            return result;
-        } else {
-            return value;
-        }
-    },
-
-    pages: function(value) {
-
-        if (Utils.isArray(value)) {
-            var result = '';
-
-            for (var p = 0; p < value.length; p++) {
-                var page = value[p];
-                result += Report.elapsedTime(page.secondsFromStart) + ' - ' + page.name + '<br />';
-            }
-            return result;
-        } else {
-            return value;
-        }
-    },
-
-    personId: function(value) {
-        if (value)
-            return '<a href="/person/profile?person=' + encodeURIComponent(value) + '"><i class="fa fa-user"></i>&nbsp; ' + value + '</a>';
-        else
-            return value;
-    }
+     */
 };
