@@ -1621,7 +1621,6 @@ var Filter = {
 
                 $('input[name*="' + rule.id + '_value_0"]').on('apply.daterangepicker', function(ev, picker) {
                     $('input[name*="' + rule.id + '_value_0"]').val(picker.startDate.format(format)).change();
-                    runQuery();
                 });
 
                 //  if the second element exists (for betweens)
@@ -1634,7 +1633,6 @@ var Filter = {
 
                     $('input[name*="' + rule.id + '_value_1"]').on('apply.daterangepicker', function(ev, picker) {
                         $('input[name*="' + rule.id + '_value_1"]').val(picker.startDate.format(format)).change();
-                        runQuery();
                     });
                 }
                 break;
@@ -1646,6 +1644,7 @@ var Filter = {
 
         var filterModel = $('#' + element).queryBuilder('getModel');
 
+        //  only validate if all rules are filled in
         if (filterModel.rules.length > 1 || (filterModel.rules.length == 1 && filterModel.rules[0].filter)) {
             if (!$('#' + element).queryBuilder('validate')) {
                 return false;
