@@ -599,13 +599,12 @@ Report.prototype.renderTimeline = function () {
 
                 if (data.rows[val]) {
 
-                    var label = '';
+                    var label = [];
 
                     for (g = 0; g < groupBy.length; g++)
-                        label += data.rows[val][groupBy[g]] + ' / ';
+                        label.push(Report.formatValue(data.rows[val][groupBy[g]], columnEnum[groupBy[g]].dataType));
 
-                    label = label.substr(0, label.length - 3);
-                    return label;
+                    return label.join(' / ');
                 } else {
                     return '';
                 }
@@ -1495,19 +1494,7 @@ Report.formatValue = function(value, dataType, format) {
             break;
         case Report.dataTypes.date:
         case "date":
-            //  format ISO dates only to local string
-            if (value && value.substr(value.length - 1, 1) == 'Z') {
-                var ret = new Date(value);
-
-                var yyyy = ret.getFullYear().toString();
-                var mm = (ret.getMonth()+1).toString(); // getMonth() is zero-based
-                var dd  = ret.getDate().toString();
-                var hh  = ret.getHours().toString();
-                var min  = ret.getMinutes().toString();
-                var ss  = ret.getSeconds().toString();
-                return yyyy + '-' + (mm[1]?mm:"0"+mm[0]) + '-' + (dd[1]?dd:"0"+dd[0]) + ' ' + (hh[1]?hh:"0"+hh[0]) + ':' + (min[1]?min:"0"+min[0]) + ':' + (ss[1]?ss:"0"+ss[0]);
-
-            }
+            return moment.utc(value).format('YYYY-MM-DD h:mm A')
         default:
             return value || '(not set)';
     }
@@ -1613,7 +1600,7 @@ var Filter = {
             case 'date':
                 //  default to ISO date format if not specified on attribute
                 var format = rule.filter.validation ? rule.filter.validation.format : 'YYYY-MM-DD';
-                var timePicker = format.indexOf('h') > -1;
+                var timePicker = format.toLowerCase().indexOf('h') > -1;
 
                 var drOptions = {
                     singleDatePicker: true,
@@ -1757,7 +1744,7 @@ var Toolbar = {
             cancelClass: 'btn-default',
             separator: ' to ',
             locale: {
-                format: 'YYYY-MM-DD HH:mm',
+                format: 'YYYY-MM-DD h:mm A',
                 applyLabel: 'Apply',
                 cancelLabel: 'Cancel',
                 fromLabel: 'From',
@@ -2047,6 +2034,7 @@ var Toolbar = {
         }
     },
 
+    //  These are in the where format the API can tell what the grouping is
     momentFormat: function(interval) {
 
         switch (interval) {
