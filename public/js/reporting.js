@@ -551,7 +551,20 @@ Report.prototype.renderTimeline = function () {
                 };
 
                 for (i = 0; i < data.rows.length; i++) {
-                    dataset.data.push([i, data.rows[i][column.name] || 0]);
+
+                    switch (column.gapType) {
+                        case 'open':
+                            //  if data is missing, create open gap
+                            dataset.data.push([i, data.rows[i][column.name]]);
+                            break;
+                        case 'drawOver':
+                            //  if data is missing, do not plot at all
+                            if (data.rows[i].hasOwnProperty(column.name))
+                                dataset.data.push([i, data.rows[i][column.name]]);
+                            break;
+                        default:    //  zeroFill is default
+                            dataset.data.push([i, data.rows[i][column.name] || 0]);
+                    }
                 }
 
                 datasets.push(dataset);
@@ -602,7 +615,7 @@ Report.prototype.renderTimeline = function () {
                     var label = [];
 
                     for (g = 0; g < groupBy.length; g++)
-                        label.push(Report.formatValue(data.rows[val][groupBy[g]], columnEnum[groupBy[g]].dataType));
+                        label.push(Report.formatValue(data.rows[val][groupBy[g]], columnEnum[groupBy[g]].dataType, columnEnum[groupBy[g]].format));
 
                     return label.join(' / ');
                 } else {
@@ -956,6 +969,11 @@ Report.prototype.configureColumn = function(newCol, column) {
             };
             break;
         case Report.dataTypes.date:
+
+            newCol.createdCell = function (td, cellData, rowData, row, col) {
+                $(td).attr('data-order', cellData);
+            };
+
             newCol.render = function(data, type, row) {
                 return Report.formatValue(data, Report.dataTypes.date, column.format);
             };
@@ -1230,6 +1248,7 @@ Report.prototype.renderTable = function () {
         state.pageLength = 5;
     }
 
+    var x=1;
     this.dataTablesObject = $('#' + tableId).dataTable({
         order: order,
         data: tableRows,
@@ -1258,6 +1277,7 @@ Report.prototype.renderTable = function () {
         if (typeof that.pageOptions.onStateChange == 'function')
             that.pageOptions.onStateChange();
     });
+
     this.setupRowToggles();
 
     //  unbind click handlers
@@ -1494,7 +1514,7 @@ Report.formatValue = function(value, dataType, format) {
             break;
         case Report.dataTypes.date:
         case "date":
-            return moment.utc(value).format('YYYY-MM-DD h:mm A')
+            return moment.utc(value).format(format || 'YYYY-MM-DD h:mm A')
         default:
             return value || '(not set)';
     }
