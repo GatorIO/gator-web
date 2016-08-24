@@ -48,8 +48,7 @@ function setup(app, application, callback) {
                     settings: utils.config.settings(),
                     application: application,
                     dev: utils.config.dev(),
-                    req: req,
-                    definition: definition,
+                    req: req
                 });
                 return;
             }

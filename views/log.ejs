@@ -81,7 +81,7 @@
 <script>
 
     //  set the timezone to the user's timezone
-    moment.tz.setDefault('<%- timezone.momentName %>');
+    moment.tz.setDefault('<%- req.session.timezone.momentName %>');
 
     var segmentsSelectize, customCount = 0, customSegments, suppressUpdates = false;
     var report = new Report();
