@@ -244,7 +244,7 @@
             //  Set initial items based on definition
             $('#page-title').html(definition.title);
 
-            if (definition.filter)
+            if (definition.filter && Object.keys(definition.filter).length > 0)
                 Filter.setRules('filter-builder', definition.filter);
 
             if (options) {

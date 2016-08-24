@@ -381,7 +381,7 @@
             //  Get options first by query string, then by definition, then by default
             var options = Utils.getParam('options', window.location.search);
 
-            if (definition.filter)
+            if (definition.filter && Object.keys(definition.filter).length > 0)
                 Filter.setRules('filter-builder', definition.filter);
 
             if (options) {

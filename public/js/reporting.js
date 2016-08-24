@@ -970,11 +970,13 @@ Report.prototype.configureColumn = function(newCol, column) {
             break;
         case Report.dataTypes.date:
 
-            newCol.createdCell = function (td, cellData, rowData, row, col) {
-                $(td).attr('data-order', cellData);
-            };
-
             newCol.render = function(data, type, row) {
+
+                //  this is for formatting the value used for sorting
+                if (type != 'display' && type != 'filter') {
+                    return new Date(data).getTime() ;
+                }
+
                 return Report.formatValue(data, Report.dataTypes.date, column.format);
             };
             break;
@@ -1148,6 +1150,7 @@ Report.prototype.renderTable = function () {
                 newCol.title += '</div>';
             }
             this.configureColumn(newCol, col);
+
             tableCols.push(newCol);
 
             //  if the ordering was not part of the state, check for sorting on the query and use that
@@ -1211,7 +1214,6 @@ Report.prototype.renderTable = function () {
         for (e = 0; e < columns.length; e++) {
 
             if (this.visibleColumn(columns[e])) {
-
                 if (!this.propertyExists(rows[r], columns[e].name)) {
 
                     if (!columns[e].isMetric && columns[e].dataType != 'numeric' && columns[e].dataType != 'integer' && columns[e].dataType != 'currency') {
@@ -1248,7 +1250,6 @@ Report.prototype.renderTable = function () {
         state.pageLength = 5;
     }
 
-    var x=1;
     this.dataTablesObject = $('#' + tableId).dataTable({
         order: order,
         data: tableRows,
