@@ -38,7 +38,7 @@
             </div>
             <div class="row white-bg hidden-print">
                 <div class="col-md-12 col-lg-6">
-                    <div <%- (definition.segmentation ? '' : ' class="hidden"') %>">
+                    <div<%- (definition.segmentation ? '' : ' class="hidden"') %>>
                         <h4 class="text-navy">With Segments:</h4>
                         <div class="input-group">
                             <input class="form-control" id="segments" data-placeholder="Choose segments..." type="text" />
@@ -105,7 +105,7 @@
 <script>
 
     //  set the timezone to the user's timezone
-    moment.tz.setDefault('<%- req.session.timezone.momentName %>');
+    moment.tz.setDefault('<%- req.session.user.timezone ? req.session.user.timezone.momentName : 'UTC' %>');
 
     var segmentsSelectize, customCount = 0, customSegments, suppressUpdates = false, title;
     var report = new Report();
@@ -259,6 +259,7 @@
         }
     };
 
+    //  set the report state from the page elements and defaults - only use definition for immutable info
     function setState() {
         report.state.view = definition.view || 'sessions';
         report.state.title =  $('#page-title').html();
@@ -267,14 +268,13 @@
         report.state.dateInterval = $("#reportIntervalTitle").html();
         report.state.attributes = $("#metrics").val();
 
+        //  see if already set and if not, set it to the definition
+        report.state.hiddenSeries = report.state.hiddenSeries || definition.hiddenSeries;
+        report.state.tableOrder = report.state.tableOrder || definition.tableOrder;
+
+        //  this is the report id
         if (definition.key)
             report.state.key = definition.key;
-
-        if (definition.hiddenSeries)
-            report.state.hiddenSeries = definition.hiddenSeries;
-
-        if (definition.tableOrder)
-            report.state.tableOrder = definition.tableOrder;
 
         if ($("#elements").val())
             report.state.group = $("#elements").val();
@@ -314,6 +314,7 @@
             delete report.state.tableOrder;
     }
 
+    //  restore the report state from the history state object
     function restoreState(state) {
 
         suppressUpdates = true;

@@ -87,7 +87,7 @@
 <script>
 
     //  set the timezone to the user's timezone
-    moment.tz.setDefault('<%- timezone.momentName %>');
+    moment.tz.setDefault('<%- req.session.user.timezone ? req.session.user.timezone.momentName : 'UTC' %>');
 
     var i, maxSteps = 6, reports = [];
 
@@ -223,11 +223,9 @@
         report.state.dateInterval = $("#reportIntervalTitle").html();
         report.state.attributes = $("#metrics").val();
 
-        if (definition.hiddenSeries)
-            report.state.hiddenSeries = definition.hiddenSeries;
-
-        if (definition.tableOrder)
-            report.state.tableOrder = definition.tableOrder;
+        //  see if already set and if not, set it to the definition
+        report.state.hiddenSeries = report.state.hiddenSeries || definition.hiddenSeries;
+        report.state.tableOrder = report.state.tableOrder || definition.tableOrder;
 
         if ($("#elements").val())
             report.state.group = $("#elements").val();
