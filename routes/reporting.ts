@@ -68,10 +68,22 @@ export function setup(app: express.Application, application: IApplication, callb
 
         if (req.query.id) {
             if (utils.isNumeric(req.query.id))
-                definition = application.reports.definitions[+req.query.id].options;
+                definition = application.reports.definitions[+req.query.id];
             else
-                definition = application.reports.definitions[application.reports.Types[req.query.id]].options;
+                definition = application.reports.definitions[application.reports.Types[req.query.id]];
 
+            if (!definition) {
+                res.render('message', {
+                    title: 'Error',
+                    message: 'No such report',
+                    settings: utils.config.settings(),
+                    application: application,
+                    dev: utils.config.dev(),
+                    req: req
+                });
+                return;
+            }
+            definition = definition.options;
             definition.key = req.query.id;
         }
 

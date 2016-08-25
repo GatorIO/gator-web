@@ -38,9 +38,21 @@ function setup(app, application, callback) {
         var options, metricOptions, elementOptions, filterOptions, attribOptions;
         if (req.query.id) {
             if (utils.isNumeric(req.query.id))
-                definition = application.reports.definitions[+req.query.id].options;
+                definition = application.reports.definitions[+req.query.id];
             else
-                definition = application.reports.definitions[application.reports.Types[req.query.id]].options;
+                definition = application.reports.definitions[application.reports.Types[req.query.id]];
+            if (!definition) {
+                res.render('message', {
+                    title: 'Error',
+                    message: 'No such report',
+                    settings: utils.config.settings(),
+                    application: application,
+                    dev: utils.config.dev(),
+                    req: req
+                });
+                return;
+            }
+            definition = definition.options;
             definition.key = req.query.id;
         }
         if (req.query.options) {
@@ -84,8 +96,7 @@ function setup(app, application, callback) {
                 metricOptions: metricOptions,
                 elementOptions: elementOptions,
                 filterOptions: filterOptions,
-                attribOptions: attribOptions,
-                timezone: utils.epoch.getTimezone(req['session'].user.timezoneId)
+                attribOptions: attribOptions
             });
         });
     });
