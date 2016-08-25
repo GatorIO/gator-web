@@ -81,7 +81,7 @@
 <script>
 
     //  set the timezone to the user's timezone
-    moment.tz.setDefault('<%- timezone.momentName %>');
+    moment.tz.setDefault('<%- req.session.user.timezone ? req.session.user.timezone.momentName : 'UTC' %>');
 
     var segmentsSelectize, customCount = 0, customSegments, suppressUpdates = false;
     var report = new Report();
@@ -164,8 +164,9 @@
     function setState() {
         report.state.view = definition.view;
 
-        if (definition.sort)
-            report.state.sort = definition.sort;
+        //  see if already set and if not, set it to the definition
+        report.state.tableOrder = report.state.tableOrder || definition.tableOrder;
+        report.state.sort = report.state.sort || definition.sort;
 
         if (definition.map) {
             report.state.map = definition.map;
@@ -189,10 +190,6 @@
             delete report.state.dateStart;
             delete report.state.dateEnd;
         }
-
-        if (!report.state.tableOrder)
-            delete report.state.tableOrder;
-
         if ($("#filter-builder").queryBuilder('validate'))
             report.state.filter = $("#filter-builder").queryBuilder('getMongo');
         else

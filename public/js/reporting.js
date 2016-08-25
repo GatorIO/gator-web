@@ -36,7 +36,8 @@ function Report(pageOptions) {
         plotKeys: null,
         pageLength: null,
         eventSteps: null,
-        activeStep: null
+        activeStep: null,
+        hiddenSeries: null
     };
 
     //  The data used to populate the table
@@ -64,8 +65,17 @@ function Report(pageOptions) {
         { color: "rgba(26,179,148,0.5)", highlight: "rgba(26,179,148,0.8)" }
     ];
 
-    this.getColor = function(i) {
-        return this.colors[i % this.colors.length];
+    this.getColors = function(i, column) {
+
+        //  if grouping by an element, then use system colors to display metrics
+        if (!this.snapshot() && this.state.group)
+            return this.colors[i % this.colors.length];
+
+        if (column && column.chartColors) {
+            return column.chartColors;
+        } else {
+            return this.colors[i % this.colors.length];
+        }
     };
 
     this.run = function(callback) {
@@ -473,7 +483,7 @@ Report.prototype.snapshot = function () {
 
 Report.prototype.renderChart = function () {
 
-    if (this.chartData.rows.length > 1) {
+    if (this.chartData.rows.length > 0) {
 
         if (this.snapshot())
             this.renderSnapshot();
@@ -536,11 +546,11 @@ Report.prototype.renderTimeline = function () {
         var metric = chartMetrics[c];
 
         if (!this.state.hiddenSeries || !this.state.hiddenSeries[metric.baseName]) {
-            colors.push(this.getColor(colorIndex).color);
-
             column = columnEnum[metric.name];
 
             if (column) {
+
+                colors.push(this.getColors(colorIndex, column).color);
 
                 var dataset = {
                     label: column.title,
@@ -614,14 +624,23 @@ Report.prototype.renderTimeline = function () {
 
                     var label = [];
 
-                    for (g = 0; g < groupBy.length; g++)
-                        label.push(Report.formatValue(data.rows[val][groupBy[g]], columnEnum[groupBy[g]].dataType, columnEnum[groupBy[g]].format));
+                    for (g = 0; g < groupBy.length; g++) {
+                        if (Toolbar.dateInterval == 'Hourly' && columnEnum[groupBy[g]].dataType == 'date')
+                            label.push(Report.formatValue(data.rows[val][groupBy[g]], columnEnum[groupBy[g]].dataType, 'M-DD h A'));
+                        else if (Toolbar.dateInterval == 'Minute' && columnEnum[groupBy[g]].dataType == 'date')
+                            label.push(Report.formatValue(data.rows[val][groupBy[g]], columnEnum[groupBy[g]].dataType, 'h:mm A'));
+                        else
+                            label.push(Report.formatValue(data.rows[val][groupBy[g]], columnEnum[groupBy[g]].dataType, columnEnum[groupBy[g]].format));
+                    }
 
                     return label.join(' / ');
                 } else {
                     return '';
                 }
             }
+        },
+        selection: {
+            mode: "x"
         }
     };
 
@@ -634,6 +653,19 @@ Report.prototype.renderTimeline = function () {
     );
 
     $('#' + this.pageOptions.chartContainer + '-container').resizable();
+
+    $('#' + this.pageOptions.chartContainer + '-0').bind("plotselected", function (event, ranges) {
+
+        // do the zooming
+        $.each(plot.getXAxes(), function(_, axis) {
+            var opts = axis.options;
+            opts.min = ranges.xaxis.from;
+            opts.max = ranges.xaxis.to;
+        });
+        plot.setupGrid();
+        plot.draw();
+        plot.clearSelection();
+    });
 
     $("<div id='chart-tooltip' class='chart-tooltip'></div>").appendTo("body");
 
@@ -672,7 +704,7 @@ Report.prototype.renderTimeline = function () {
                         }
                     }
 
-                    tooltip += '<tr><td><span class="fa fa-square" style="color:' + that.getColor(colorIndex).highlight + '"></span>&nbsp; ' +
+                    tooltip += '<tr><td><span class="fa fa-square" style="color:' + that.getColors(colorIndex, column).highlight + '"></span>&nbsp; ' +
                         column.title + ':&nbsp; </td><td style="text-align:right">' +
                         Report.formatValue(data.rows[item.datapoint[0]][chartMetrics[c].name], column.dataType, column.format) + pct + '</td></tr>';
                 }
@@ -717,7 +749,7 @@ Report.prototype.renderSnapshot = function () {
     }
 
     for (c = 0; c < this.colors.length; c++)
-        colors.push(this.getColor(c).color);
+        colors.push(this.getColors(c).color);
 
     var colSize = 12 / numCharts;
     var html = '<div class="row white-bg">';
@@ -755,7 +787,7 @@ Report.prototype.renderSnapshot = function () {
                         dataset.push({ label: label, data: value });
                     }
                 } else {
-                    var index = data.rows.length - i - 1, barColor = this.getColor(0).color;
+                    var index = data.rows.length - i - 1, barColor = this.getColors(0, metric).color;
                     ticks.push([index, label]);
 
                     //  color score bars
@@ -1104,7 +1136,7 @@ Report.prototype.renderTable = function () {
                     if (state.group)
                         data_color = '#aaa';
                     else
-                        data_color = this.getColor(colorIndex++).color;
+                        data_color = this.getColors(colorIndex++, col).color;
 
                     var icon = this.state.hiddenSeries && this.state.hiddenSeries[col.name] ? 'fa-square-o' : 'fa-check-square';
                     var stateColor = this.state.hiddenSeries && this.state.hiddenSeries[col.name] ? '#888' : data_color;
