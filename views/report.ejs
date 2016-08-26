@@ -38,7 +38,7 @@
             </div>
             <div class="row white-bg hidden-print">
                 <div class="col-md-12 col-lg-6">
-                    <div<%- (definition.segmentation ? '' : ' class="hidden"') %>>
+                    <div<%- (options.segmentation ? '' : ' class="hidden"') %>>
                         <h4 class="text-navy">With Segments:</h4>
                         <div class="input-group">
                             <input class="form-control" id="segments" data-placeholder="Choose segments..." type="text" />
@@ -107,15 +107,16 @@
     //  set the timezone to the user's timezone
     moment.tz.setDefault('<%- req.session.user.timezone ? req.session.user.timezone.momentName : 'UTC' %>');
 
-    var segmentsSelectize, customCount = 0, customSegments, suppressUpdates = false, title;
     var report = new Report();
-    var definition = <%- JSON.stringify(definition) %>;
+    report.state = <%- JSON.stringify(options) %>;      //  set initial state from options
 
-    $('#page-title').html(definition.title);
+    var segmentsSelectize, customCount = 0, customSegments, suppressUpdates = false, title;
+
+    $('#page-title').html(report.state.title);
 
     var metricSelectize = $('#metrics').selectize({
         options: <%- JSON.stringify(metricOptions) %>,
-        items: Utils.replaceAll(definition.attributes, ' ', '').split(','),
+        items: Utils.replaceAll(report.state.attributes, ' ', '').split(','),
         plugins: ['drag_drop','remove_button'],
         delimiter: ',',
         closeAfterSelect: true,
@@ -130,7 +131,7 @@
 
     var elementSelectize = $('#elements').selectize({
         options: <%- JSON.stringify(elementOptions) %>,
-        items: definition.group ? Utils.replaceAll(definition.group, ' ', '').split(',') : [],
+        items: report.state.group ? Utils.replaceAll(report.state.group, ' ', '').split(',') : [],
         plugins: ['drag_drop','remove_button'],
         delimiter: ',',
         closeAfterSelect: true,
@@ -216,7 +217,7 @@
             Page.showMessage('You must select at least one metric to report on.');
         } else {
 
-            //  set options for both chart and table
+            //  set page options for both chart and table
             report.pageOptions = {
                 projectId: $('#projects').val(),
                 chartContainer: 'results-chart',
@@ -259,22 +260,12 @@
         }
     };
 
-    //  set the report state from the page elements and defaults - only use definition for immutable info
+    //  set the report state from the page elements
     function setState() {
-        report.state.view = definition.view || 'sessions';
         report.state.title =  $('#page-title').html();
-        report.state.renderView = definition.renderView || 'report';
         report.state.dateLabel = Toolbar.dateLabel;
         report.state.dateInterval = $("#reportIntervalTitle").html();
         report.state.attributes = $("#metrics").val();
-
-        //  see if already set and if not, set it to the definition
-        report.state.hiddenSeries = report.state.hiddenSeries || definition.hiddenSeries;
-        report.state.tableOrder = report.state.tableOrder || definition.tableOrder;
-
-        //  this is the report id
-        if (definition.key)
-            report.state.key = definition.key;
 
         if ($("#elements").val())
             report.state.group = $("#elements").val();
@@ -368,10 +359,7 @@
         try {
             suppressUpdates = true;
 
-            Toolbar.init(definition);
-
-            if (definition.dateLabel || definition.dateInterval)
-                Toolbar.setDateRange(definition.dateLabel, null, null, definition.dateInterval);
+            Toolbar.init(report);
 
             Filter.init('filter-builder', '<%- settings.apiUrl %>', <%- req.session.currentProjectId %>, null, filterOptions);
             Filter.init('segment-builder', '<%- settings.apiUrl %>', <%- req.session.currentProjectId %>, null, filterOptions);
@@ -379,14 +367,11 @@
             //  'filter-builder' is part of the page and can cause updates
             Filter.configureEmbeddedFilter('filter-builder');
 
-            //  Get options first by query string, then by definition, then by default
-            var options = Utils.getParam('options', window.location.search);
+            if (report.state.filter && Object.keys(report.state.filter).length > 0)
+                Filter.setRules('filter-builder', report.state.filter);
 
-            if (definition.filter && Object.keys(definition.filter).length > 0)
-                Filter.setRules('filter-builder', definition.filter);
-
-            if (options) {
-                restoreState(JSON.parse(options));
+            if (report.state) {
+                restoreState(report.state);
             } else {
                 setState();     //  set defaults
             }

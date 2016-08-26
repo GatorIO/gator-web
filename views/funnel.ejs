@@ -7,7 +7,6 @@
     <link href="/css/funnel.css" rel="stylesheet">
 </head>
 <body class="fixed-navigation">
-
 <div id="wrapper">
 
     <% include partials/master/leftPanel %>
@@ -461,7 +460,7 @@
 
             suppressUpdates = true;
 
-            Toolbar.init();
+            Toolbar.init(report);
 
             if (definition.dateLabel || definition.dateInterval)
                 Toolbar.setDateRange(definition.dateLabel, null, null, definition.dateInterval);

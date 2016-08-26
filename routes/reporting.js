@@ -34,13 +34,14 @@ function setup(app, application, callback) {
             res.redirect(application.branding.postSignupUrl);
             return;
         }
-        var definition = { view: 'sessions', renderView: 'report' };
-        var options, metricOptions, elementOptions, filterOptions, attribOptions;
-        if (req.query.id) {
-            if (utils.isNumeric(req.query.id))
-                definition = application.reports.definitions[+req.query.id];
+        var definition, qsOptions, options = {}, metricOptions, elementOptions, filterOptions, attribOptions, id;
+        qsOptions = req.query.options ? JSON.parse(req.query.options) : {};
+        id = qsOptions.id || req.query.id;
+        if (id) {
+            if (utils.isNumeric(id))
+                definition = application.reports.definitions[+id];
             else
-                definition = application.reports.definitions[application.reports.Types[req.query.id]];
+                definition = application.reports.definitions[application.reports.Types[id]];
             if (!definition) {
                 res.render('message', {
                     title: 'Error',
@@ -52,23 +53,14 @@ function setup(app, application, callback) {
                 });
                 return;
             }
-            definition = definition.options;
-            definition.key = req.query.id;
+            options = definition.options || {};
+            options.id = id;
         }
-        if (req.query.options) {
-            options = JSON.parse(req.query.options);
-            if (options.key) {
-                if (utils.isNumeric(options.key))
-                    definition = application.reports.definitions[+options.key].options;
-                else
-                    definition = application.reports.definitions[application.reports.Types[options.key]].options;
-                definition.key = options.key;
-            }
-            if (options.renderView)
-                definition.renderView = options.renderView;
-            if (options.view)
-                definition.view = options.view;
+        else {
+            options = { renderView: 'report' };
         }
+        if (req.query.options)
+            options = utils.merge(options, qsOptions, true);
         var project = api.currentProject(req);
         if (!project)
             project = {};
@@ -77,21 +69,21 @@ function setup(app, application, callback) {
         if (!project.data.attributes)
             project.data.attributes = {};
         var customAttribs = project.data.attributes;
-        var isLog = definition.renderView == 'log';
-        metricOptions = api.reporting.getAttributeOptions(definition.view, api.reporting.AttributeTypes.metrics, customAttribs, isLog);
-        elementOptions = api.reporting.getAttributeOptions(definition.view, api.reporting.AttributeTypes.elements, customAttribs, isLog);
-        filterOptions = api.reporting.getFilterOptions(definition.view, customAttribs, isLog);
-        attribOptions = api.reporting.getAttributeOptions(definition.view, api.reporting.AttributeTypes.all, customAttribs, isLog);
+        var isLog = options.renderView == 'log';
+        metricOptions = api.reporting.getAttributeOptions(options.view, api.reporting.AttributeTypes.metrics, customAttribs, isLog);
+        elementOptions = api.reporting.getAttributeOptions(options.view, api.reporting.AttributeTypes.elements, customAttribs, isLog);
+        filterOptions = api.reporting.getFilterOptions(options.view, customAttribs, isLog);
+        attribOptions = api.reporting.getAttributeOptions(options.view, api.reporting.AttributeTypes.all, customAttribs, isLog);
         utils.noCache(res);
         api.reporting.getSegments(req, false, function (err) {
             if (err)
                 req.flash('error', err.message);
-            res.render(definition.renderView || 'report', {
+            res.render(options.renderView || 'report', {
                 settings: utils.config.settings(),
                 application: application,
                 dev: utils.config.dev(),
                 req: req,
-                definition: definition,
+                options: options,
                 segmentOptions: api.reporting.getSegmentOptions(req),
                 metricOptions: metricOptions,
                 elementOptions: elementOptions,

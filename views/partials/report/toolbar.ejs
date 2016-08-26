@@ -21,31 +21,31 @@
         <span id="toolbar-interval" class="input-group-btn hideAt480" style="width:1%">
             <button id="reportInterval" type="button" data-toggle="dropdown" class="btn btn-white dropdown-toggle">
                 <span id="reportIntervalTitle">
-                    <% if (definition && definition.intervals && definition.intervals.defaultOption) { %>
-                        <%- definition.intervals.defaultOption %>
+                    <% if (options && options.intervals && options.intervals.defaultOption) { %>
+                        <%- options.intervals.defaultOption %>
                     <% } else { %>
                         Daily
                     <% } %>
                 </span>&nbsp;<span class="caret"></span>
             </button>
             <ul class="dropdown-menu pull-right">
-                <% if (definition && definition.intervals && definition.intervals.options && definition.intervals.options.Minute) { %>
+                <% if (options && options.intervals && options.intervals.options && options.intervals.options.Minute) { %>
                 <li><a href="#" onclick="Toolbar.updateInterval('Minute'); runQuery(); return false">Minute</a></li>
                 <% } %>
 
-                <% if (definition && definition.intervals && definition.intervals.options && definition.intervals.options.Hourly) { %>
+                <% if (options && options.intervals && options.intervals.options && options.intervals.options.Hourly) { %>
                     <li><a href="#" onclick="Toolbar.updateInterval('Hourly'); runQuery(); return false">Hourly</a></li>
                 <% } %>
 
-                <% if (definition && definition.intervals && definition.intervals.options && definition.intervals.options.Daily) { %>
+                <% if (options && options.intervals && options.intervals.options && options.intervals.options.Daily) { %>
                     <li><a href="#" onclick="Toolbar.updateInterval('Daily'); runQuery(); return false">Daily</a></li>
                 <% } %>
 
-                <% if (definition && definition.intervals && definition.intervals.options && definition.intervals.options.Weekly) { %>
+                <% if (options && options.intervals && options.intervals.options && options.intervals.options.Weekly) { %>
                     <li><a href="#" onclick="Toolbar.updateInterval('Weekly'); runQuery(); return false">Weekly</a></li>
                 <% } %>
 
-                <% if (definition && definition.intervals && definition.intervals.options && definition.intervals.options.Monthly) { %>
+                <% if (options && options.intervals && options.intervals.options && options.intervals.options.Monthly) { %>
                     <li><a href="#" onclick="Toolbar.updateInterval('Monthly'); runQuery(); return false">Monthly</a></li>
                 <% } %>
             </ul>
@@ -208,7 +208,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="delete report.state.plotKeys; runQuery();">Apply</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="delete options.plotKeys; runQuery();">Apply</button>
             </div>
         </div>
     </div>

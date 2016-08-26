@@ -15,7 +15,7 @@ function Report(pageOptions) {
 
     //  The report configuration options and the UI state (selected series, sort order, etc.).  This is what should be persisted on a push state call.
     this.state = {
-        key: null,      //  the definition key for the report
+        id: null,       //  the report id from the definition
         map: null,
         view: null,     //  the data view (sessions, events, users or pages)
         isLog: null,    //  if it's a log report, don't group results
@@ -453,7 +453,7 @@ Report.prototype.render = function() {
 //  Format the query's group by into an array
 Report.prototype.groupByArray = function (data) {
 
-    var groupBy = data.query.group;
+    var groupBy = data.query.group || [];
 
     if (!Utils.isArray(groupBy))
         groupBy = groupBy.split(',');
@@ -1770,16 +1770,16 @@ var Toolbar = {
     dateLabel: '',
     dateInterval: '',
 
-    init: function(definition) {
+    init: function(report) {
+        var options = (report ? report.state : {}) || {};
 
-        Toolbar.intervals = definition.intervals;
-        Toolbar.ranges = definition.ranges || ['Today', 'Yesterday', 'Last 24 Hours', 'Last 7 Days', 'Last 30 Days', 'This Month', 'Last Month'];
+        Toolbar.intervals = options.intervals;
+        Toolbar.ranges = options.ranges || ['Today', 'Yesterday', 'Last 24 Hours', 'Last 7 Days', 'Last 30 Days', 'This Month', 'Last Month'];
 
         var ranges = {};
 
-        for (var r = 0; r < Toolbar.ranges.length; r++) {
+        for (var r = 0; r < Toolbar.ranges.length; r++)
             ranges[Toolbar.ranges[r]] = Toolbar.range(Toolbar.ranges[r]);
-        }
 
         $('#reportRange').daterangepicker({
             linkedCalendars: false,
@@ -1837,10 +1837,22 @@ var Toolbar = {
             Toolbar.setDateRange(Toolbar.dateLabel, Toolbar.dateStart, Toolbar.dateEnd, Toolbar.dateInterval);
         });
 
-        if (Toolbar.intervals && Toolbar.intervals.defaultRange)
+        if (options.dateStart) {
+            Toolbar.setDateRange(options.dateLabel, options.dateStart, options.dateEnd, options.dateInterval);
+        } else if (Toolbar.intervals && Toolbar.intervals.defaultRange) {
             Toolbar.setDateRange(Toolbar.intervals.defaultRange, null, null, Toolbar.intervals.defaultOption);
-        else
+        } else {
             Toolbar.setDateRange('Last 30 Days');
+        }
+
+        if (report) {
+            report.state = report.state || {};
+
+            report.state.dateLabel = Toolbar.dateLabel;
+            report.state.dateInterval = Toolbar.dateInterval;
+            report.state.dateStart = Toolbar.dateStart;
+            report.state.dateEnd = Toolbar.dateEnd;
+        }
     },
 
     initLog: function() {
@@ -1994,6 +2006,7 @@ var Toolbar = {
         Toolbar.dateStart = moment(start).format(format);
         Toolbar.dateEnd = moment(end).format(format);
         Toolbar.dateLabel = label;
+        Toolbar.dateInterval = interval;
 
         if (label && label != 'Custom')
             $('#reportRange').val(label);

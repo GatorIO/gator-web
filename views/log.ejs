@@ -15,7 +15,6 @@
     </style>
 </head>
 <body class="fixed-navigation">
-
 <div id="wrapper">
 
     <% include partials/master/leftPanel %>
@@ -226,7 +225,7 @@
 
             suppressUpdates = true;
 
-            Toolbar.initLog();
+            Toolbar.initLog(report);
 
             if (definition.dateLabel || definition.dateInterval)
                 Toolbar.setDateRange(definition.dateLabel, null, null, definition.dateInterval);

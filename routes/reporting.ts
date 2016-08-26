@@ -62,15 +62,30 @@ export function setup(app: express.Application, application: IApplication, callb
             return;
         }
 
-        //  set default report definition
-        var definition: any = { view: 'sessions', renderView: 'report'};
-        var options, metricOptions, elementOptions, filterOptions, attribOptions;
+        /*
+            The id query string param is the report id in application.reports:  /report?id=log
 
-        if (req.query.id) {
-            if (utils.isNumeric(req.query.id))
-                definition = application.reports.definitions[+req.query.id];
+            The options query string param is the customized version of the definition.  Its values take priority
+            over the definition.
+
+            To get the options:
+            -   Get report definition from the id param, if it exists
+            -   Override the report definition from the options.id param, if it exists
+            -   Override the report definition options from the options param
+
+        */
+
+        var definition, qsOptions, options: any = {}, metricOptions, elementOptions, filterOptions, attribOptions, id;
+
+        qsOptions = req.query.options ? JSON.parse(req.query.options) : {};
+        id = qsOptions.id || req.query.id;        //  there should not be two ids, but if there is, use the one in options
+
+        //  get report definition
+        if (id) {
+            if (utils.isNumeric(id))
+                definition = application.reports.definitions[+id];
             else
-                definition = application.reports.definitions[application.reports.Types[req.query.id]];
+                definition = application.reports.definitions[application.reports.Types[id]];
 
             if (!definition) {
                 res.render('message', {
@@ -83,28 +98,15 @@ export function setup(app: express.Application, application: IApplication, callb
                 });
                 return;
             }
-            definition = definition.options;
-            definition.key = req.query.id;
+            options = definition.options || {};
+            options.id = id;
+        } else {
+            options = { renderView: 'report' };      //  default definition
         }
 
-        if (req.query.options) {
-            options = JSON.parse(req.query.options);
-
-            if (options.key) {
-                if (utils.isNumeric(options.key))
-                    definition = application.reports.definitions[+options.key].options;
-                else
-                    definition = application.reports.definitions[application.reports.Types[options.key]].options;
-
-                definition.key = options.key;
-            }
-
-            if (options.renderView)
-                definition.renderView = options.renderView;
-
-            if (options.view)
-                definition.view = options.view;
-        }
+        //  override options from definition with query string params
+        if (req.query.options)
+            options = utils.merge(options, qsOptions, true);
 
         var project: any = api.currentProject(req);
 
@@ -119,12 +121,12 @@ export function setup(app: express.Application, application: IApplication, callb
 
         var customAttribs = project.data.attributes;
 
-        var isLog = definition.renderView == 'log';
+        var isLog = options.renderView == 'log';
 
-        metricOptions = api.reporting.getAttributeOptions(definition.view, api.reporting.AttributeTypes.metrics, customAttribs, isLog);
-        elementOptions = api.reporting.getAttributeOptions(definition.view, api.reporting.AttributeTypes.elements, customAttribs, isLog);
-        filterOptions = api.reporting.getFilterOptions(definition.view, customAttribs, isLog);
-        attribOptions = api.reporting.getAttributeOptions(definition.view, api.reporting.AttributeTypes.all, customAttribs, isLog);
+        metricOptions = api.reporting.getAttributeOptions(options.view, api.reporting.AttributeTypes.metrics, customAttribs, isLog);
+        elementOptions = api.reporting.getAttributeOptions(options.view, api.reporting.AttributeTypes.elements, customAttribs, isLog);
+        filterOptions = api.reporting.getFilterOptions(options.view, customAttribs, isLog);
+        attribOptions = api.reporting.getAttributeOptions(options.view, api.reporting.AttributeTypes.all, customAttribs, isLog);
 
         utils.noCache(res);
 
@@ -134,12 +136,12 @@ export function setup(app: express.Application, application: IApplication, callb
             if (err)
                 req.flash('error', err.message);
 
-            res.render(definition.renderView || 'report', {
+            res.render(options.renderView || 'report', {
                 settings: utils.config.settings(),
                 application: application,
                 dev: utils.config.dev(),
                 req: req,
-                definition: definition,
+                options: options,
                 segmentOptions: api.reporting.getSegmentOptions(req),
                 metricOptions: metricOptions,
                 elementOptions: elementOptions,
