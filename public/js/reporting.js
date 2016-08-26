@@ -546,8 +546,6 @@ Report.prototype.renderTimeline = function () {
         var metric = chartMetrics[c];
 
         if (!this.state.hiddenSeries || !this.state.hiddenSeries[metric.baseName]) {
-            colors.push(this.getColor(colorIndex).color);
-
             column = columnEnum[metric.name];
 
             if (column) {
