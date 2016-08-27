@@ -30,23 +30,23 @@
             </button>
             <ul class="dropdown-menu pull-right">
                 <% if (options && options.intervals && options.intervals.options && options.intervals.options.Minute) { %>
-                <li><a href="#" onclick="Toolbar.updateInterval('Minute'); runQuery(); return false">Minute</a></li>
+                <li><a href="#" onclick="Toolbar.intervalChanged('Minute'); return false">Minute</a></li>
                 <% } %>
 
                 <% if (options && options.intervals && options.intervals.options && options.intervals.options.Hourly) { %>
-                    <li><a href="#" onclick="Toolbar.updateInterval('Hourly'); runQuery(); return false">Hourly</a></li>
+                    <li><a href="#" onclick="Toolbar.intervalChanged('Hourly'); return false">Hourly</a></li>
                 <% } %>
 
                 <% if (options && options.intervals && options.intervals.options && options.intervals.options.Daily) { %>
-                    <li><a href="#" onclick="Toolbar.updateInterval('Daily'); runQuery(); return false">Daily</a></li>
+                    <li><a href="#" onclick="Toolbar.intervalChanged('Daily'); return false">Daily</a></li>
                 <% } %>
 
                 <% if (options && options.intervals && options.intervals.options && options.intervals.options.Weekly) { %>
-                    <li><a href="#" onclick="Toolbar.updateInterval('Weekly'); runQuery(); return false">Weekly</a></li>
+                    <li><a href="#" onclick="Toolbar.intervalChanged('Weekly'); return false">Weekly</a></li>
                 <% } %>
 
                 <% if (options && options.intervals && options.intervals.options && options.intervals.options.Monthly) { %>
-                    <li><a href="#" onclick="Toolbar.updateInterval('Monthly'); runQuery(); return false">Monthly</a></li>
+                    <li><a href="#" onclick="Toolbar.intervalChanged('Monthly'); return false">Monthly</a></li>
                 <% } %>
             </ul>
         </span>

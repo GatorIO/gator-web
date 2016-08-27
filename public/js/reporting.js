@@ -1763,6 +1763,7 @@ var Filter = {
 };
 
 var Toolbar = {
+    suppressUpdates: false,
     intervals: null,
     ranges: null,
     dateStart: 0,
@@ -1778,9 +1779,10 @@ var Toolbar = {
 
         var ranges = {};
 
-        for (var r = 0; r < Toolbar.ranges.length; r++)
+        for (var r = 0; r < Toolbar.ranges.length; r++) {
             ranges[Toolbar.ranges[r]] = Toolbar.range(Toolbar.ranges[r]);
-
+        }
+        
         $('#reportRange').daterangepicker({
             linkedCalendars: false,
             startDate: moment().subtract(29, 'days'),
@@ -1807,55 +1809,37 @@ var Toolbar = {
                 firstDay: 1
             }
         }, function(start, end, label) {
-            var format = Toolbar.momentFormat(Toolbar.dateInterval);
-            Toolbar.setDateRange(label, start.format(format), end.format(format));
+            Toolbar.rangeChanged(start, end, label);
         });
 
         $('#reportRange').on('apply.daterangepicker', function(ev, picker) {
-
-            switch ($('#reportRange').val()) {
-                case 'This Month':
-                case 'Last Month':
-                case 'Custom':
-                case 'Last 7 Days':
-                case 'Last 30 Days':
-                    Toolbar.updateInterval('Daily');
-                    break;
-                case 'Today':
-                case 'Yesterday':
-                case 'Last 24 Hours':
-                    Toolbar.updateInterval('Hourly');
-                    break;
-                case 'Last 60 Minutes':
-                    Toolbar.updateInterval('Minute');
-                    break;
-            }
+            Toolbar.draw();
             runQuery();
         });
 
-        $('#reportRange').on('change.daterangepicker', function(ev, picker) {
-            Toolbar.setDateRange(Toolbar.dateLabel, Toolbar.dateStart, Toolbar.dateEnd, Toolbar.dateInterval);
-        });
+        Toolbar.dateStart = options.dateStart;
+        Toolbar.dateEnd = options.dateEnd;
 
-        if (options.dateStart) {
-            Toolbar.setDateRange(options.dateLabel, options.dateStart, options.dateEnd, options.dateInterval);
-        } else if (Toolbar.intervals && Toolbar.intervals.defaultRange) {
-            Toolbar.setDateRange(Toolbar.intervals.defaultRange, null, null, Toolbar.intervals.defaultOption);
-        } else {
-            Toolbar.setDateRange('Last 30 Days');
-        }
+        if (options.dateLabel)
+            Toolbar.dateLabel = options.dateLabel;
+        else if (Toolbar.intervals && Toolbar.intervals.defaultRange)
+            Toolbar.dateLabel = Toolbar.intervals.defaultRange;
+        else
+            Toolbar.dateLabel = 'Last 30 Days';
 
-        if (report) {
-            report.state = report.state || {};
+        if (options.dateInterval)
+            Toolbar.dateInterval = options.dateInterval;
+        else if (Toolbar.intervals && Toolbar.intervals.defaultOption)
+            Toolbar.dateInterval = Toolbar.intervals.defaultOption;
+        else
+            Toolbar.dateInterval = 'Daily';
 
-            report.state.dateLabel = Toolbar.dateLabel;
-            report.state.dateInterval = Toolbar.dateInterval;
-            report.state.dateStart = Toolbar.dateStart;
-            report.state.dateEnd = Toolbar.dateEnd;
-        }
+        Toolbar.calculateDates(Toolbar.dateLabel);
+        Toolbar.draw();
     },
 
-    initLog: function() {
+    initLog: function(report) {
+        var options = (report ? report.state : {}) || {};
 
         Toolbar.dateInterval = 'Minute';
 
@@ -1887,19 +1871,158 @@ var Toolbar = {
                 firstDay: 1
             }
         }, function(start, end, label) {
-            var format = Toolbar.momentFormat('Minute');
-            Toolbar.setDateRange(label, start.format(format), end.format(format));
+            Toolbar.rangeChanged(start, end, label);
         });
 
         $('#reportRange').on('apply.daterangepicker', function(ev, picker) {
+            Toolbar.draw();
             runQuery();
         });
 
-        $('#reportRange').on('change.daterangepicker', function(ev, picker) {
-            Toolbar.setDateRange(Toolbar.dateLabel, Toolbar.dateStart, Toolbar.dateEnd, Toolbar.dateInterval);
-        });
+        Toolbar.dateStart = options.dateStart;
+        Toolbar.dateEnd = options.dateEnd;
 
-        Toolbar.setDateRange('Today');
+        if (options.dateLabel)
+            Toolbar.dateLabel = options.dateLabel;
+        else
+            Toolbar.dateLabel = 'Today';
+
+        Toolbar.calculateDates(Toolbar.dateLabel);
+        Toolbar.draw();
+    },
+
+    rangeChanged: function(start, end, label) {
+        if (Toolbar.suppressUpdates)
+            return;
+
+        Toolbar.dateLabel = label;
+
+        if (label == 'Custom') {
+            var format = Toolbar.momentFormat(Toolbar.dateInterval);
+            Toolbar.dateStart = moment(start).format(format);
+            Toolbar.dateEnd = moment(end).format(format);
+        } else {
+
+            switch (label) {
+                case 'This Month':
+                case 'Last Month':
+                case 'Custom':
+                case 'Last 7 Days':
+                case 'Last 30 Days':
+                    Toolbar.dateInterval = 'Daily';
+                    break;
+                case 'Today':
+                case 'Yesterday':
+                case 'Last 24 Hours':
+                    Toolbar.dateInterval = 'Hourly';
+                    break;
+                case 'Last 60 Minutes':
+                    Toolbar.dateInterval = 'Minute';
+                    break;
+            }
+
+            Toolbar.calculateDates(Toolbar.dateLabel);
+        }
+        Toolbar.draw();
+    },
+
+    intervalChanged: function(interval) {
+        Toolbar.dateInterval = interval;
+        Toolbar.calculateDates(Toolbar.dateLabel);
+        Toolbar.draw();
+        runQuery();
+    },
+
+    draw: function() {
+        Toolbar.suppressUpdates = true;
+
+        Toolbar.calculateDates();
+
+        //  draw range
+        if (Toolbar.dateLabel && Toolbar.dateLabel != 'Custom')
+            $('#reportRange').val(Toolbar.dateLabel);
+        else {
+            var friendlyHour = 'YYYY-MM-DD hA';
+            var friendlyMinute = 'MM-DD h:mmA';
+            var format = Toolbar.momentFormat();
+
+            if (Toolbar.dateInterval == 'Daily' && Toolbar.dateStart == Toolbar.dateEnd)
+                $('#reportRange').val(moment(Toolbar.dateStart).format(format));
+            else if (Toolbar.dateInterval == 'Hourly')
+                $('#reportRange').val(moment(Toolbar.dateStart, friendlyHour).format(friendlyHour) + ' to ' + moment(Toolbar.dateEnd, friendlyHour).format(friendlyHour));
+            else if (Toolbar.dateInterval == 'Minute')
+                $('#reportRange').val(moment(Toolbar.dateStart).format(friendlyMinute) + ' to ' + moment(Toolbar.dateEnd).format(friendlyMinute));
+            else
+                $('#reportRange').val(moment(Toolbar.dateStart).format(format) + ' to ' + moment(Toolbar.dateEnd).format(format));
+        }
+
+        //  draw interval
+        $('#reportIntervalTitle').html(Toolbar.dateInterval);
+
+        //  set next/prior enabling
+        switch (Toolbar.dateLabel) {
+            case 'Today':
+            case 'Last 24 Hours':
+            case 'Last 7 Days':
+            case 'Last 30 Days':
+            case 'Last 60 Minutes':
+            case 'This Month':
+                $('#toolbar-next-btn').addClass('disabled');
+                $('#toolbar-next-btn').attr('disabled', true);
+                break;
+            default:
+                $('#toolbar-next-btn').removeClass('disabled');
+                $('#toolbar-next-btn').attr('disabled', false);
+        }
+
+        Toolbar.suppressUpdates = false;
+    },
+
+    next: function() {
+        var diff, start, end, label;
+
+        switch (Toolbar.dateLabel) {
+            case 'Yesterday':
+                label = 'Today';
+                break;
+            case 'Last Month':
+                label = 'This Month';
+                break;
+            default:
+                var diffInterval = Toolbar.momentInterval(Toolbar.dateInterval);
+                var format = Toolbar.momentFormat(diffInterval);
+                diff = moment(Toolbar.dateEnd, format).diff(moment(Toolbar.dateStart, format), diffInterval) + 1;
+
+                start = moment(Toolbar.dateStart, format).add(diff, diffInterval);
+                end = moment(Toolbar.dateEnd, format).add(diff, diffInterval);
+                label = 'Custom';
+        }
+        Toolbar.rangeChanged(start, end, label);
+        runQuery();
+    },
+
+    prior: function() {
+        var diff, start, end, label;
+
+        switch (Toolbar.dateLabel) {
+            case 'Today':
+                label = 'Yesterday';
+                break;
+            case 'This Month':
+                label = 'Last Month';
+                break;
+            default:
+                var diffInterval = Toolbar.momentInterval(Toolbar.dateInterval);
+                var format = Toolbar.momentFormat(diffInterval);
+                diff = moment(Toolbar.dateEnd, format).diff(moment(Toolbar.dateStart, format), diffInterval) + 1;
+
+                start = moment(Toolbar.dateStart, format).subtract(diff, diffInterval);
+                end = moment(Toolbar.dateEnd, format).subtract(diff, diffInterval);
+                label = 'Custom';
+        }
+
+        Toolbar.rangeChanged(start, end, label);
+        runQuery();
     },
 
     addToDashboard: function() {
@@ -1972,117 +2095,21 @@ var Toolbar = {
         });
     },
 
-    updateInterval: function(interval) {
-
-        if (Toolbar.dateInterval != interval) {
-
-            //  move dateEnd to the end of the interval
-            Toolbar.dateEnd = moment(Toolbar.dateEnd).endOf(Toolbar.momentInterval(Toolbar.dateInterval)).format(Toolbar.momentFormat(interval));
-
-            Toolbar.dateInterval = interval;
-
-            var format = Toolbar.momentFormat(interval);
-
-            $('#reportRange').data('daterangepicker').setStartDate(moment(Toolbar.dateStart, format));
-            $('#reportRange').data('daterangepicker').setEndDate(moment(Toolbar.dateEnd, format));
-        }
-
-        $('#reportIntervalTitle').html(interval);
-        $('#reportTimeframe').html(Toolbar.dateStart + ' to ' + Toolbar.dateEnd);
-    },
-
-    inSetDateRange: false,
-
-    setDateRange: function(label, start, end, interval) {
-
-        if (!interval)
-            interval = Toolbar.dateInterval;
-
-        if (!interval)
-            interval = 'Daily';
+    setValues: function(label, start, end, interval) {
 
         var format = Toolbar.momentFormat(interval);
 
-        Toolbar.dateStart = moment(start).format(format);
-        Toolbar.dateEnd = moment(end).format(format);
-        Toolbar.dateLabel = label;
-        Toolbar.dateInterval = interval;
+        if (start)
+            Toolbar.dateStart = moment(start).format(format);
 
-        if (label && label != 'Custom')
-            $('#reportRange').val(label);
-        else {
-            var friendlyHour = 'YYYY-MM-DD hA';
-            var friendlyMinute = 'MM-DD h:mmA';
+        if (end)
+            Toolbar.dateEnd = moment(end).format(format);
 
-            if (interval == 'Daily' && start == end)
-                $('#reportRange').val(moment(start).format(format));
-            else if (interval == 'Hourly')
-                $('#reportRange').val(moment(start, friendlyHour).format(friendlyHour) + ' to ' + moment(end, friendlyHour).format(friendlyHour));
-            else if (interval == 'Minute')
-                $('#reportRange').val(moment(start).format(friendlyMinute) + ' to ' + moment(end).format(friendlyMinute));
-            else
-                $('#reportRange').val(moment(start).format(format) + ' to ' + moment(end).format(format));
-        }
-
-
-        switch (label) {
-            case 'Today':
-            case 'Last 24 Hours':
-            case 'Last 7 Days':
-            case 'Last 30 Days':
-            case 'Last 60 Minutes':
-            case 'This Month':
-                $('#toolbar-next-btn').addClass('disabled');
-                $('#toolbar-next-btn').attr('disabled', true);
-                break;
-            default:
-                $('#toolbar-next-btn').removeClass('disabled');
-                $('#toolbar-next-btn').attr('disabled', false);
-        }
-
-        var rangeLabels = Toolbar.range(label);
-
-        if (rangeLabels) {
-            Toolbar.dateStart = rangeLabels[0];
-            Toolbar.dateEnd = rangeLabels[1];
-        }
-
-        if (this.inSetDateRange)
-            return;
-
-        this.inSetDateRange = true;
-
-        if (!$('#reportRange').data('daterangepicker').startDate.isSame(moment(Toolbar.dateStart)))
-            $('#reportRange').data('daterangepicker').setStartDate(moment(Toolbar.dateStart, format));
-
-        if (!$('#reportRange').data('daterangepicker').endDate.isSame(moment(Toolbar.dateEnd)))
-            $('#reportRange').data('daterangepicker').setEndDate(moment(Toolbar.dateEnd, format));
-
-        this.inSetDateRange = false;
-
-        Toolbar.updateInterval(interval);
-    },
-
-    next: function() {
-        var diff;
-
-        switch (Toolbar.dateLabel) {
-            case 'Yesterday':
-                Toolbar.setDateRange('Today');
-                break;
-            case 'Last Month':
-                Toolbar.setDateRange('This Month');
-                break;
-            default:
-                var diffInterval = Toolbar.momentInterval(Toolbar.dateInterval);
-                var format = Toolbar.momentFormat(diffInterval);
-                diff = moment(Toolbar.dateEnd, format).diff(moment(Toolbar.dateStart, format), diffInterval) + 1;
-
-                var newStart = moment(Toolbar.dateStart, format).add(diff, diffInterval);
-                var newEnd = moment(Toolbar.dateEnd, format).add(diff, diffInterval);
-                Toolbar.setDateRange('Custom', newStart.format(format), newEnd.format(format));
-        }
-        runQuery();
+        if (label)
+            Toolbar.dateLabel = label;
+        
+        if (interval)
+            Toolbar.dateInterval = interval;
     },
 
     momentInterval: function(interval) {
@@ -2101,6 +2128,9 @@ var Toolbar = {
 
     //  These are in the where format the API can tell what the grouping is
     momentFormat: function(interval) {
+
+        if (!interval)
+            interval = Toolbar.dateInterval;
 
         switch (interval) {
             case 'Second':
@@ -2124,29 +2154,6 @@ var Toolbar = {
         }
     },
 
-    prior: function() {
-        var diff;
-
-        switch (Toolbar.dateLabel) {
-            case 'Today':
-                Toolbar.setDateRange('Yesterday');
-                break;
-            case 'This Month':
-                Toolbar.setDateRange('Last Month');
-                break;
-            default:
-                var diffInterval = Toolbar.momentInterval(Toolbar.dateInterval);
-                var format = Toolbar.momentFormat(diffInterval);                
-                diff = moment(Toolbar.dateEnd, format).diff(moment(Toolbar.dateStart, format), diffInterval) + 1;
-
-                var newStart = moment(Toolbar.dateStart, format).subtract(diff, diffInterval);
-                var newEnd = moment(Toolbar.dateEnd, format).subtract(diff, diffInterval);
-                Toolbar.setDateRange('Custom', newStart.format(format), newEnd.format(format));
-        }
-
-        runQuery();
-    },
-
     range: function(label) {
         var format = Toolbar.momentFormat(Toolbar.dateInterval);
 
@@ -2167,6 +2174,20 @@ var Toolbar = {
                 return [moment().subtract(1, 'month').startOf('month').format(format), moment().subtract(1, 'month').endOf('month').format(format)];
             case 'Last 60 Minutes':
                 return [moment().subtract(59, 'minutes').format(format), moment().format(format)];
+        }
+    },
+
+    calculateDates: function(label) {
+
+        var range = Toolbar.range(label);
+
+        if (range) {
+            Toolbar.dateStart = range[0];
+            Toolbar.dateEnd = range[1];
+        } else {
+            var format = Toolbar.momentFormat(Toolbar.dateInterval);
+            Toolbar.dateStart = moment(Toolbar.dateStart).format(format);
+            Toolbar.dateEnd = moment(Toolbar.dateEnd).format(format);
         }
     },
 

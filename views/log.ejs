@@ -37,7 +37,7 @@
                 </div>
             </div>
             <div class="row white-bg hidden-print">
-                <% if (definition.map) { %>
+                <% if (options.map) { %>
                     <div class="col-md-12 col-lg-6">
                         <br><div id="filter-builder"></div>
                     </div>
@@ -84,11 +84,11 @@
 
     var segmentsSelectize, customCount = 0, customSegments, suppressUpdates = false;
     var report = new Report();
-    var definition = <%- JSON.stringify(definition) %>;
+    report.state = <%- JSON.stringify(options) %>;      //  set initial state from options
 
     var attribSelectize = $('#attribs').selectize({
         options: <%- JSON.stringify(attribOptions) %>,
-        items: Utils.replaceAll(definition.attributes || '', ' ', '').split(','),
+        items: Utils.replaceAll(report.state.attributes || '', ' ', '').split(','),
         plugins: ['drag_drop','remove_button'],
         delimiter: ',',
         closeAfterSelect: true,
@@ -160,23 +160,13 @@
         }
     };
 
+    //  set the report state from the page elements
     function setState() {
-        report.state.view = definition.view;
-
-        //  see if already set and if not, set it to the definition
-        report.state.tableOrder = report.state.tableOrder || definition.tableOrder;
-        report.state.sort = report.state.sort || definition.sort;
-
-        if (definition.map) {
-            report.state.map = definition.map;
+        if (report.state.map) {
             $('#world-map').removeClass('hidden');
         }
 
-        if (definition.key)
-            report.state.key = definition.key;
-
         report.state.title =  $('#page-title').html();
-        report.state.renderView = definition.renderView || 'report';
         report.state.isLog = true;
         report.state.pageLength = 100;
         report.state.dateLabel = Toolbar.dateLabel;
@@ -207,7 +197,7 @@
         if (state.map)
             $('#world-map').removeClass('hidden');
 
-            Toolbar.setDateRange(state.dateLabel, state.dateStart, state.dateEnd, state.dateInterval);
+            Toolbar.setValues(state.dateLabel, state.dateStart, state.dateEnd, state.dateInterval);
 
         attribSelectize[0].selectize.clear();
         state.attributes.split(',').forEach(function(item) {attribSelectize[0].selectize.addItem(item.trim());});
@@ -227,24 +217,19 @@
 
             Toolbar.initLog(report);
 
-            if (definition.dateLabel || definition.dateInterval)
-                Toolbar.setDateRange(definition.dateLabel, null, null, definition.dateInterval);
-
             Filter.init('filter-builder', '<%- settings.apiUrl %>', <%- req.session.currentProjectId %>, null, filterOptions);
 
             //  'filter-builder' is part of the page and can cause updates
             Filter.configureEmbeddedFilter('filter-builder');
 
-            var options = Utils.getParam('options', window.location.search);
+            //  Set initial items based on report.state
+            $('#page-title').html(report.state.title);
 
-            //  Set initial items based on definition
-            $('#page-title').html(definition.title);
+            if (report.state.filter && Object.keys(report.state.filter).length > 0)
+                Filter.setRules('filter-builder', report.state.filter);
 
-            if (definition.filter && Object.keys(definition.filter).length > 0)
-                Filter.setRules('filter-builder', definition.filter);
-
-            if (options) {
-                restoreState(JSON.parse(options));
+            if (report.state) {
+                restoreState(report.state);
             } else {
                 setState();     //  set defaults
             }

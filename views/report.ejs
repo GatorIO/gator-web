@@ -315,7 +315,7 @@
         if (report.state.title)
             $('#page-title').html(report.state.title);
 
-        Toolbar.setDateRange(state.dateLabel, state.dateStart, state.dateEnd, state.dateInterval);
+        Toolbar.setValues(state.dateLabel, state.dateStart, state.dateEnd, state.dateInterval);
 
         metricSelectize[0].selectize.clear();
         state.attributes.split(',').forEach(function(item) {metricSelectize[0].selectize.addItem(item.trim());});

@@ -59,7 +59,7 @@
             </div>
         </span>
 
-        <span id="toolbar-export" title="Export this report"    class="input-group-btn hideAt1024" style="width:1%">
+        <span id="toolbar-export" title="Export this report" class="input-group-btn hideAt1024" style="width:1%">
             <button type="button" data-toggle="dropdown" class="btn btn-white dropdown-toggle"><i class="glyphicon glyphicon-share"></i></button>
             <ul class="dropdown-menu pull-right">
                 <!--
@@ -173,17 +173,6 @@
 
     function getSuggestedTitle() {
         var title = 'Log';
-        var view = '<%- definition.view %>';
-
-        switch (view) {
-            case 'sessions':
-                title = 'Session Log';
-                break;
-            case 'events':
-                title = 'Event Log';
-                break;
-        }
-
         $('#pod-title').val(title);
     }
 </script>
