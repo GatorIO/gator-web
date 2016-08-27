@@ -1763,7 +1763,6 @@ var Filter = {
 };
 
 var Toolbar = {
-    suppressUpdates: false,
     intervals: null,
     ranges: null,
     dateStart: 0,
@@ -1813,7 +1812,7 @@ var Toolbar = {
         });
 
         $('#reportRange').on('apply.daterangepicker', function(ev, picker) {
-            Toolbar.draw();
+            Toolbar.rangeChanged(picker.startDate, picker.endDate, picker.chosenLabel);
             runQuery();
         });
 
@@ -1834,7 +1833,7 @@ var Toolbar = {
         else
             Toolbar.dateInterval = 'Daily';
 
-        Toolbar.calculateDates(Toolbar.dateLabel);
+        Toolbar.calculateDates();
         Toolbar.draw();
     },
 
@@ -1875,8 +1874,8 @@ var Toolbar = {
         });
 
         $('#reportRange').on('apply.daterangepicker', function(ev, picker) {
-            Toolbar.draw();
-            runQuery();
+            Toolbar.rangeChanged(picker.startDate, picker.endDate, picker.chosenLabel);
+            //runQuery();
         });
 
         Toolbar.dateStart = options.dateStart;
@@ -1887,14 +1886,11 @@ var Toolbar = {
         else
             Toolbar.dateLabel = 'Today';
 
-        Toolbar.calculateDates(Toolbar.dateLabel);
+        Toolbar.calculateDates();
         Toolbar.draw();
     },
 
     rangeChanged: function(start, end, label) {
-        if (Toolbar.suppressUpdates)
-            return;
-
         Toolbar.dateLabel = label;
 
         if (label == 'Custom') {
@@ -1920,22 +1916,17 @@ var Toolbar = {
                     Toolbar.dateInterval = 'Minute';
                     break;
             }
-
-            Toolbar.calculateDates(Toolbar.dateLabel);
         }
         Toolbar.draw();
     },
 
     intervalChanged: function(interval) {
         Toolbar.dateInterval = interval;
-        Toolbar.calculateDates(Toolbar.dateLabel);
         Toolbar.draw();
         runQuery();
     },
 
     draw: function() {
-        Toolbar.suppressUpdates = true;
-
         Toolbar.calculateDates();
 
         //  draw range
@@ -1975,7 +1966,40 @@ var Toolbar = {
                 $('#toolbar-next-btn').attr('disabled', false);
         }
 
-        Toolbar.suppressUpdates = false;
+        //  reset interval menu item display status
+        $('#intervalMenuItemMinute').removeClass('hidden');
+        $('#intervalMenuItemHour').removeClass('hidden');
+        $('#intervalMenuItemDay').removeClass('hidden');
+        $('#intervalMenuItemWeek').removeClass('hidden');
+        $('#intervalMenuItemMonth').removeClass('hidden');
+
+        switch (Toolbar.dateLabel) {
+            case 'Last 30 Days':
+            case 'Last 7 Days':
+                $('#intervalMenuItemWeek').addClass('hidden');
+                $('#intervalMenuItemMonth').addClass('hidden');
+                $('#intervalMenuItemMinute').addClass('hidden');
+                break;
+            case 'This Month':
+            case 'Last Month':
+                $('#intervalMenuItemWeek').addClass('hidden');
+                $('#intervalMenuItemMinute').addClass('hidden');
+                break;
+            case 'Last 60 Minutes':
+                $('#intervalMenuItemHour').addClass('hidden');
+                $('#intervalMenuItemDay').addClass('hidden');
+                $('#intervalMenuItemWeek').addClass('hidden');
+                break;
+            case 'Last 24 Hours':
+                $('#intervalMenuItemDay').addClass('hidden');
+                $('#intervalMenuItemWeek').addClass('hidden');
+                break;
+            case 'Today':
+            case 'Yesterday':
+                $('#intervalMenuItemWeek').addClass('hidden');
+                $('#intervalMenuItemMonth').addClass('hidden');
+                break;
+        }
     },
 
     next: function() {
@@ -2163,11 +2187,24 @@ var Toolbar = {
             case 'Yesterday':
                 return [moment().subtract(1, 'days').startOf('day').format(format), moment().subtract(1, 'days').endOf('day').format(format)];
             case 'Last 24 Hours':
-                return [moment().subtract(23, 'hours').format(format), moment().format(format)];
+                if (Toolbar.dateInterval == 'Minute')
+                    return [moment().subtract(1439, 'minutes').format(format), moment().format(format)];
+                else
+                    return [moment().subtract(23, 'hours').format(format), moment().format(format)];
             case 'Last 7 Days':
-                return [moment().subtract(6, 'days').format(format), moment().format(format)];
+                if (Toolbar.dateInterval == 'Minute')
+                    return [moment().subtract(10079, 'minutes').format(format), moment().format(format)];
+                if (Toolbar.dateInterval == 'Hourly')
+                    return [moment().subtract(167, 'hours').format(format), moment().format(format)];
+                else
+                    return [moment().subtract(6, 'days').format(format), moment().format(format)];
             case 'Last 30 Days':
-                return [moment().subtract(29, 'days').format(format), moment().format(format)];
+                if (Toolbar.dateInterval == 'Minute')
+                    return [moment().subtract(43199, 'minutes').format(format), moment().format(format)];
+                if (Toolbar.dateInterval == 'Hourly')
+                    return [moment().subtract(719, 'hours').format(format), moment().format(format)];
+                else
+                    return [moment().subtract(29, 'days').format(format), moment().format(format)];
             case 'This Month':
                 return [moment().startOf('month').format(format), moment().endOf('month').format(format)];
             case 'Last Month':
@@ -2177,9 +2214,9 @@ var Toolbar = {
         }
     },
 
-    calculateDates: function(label) {
+    calculateDates: function() {
 
-        var range = Toolbar.range(label);
+        var range = Toolbar.range(Toolbar.dateLabel);
 
         if (range) {
             Toolbar.dateStart = range[0];
