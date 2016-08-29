@@ -92,11 +92,12 @@
 
     var suppressUpdates = false, title;
     var report = new Report();
-    report.state = <%- JSON.stringify(options) %>;      //  set initial state from options
+    report.settings = <%- JSON.stringify(options.settings) %>;       //  set static setting from report definition
+    report.state = <%- JSON.stringify(options.initialState) %>;      //  set initial state from options
     report.state.activeStep = 0;
     report.state.eventSteps = [];
 
-    $('#page-title').html(report.state.title);
+    $('#page-title').html(report.settings.title);
 
     var metricSelectize = $('#metrics').selectize({
         options: <%- JSON.stringify(metricOptions) %>,
@@ -210,9 +211,6 @@
     };
 
     function setState() {
-        report.state.view = 'users';
-        report.state.title =  $('#page-title').html();
-        report.state.renderView = 'funnel';
         report.state.dateLabel = Toolbar.dateLabel;
         report.state.dateInterval = $("#reportIntervalTitle").html();
         report.state.attributes = $("#metrics").val();
@@ -248,8 +246,8 @@
 
         report.state = state;
 
-        if (report.state.title)
-            $('#page-title').html(report.state.title);
+        if (report.settings.title)
+            $('#page-title').html(report.settings.title);
 
         Toolbar.setValues(state.dateLabel, state.dateStart, state.dateEnd, state.dateInterval);
 

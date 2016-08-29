@@ -81,7 +81,8 @@
 
     var segmentsSelectize, customCount = 0, customSegments, suppressUpdates = false;
     var report = new Report();
-    report.state = <%- JSON.stringify(options) %>;      //  set initial state from options
+    report.settings = <%- JSON.stringify(options.settings) %>;       //  set static setting from report definition
+    report.state = <%- JSON.stringify(options.initialState) %>;      //  set initial state from options
 
     var attribSelectize = $('#attribs').selectize({
         options: <%- JSON.stringify(attribOptions) %>,
@@ -163,7 +164,6 @@
             $('#world-map').removeClass('hidden');
         }
 
-        report.state.title =  $('#page-title').html();
         report.state.isLog = true;
         report.state.pageLength = 100;
         report.state.dateLabel = Toolbar.dateLabel;
@@ -188,8 +188,8 @@
 
         report.state = state;
 
-        if (state.title)
-            $('#page-title').html(report.state.title);
+        if (report.settings.title)
+            $('#page-title').html(report.settings.title);
 
         if (state.map)
             $('#world-map').removeClass('hidden');
@@ -220,7 +220,7 @@
             Filter.configureEmbeddedFilter('filter-builder');
 
             //  Set initial items based on report.state
-            $('#page-title').html(report.state.title);
+            $('#page-title').html(report.settings.title);
 
             if (report.state.filter && Object.keys(report.state.filter).length > 0)
                 Filter.setRules('filter-builder', report.state.filter);

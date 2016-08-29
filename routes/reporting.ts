@@ -101,7 +101,7 @@ export function setup(app: express.Application, application: IApplication, callb
             options = definition.options || {};
             options.id = id;
         } else {
-            options = { renderView: 'report' };      //  default definition
+            options = { settings: { renderView: 'report' } };      //  default definition
         }
 
         //  override options from definition with query string params
@@ -127,7 +127,7 @@ export function setup(app: express.Application, application: IApplication, callb
 
         var customAttribs = project.data.attributes;
 
-        var isLog = options.renderView == 'log';
+        var isLog = options.settings.renderView == 'log';
 
         metricOptions = api.reporting.getAttributeOptions(options.view, api.reporting.AttributeTypes.metrics, customAttribs, isLog);
         elementOptions = api.reporting.getAttributeOptions(options.view, api.reporting.AttributeTypes.elements, customAttribs, isLog);
@@ -142,7 +142,7 @@ export function setup(app: express.Application, application: IApplication, callb
             if (err)
                 req.flash('error', err.message);
 
-            res.render(options.renderView || 'report', {
+            res.render(options.settings.renderView || 'report', {
                 settings: utils.config.settings(),
                 application: application,
                 dev: utils.config.dev(),

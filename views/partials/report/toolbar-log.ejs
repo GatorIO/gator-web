@@ -1,3 +1,5 @@
+<% var settings = options && options.settings ? options.settings || {} %>
+
 <form class="form-inline pull-right expandAt1200" style="margin-top:15px" role="form">
 
     <div id="reportTimeframe" class="visible-print"></div>
@@ -134,7 +136,7 @@
                     <br><label>Pick a title:</label>
                     <br><input id="pod-title" type="text" class="form-control" />
 
-                    <% if (options.map) { %>
+                    <% if (settings.map) { %>
                         <br><label>Select what to display:</label><br>
                         <input type="radio" name="pod-type" value="map" checked> Map &nbsp;&nbsp; <input type="radio" name="pod-type" value="table"> Table
                     <% } else { %>

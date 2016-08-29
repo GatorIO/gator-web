@@ -1,3 +1,5 @@
+<% var settings = options && options.settings ? options.settings || {} %>
+
 <form class="form-inline pull-right expandAt1200" style="margin-top:15px;" role="form">
 
     <div id="reportTimeframe" class="visible-print"></div>
@@ -21,31 +23,31 @@
         <span id="toolbar-interval" class="input-group-btn hideAt480" style="width:1%">
             <button id="reportInterval" type="button" data-toggle="dropdown" class="btn btn-white dropdown-toggle">
                 <span id="reportIntervalTitle">
-                    <% if (options && options.intervals && options.intervals.defaultOption) { %>
-                        <%- options.intervals.defaultOption %>
+                    <% if (settings.intervals && settings.intervals.defaultOption) { %>
+                        <%- settings.intervals.defaultOption %>
                     <% } else { %>
                         Daily
                     <% } %>
                 </span>&nbsp;<span class="caret"></span>
             </button>
             <ul class="dropdown-menu pull-right">
-                <% if (options && options.intervals && options.intervals.options && options.intervals.options.Minute) { %>
+                <% if (settings.intervals && settings.intervals.options && settings.intervals.options.Minute) { %>
                     <li id="intervalMenuItemMinute"><a href="#" onclick="Toolbar.intervalChanged('Minute'); return false">Minute</a></li>
                 <% } %>
 
-                <% if (options && options.intervals && options.intervals.options && options.intervals.options.Hourly) { %>
+                <% if (settingsintervals && settings.intervals.options && settings.intervals.options.Hourly) { %>
                     <li id="intervalMenuItemHour"><a href="#" onclick="Toolbar.intervalChanged('Hourly'); return false">Hourly</a></li>
                 <% } %>
 
-                <% if (options && options.intervals && options.intervals.options && options.intervals.options.Daily) { %>
+                <% if (settings.intervals && settings.intervals.options && settings.intervals.options.Daily) { %>
                     <li id="intervalMenuItemDay"><a href="#" onclick="Toolbar.intervalChanged('Daily'); return false">Daily</a></li>
                 <% } %>
 
-                <% if (options && options.intervals && options.intervals.options && options.intervals.options.Weekly) { %>
+                <% if (settings.intervals && settings.intervals.options && settings.intervals.options.Weekly) { %>
                     <li id="intervalMenuItemWeek"><a href="#" onclick="Toolbar.intervalChanged('Weekly'); return false">Weekly</a></li>
                 <% } %>
 
-                <% if (options && options.intervals && options.intervals.options && options.intervals.options.Monthly) { %>
+                <% if (settings.intervals && settings.intervals.options && settings.intervals.options.Monthly) { %>
                     <li id="intervalMenuItemMonth"><a href="#" onclick="Toolbar.intervalChanged('Monthly'); return false">Monthly</a></li>
                 <% } %>
             </ul>
@@ -206,7 +208,7 @@
                 <br><label>Pick which metrics to show in the table:</label>&nbsp; (drag and drop to change order)
                 <input class="form-control" id="metrics" data-placeholder="Choose metrics to display..." type="text" />
 
-                <div<%- (options.segmentation ? '' : ' class="hidden"') %>>
+                <div<%- (settings.segmentation ? '' : ' class="hidden"') %>>
                     <br><label>Pick which segments to display:</label>
                     <div class="input-group">
                         <input class="form-control" id="segments" data-placeholder="Choose segments..." type="text" />

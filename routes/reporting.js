@@ -57,7 +57,7 @@ function setup(app, application, callback) {
             options.id = id;
         }
         else {
-            options = { renderView: 'report' };
+            options = { settings: { renderView: 'report' } };
         }
         if (req.query.options) {
             for (var key in qsOptions) {
@@ -73,7 +73,7 @@ function setup(app, application, callback) {
         if (!project.data.attributes)
             project.data.attributes = {};
         var customAttribs = project.data.attributes;
-        var isLog = options.renderView == 'log';
+        var isLog = options.settings.renderView == 'log';
         metricOptions = api.reporting.getAttributeOptions(options.view, api.reporting.AttributeTypes.metrics, customAttribs, isLog);
         elementOptions = api.reporting.getAttributeOptions(options.view, api.reporting.AttributeTypes.elements, customAttribs, isLog);
         filterOptions = api.reporting.getFilterOptions(options.view, customAttribs, isLog);
@@ -82,7 +82,7 @@ function setup(app, application, callback) {
         api.reporting.getSegments(req, false, function (err) {
             if (err)
                 req.flash('error', err.message);
-            res.render(options.renderView || 'report', {
+            res.render(options.settings.renderView || 'report', {
                 settings: utils.config.settings(),
                 application: application,
                 dev: utils.config.dev(),

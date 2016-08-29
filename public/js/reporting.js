@@ -4,23 +4,28 @@
 var runningQueries = 0;
 var ALL_SEGMENT = '-1000';
 
-function Report(pageOptions) {
+function Report() {
 
     //  Options specific to the page calling the report, like the projectId, timezone, and HTML elements to target.  These
     //  are not persisted.
-    this.pageOptions = pageOptions || {};
-    this.dataTablesObject = null;
-    this.currentType = null;
-    this.nextClause = null;
+    this.pageOptions = {};
+
+    //  static settings for the report, like renderView, ranges, intervals, etc.  These come from the report definition.
+    this.settings = {
+        title: null,
+        renderView: null,
+        intervals: null,
+        ranges: null,
+        limit: null,
+        map: null
+    };
 
     //  The report configuration options and the UI state (selected series, sort order, etc.).  This is what should be persisted on a push state call.
     this.state = {
         id: null,       //  the report id from the definition
-        map: null,
         view: null,     //  the data view (sessions, events, users or pages)
         isLog: null,    //  if it's a log report, don't group results
         title: null,
-        renderView: null,
         dateStart: null,
         dateEnd: null,
         dateLabel: Toolbar.dateLabel,
@@ -39,6 +44,10 @@ function Report(pageOptions) {
         activeStep: null,
         hiddenSeries: null
     };
+
+    this.dataTablesObject = null;
+    this.currentType = null;
+    this.nextClause = null;
 
     //  The data used to populate the table
     this.tableData = null;
@@ -210,17 +219,17 @@ function Report(pageOptions) {
 
 Report.prototype.intervalAttribute = function(interval) {
 
-    if (this.state.intervals && this.state.intervals.options) {
-        var options = this.state.intervals.options;
+    if (this.settings.intervals && this.settings.intervals.options) {
+        var options = this.settings.intervals.options;
 
         if (options[interval])
             return options[interval];
-        else if (this.state.intervals.defaultOption && options[this.state.intervals.defaultOption])
-            return options[this.state.intervals.defaultOption];
+        else if (this.settings.intervals.defaultOption && options[this.settings.intervals.defaultOption])
+            return options[this.settings.intervals.defaultOption];
     }
 
-    if (this.state.intervals && this.state.intervals.defaultAttribute)
-        return this.state.intervals.defaultAttribute;
+    if (this.settings.intervals && this.settings.intervals.defaultAttribute)
+        return this.settings.intervals.defaultAttribute;
 };
 
 Report.prototype.columnEnum = function(data) {
@@ -1789,10 +1798,11 @@ var Toolbar = {
     dateInterval: '',
 
     init: function(report) {
-        var options = (report ? report.state : {}) || {};
+        var settings = (report ? report.settings : {}) || {};
+        var state = (report ? report.state : {}) || {};
 
-        Toolbar.intervals = options.intervals;
-        Toolbar.ranges = options.ranges || ['Today', 'Yesterday', 'Last 24 Hours', 'Last 7 Days', 'Last 30 Days', 'This Month', 'Last Month'];
+        Toolbar.intervals = settings.intervals;
+        Toolbar.ranges = settings.ranges || ['Today', 'Yesterday', 'Last 24 Hours', 'Last 7 Days', 'Last 30 Days', 'This Month', 'Last Month'];
 
         var ranges = {};
 
@@ -1834,18 +1844,18 @@ var Toolbar = {
             runQuery();
         });
 
-        Toolbar.dateStart = options.dateStart;
-        Toolbar.dateEnd = options.dateEnd;
+        Toolbar.dateStart = state.dateStart;
+        Toolbar.dateEnd = state.dateEnd;
 
-        if (options.dateLabel)
-            Toolbar.dateLabel = options.dateLabel;
+        if (state.dateLabel)
+            Toolbar.dateLabel = state.dateLabel;
         else if (Toolbar.intervals && Toolbar.intervals.defaultRange)
             Toolbar.dateLabel = Toolbar.intervals.defaultRange;
         else
             Toolbar.dateLabel = 'Last 30 Days';
 
-        if (options.dateInterval)
-            Toolbar.dateInterval = options.dateInterval;
+        if (state.dateInterval)
+            Toolbar.dateInterval = state.dateInterval;
         else if (Toolbar.intervals && Toolbar.intervals.defaultOption)
             Toolbar.dateInterval = Toolbar.intervals.defaultOption;
         else
@@ -1856,7 +1866,8 @@ var Toolbar = {
     },
 
     initLog: function(report) {
-        var options = (report ? report.state : {}) || {};
+        var settings = (report ? report.settings : {}) || {};
+        var state = (report ? report.state : {}) || {};
 
         Toolbar.dateInterval = 'Minute';
 
@@ -1893,14 +1904,13 @@ var Toolbar = {
 
         $('#reportRange').on('apply.daterangepicker', function(ev, picker) {
             Toolbar.rangeChanged(picker.startDate, picker.endDate, picker.chosenLabel);
-            //runQuery();
         });
 
-        Toolbar.dateStart = options.dateStart;
-        Toolbar.dateEnd = options.dateEnd;
+        Toolbar.dateStart = state.dateStart;
+        Toolbar.dateEnd = state.dateEnd;
 
-        if (options.dateLabel)
-            Toolbar.dateLabel = options.dateLabel;
+        if (settings.dateLabel)
+            Toolbar.dateLabel = settings.dateLabel;
         else
             Toolbar.dateLabel = 'Today';
 
@@ -2090,8 +2100,8 @@ var Toolbar = {
 
     createBookmark: function() {
 
-        if (report && report.state) {
-            report.state.title = $('#bookmarkName').val();
+        if (report && report.settings) {
+            report.settings.title = $('#bookmarkName').val();
             pushState();
         }
 
