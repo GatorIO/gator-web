@@ -53,16 +53,16 @@ function setup(app, application, callback) {
                 });
                 return;
             }
-            options = definition.options || {};
-            options.id = id;
+            definition.initialState = definition.initialState || {};
+            definition.initialState.id = id;
         }
         else {
-            options = { settings: { renderView: 'report' } };
+            definition = { settings: { renderView: 'report' } };
         }
         if (req.query.options) {
             for (var key in qsOptions) {
-                if (qsOptions.hasOwnProperty(key) && !options.hasOwnProperty(key))
-                    options[key] = qsOptions[key];
+                if (qsOptions.hasOwnProperty(key) && !definition.initialState.hasOwnProperty(key))
+                    definition.initialState[key] = qsOptions[key];
             }
         }
         var project = api.currentProject(req);
@@ -87,7 +87,7 @@ function setup(app, application, callback) {
                 application: application,
                 dev: utils.config.dev(),
                 req: req,
-                options: options,
+                definition: definition,
                 segmentOptions: api.reporting.getSegmentOptions(req),
                 metricOptions: metricOptions,
                 elementOptions: elementOptions,

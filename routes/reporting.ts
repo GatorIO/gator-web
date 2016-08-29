@@ -98,10 +98,10 @@ export function setup(app: express.Application, application: IApplication, callb
                 });
                 return;
             }
-            options = definition.options || {};
-            options.id = id;
+            definition.initialState = definition.initialState || {};
+            definition.initialState.id = id;
         } else {
-            options = { settings: { renderView: 'report' } };      //  default definition
+            definition = { settings: { renderView: 'report' } };      //  default definition
         }
 
         //  override options from definition with query string params
@@ -109,8 +109,8 @@ export function setup(app: express.Application, application: IApplication, callb
 
             for (let key in qsOptions) {
 
-                if (qsOptions.hasOwnProperty(key) && !options.hasOwnProperty(key))
-                    options[key] = qsOptions[key];
+                if (qsOptions.hasOwnProperty(key) && !definition.initialState.hasOwnProperty(key))
+                    definition.initialState[key] = qsOptions[key];
             }
         }
 
@@ -147,7 +147,7 @@ export function setup(app: express.Application, application: IApplication, callb
                 application: application,
                 dev: utils.config.dev(),
                 req: req,
-                options: options,
+                definition: definition,
                 segmentOptions: api.reporting.getSegmentOptions(req),
                 metricOptions: metricOptions,
                 elementOptions: elementOptions,

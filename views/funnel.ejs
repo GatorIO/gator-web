@@ -92,8 +92,8 @@
 
     var suppressUpdates = false, title;
     var report = new Report();
-    report.settings = <%- JSON.stringify(options.settings) %>;       //  set static setting from report definition
-    report.state = <%- JSON.stringify(options.initialState) %>;      //  set initial state from options
+    report.settings = <%- JSON.stringify(definition.settings) %>;       //  set static setting from report definition
+    report.state = <%- JSON.stringify(definition.initialState) %>;      //  set initial state from options
     report.state.activeStep = 0;
     report.state.eventSteps = [];
 

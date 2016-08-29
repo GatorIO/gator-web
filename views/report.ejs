@@ -93,8 +93,8 @@
     moment.tz.setDefault('<%- req.session.user.timezone ? req.session.user.timezone.momentName : 'UTC' %>');
 
     var report = new Report();
-    report.settings = <%- JSON.stringify(options.settings) %>;       //  set static setting from report definition
-    report.state = <%- JSON.stringify(options.initialState) %>;      //  set initial state from options
+    report.settings = <%- JSON.stringify(definition.settings) %>;       //  set static setting from report definition
+    report.state = <%- JSON.stringify(definition.initialState) %>;      //  set initial state from options
 
     var segmentsSelectize, customCount = 0, customSegments, suppressUpdates = false, title;
 
