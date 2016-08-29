@@ -1,4 +1,4 @@
-<% var settings = definition && definition.settings ? definition.settings || {} %>
+<% var reportSettings = definition && definition.settings ? definition.settings : {} %>
 
 <form class="form-inline pull-right expandAt1200" style="margin-top:15px;" role="form">
 
@@ -23,31 +23,31 @@
         <span id="toolbar-interval" class="input-group-btn hideAt480" style="width:1%">
             <button id="reportInterval" type="button" data-toggle="dropdown" class="btn btn-white dropdown-toggle">
                 <span id="reportIntervalTitle">
-                    <% if (settings.intervals && settings.intervals.defaultOption) { %>
-                        <%- settings.intervals.defaultOption %>
+                    <% if (reportSettings.intervals && reportSettings.intervals.defaultOption) { %>
+                        <%- reportSettings.intervals.defaultOption %>
                     <% } else { %>
                         Daily
                     <% } %>
                 </span>&nbsp;<span class="caret"></span>
             </button>
             <ul class="dropdown-menu pull-right">
-                <% if (settings.intervals && settings.intervals.options && settings.intervals.options.Minute) { %>
+                <% if (reportSettings.intervals && reportSettings.intervals.options && reportSettings.intervals.options.Minute) { %>
                     <li id="intervalMenuItemMinute"><a href="#" onclick="Toolbar.intervalChanged('Minute'); return false">Minute</a></li>
                 <% } %>
 
-                <% if (settingsintervals && settings.intervals.options && settings.intervals.options.Hourly) { %>
+                <% if (reportSettings.intervals && reportSettings.intervals.options && reportSettings.intervals.options.Hourly) { %>
                     <li id="intervalMenuItemHour"><a href="#" onclick="Toolbar.intervalChanged('Hourly'); return false">Hourly</a></li>
                 <% } %>
 
-                <% if (settings.intervals && settings.intervals.options && settings.intervals.options.Daily) { %>
+                <% if (reportSettings.intervals && reportSettings.intervals.options && reportSettings.intervals.options.Daily) { %>
                     <li id="intervalMenuItemDay"><a href="#" onclick="Toolbar.intervalChanged('Daily'); return false">Daily</a></li>
                 <% } %>
 
-                <% if (settings.intervals && settings.intervals.options && settings.intervals.options.Weekly) { %>
+                <% if (reportSettings.intervals && reportSettings.intervals.options && reportSettings.intervals.options.Weekly) { %>
                     <li id="intervalMenuItemWeek"><a href="#" onclick="Toolbar.intervalChanged('Weekly'); return false">Weekly</a></li>
                 <% } %>
 
-                <% if (settings.intervals && settings.intervals.options && settings.intervals.options.Monthly) { %>
+                <% if (reportSettings.intervals && reportSettings.intervals.options && reportSettings.intervals.options.Monthly) { %>
                     <li id="intervalMenuItemMonth"><a href="#" onclick="Toolbar.intervalChanged('Monthly'); return false">Monthly</a></li>
                 <% } %>
             </ul>
@@ -69,31 +69,32 @@
             </button>
         </span>
 
-        <span id="toolbar-bookmark" title="Bookmark this report" class="input-group-btn hideAt1024" style="width:1%">
-            <button type="button" class="btn btn-white" data-toggle="modal" data-target="#bookmarkCreateModal"><i class="fa fa-bookmark"></i></button>
-            <div class="modal inmodal fade" id="bookmarkCreateModal" tabindex="-1" role="dialog" aria-hidden="true">
-                <div class="modal-dialog modal-md">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <i class="fa fa-bookmark modal-icon"></i>
-                            <h2 class="modal-title">Bookmark Report</h2>
-                            <small class="font-bold">Save this report to the 'Bookmarks' menu.</small>
-                        </div>
-                        <div class="modal-body">
-                            <div class="form-group">
-                                <label>Bookmark Name:</label>
-                                <input type="text" id="bookmarkName" class="form-control"/>
+        <% if (reportSettings.bookmarks != false) { %>
+            <span id="toolbar-bookmark" title="Bookmark this report" class="input-group-btn hideAt1024" style="width:1%">
+                <button type="button" class="btn btn-white" data-toggle="modal" data-target="#bookmarkCreateModal"><i class="fa fa-bookmark"></i></button>
+                <div class="modal inmodal fade" id="bookmarkCreateModal" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-md">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <i class="fa fa-bookmark modal-icon"></i>
+                                <h2 class="modal-title">Bookmark Report</h2>
+                                <small class="font-bold">Save this report to the 'Bookmarks' menu.</small>
                             </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                            <button type="button" class="btn btn-primary" onclick="Toolbar.createBookmark(); return false">Submit</button>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label>Bookmark Name:</label>
+                                    <input type="text" id="bookmarkName" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-primary" onclick="Toolbar.createBookmark(); return false">Submit</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </span>
-
+            </span>
+        <% } %>
         <!--
         <span class="input-group-btn hideAt768" style="width:1%">
             <button type="button" class="btn btn-white" data-toggle="modal" data-target="#scheduledReportCreateModal"><i class="fa fa-envelope"></i></button>
@@ -131,11 +132,13 @@
                         <i class="fa fa-th-large"></i>&nbsp; Add to Dashboard
                     </a>
                 </li>
-                <li>
-                    <a href="#" data-toggle="modal" data-target="#bookmarkCreateModal" onclick="return false;">
-                        <i class="fa fa-bookmark"></i>&nbsp; Bookmark
-                    </a>
-                </li>
+                <% if (reportSettings.bookmarks != false) { %>
+                    <li>
+                        <a href="#" data-toggle="modal" data-target="#bookmarkCreateModal" onclick="return false;">
+                            <i class="fa fa-bookmark"></i>&nbsp; Bookmark
+                        </a>
+                    </li>
+                <% } %>
                 <li>
                     <a href="#" data-toggle="modal" data-target="#columnsModal" onclick="return false;">
                         <i class="fa fa-columns"></i>&nbsp; Customize Columns
@@ -208,7 +211,7 @@
                 <br><label>Pick which metrics to show in the table:</label>&nbsp; (drag and drop to change order)
                 <input class="form-control" id="metrics" data-placeholder="Choose metrics to display..." type="text" />
 
-                <div<%- (settings.segmentation ? '' : ' class="hidden"') %>>
+                <div<%- (reportSettings.segmentation ? '' : ' class="hidden"') %>>
                     <br><label>Pick which segments to display:</label>
                     <div class="input-group">
                         <input class="form-control" id="segments" data-placeholder="Choose segments..." type="text" />

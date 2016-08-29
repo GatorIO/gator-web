@@ -17,7 +17,9 @@ function Report() {
         intervals: null,
         ranges: null,
         limit: null,
-        map: null
+        map: null,
+        segmentation: null,
+        view: null
     };
 
     //  The report configuration options and the UI state (selected series, sort order, etc.).  This is what should be persisted on a push state call.
@@ -217,6 +219,29 @@ function Report() {
     }
 }
 
+Report.prototype.timeframe = function(label, dateStart, dateEnd) {
+    switch (label) {
+        case 'Today':
+            return 'today';
+        case 'Yesterday':
+            return 'yesterday';
+        case 'Last 24 Hours':
+            return 'last24Hours';
+        case 'Last 7 Days':
+            return 'last7Days';
+        case 'Last 30 Days':
+            return 'last30Days';
+        case 'This Month':
+            return 'thisMonth';
+        case 'Last Month':
+            return 'lastMonth';
+        case 'Last 60 Minutes':
+            return 'last60Minutes';
+        default:
+            return [ dateStart, dateEnd ];
+    }
+};
+
 Report.prototype.intervalAttribute = function(interval) {
 
     if (this.settings.intervals && this.settings.intervals.options) {
@@ -252,7 +277,7 @@ Report.prototype.getBaseQuery = function() {
         view: state.view,
         projectId: this.pageOptions.projectId,
         attributes: state.attributes,
-        timeframe: Toolbar.timeframe(state.dateLabel, state.dateStart, state.dateEnd)
+        timeframe: this.timeframe(state.dateLabel, state.dateStart, state.dateEnd)
     };
 
     if (state.eventSteps)
@@ -2253,29 +2278,6 @@ var Toolbar = {
             var format = Toolbar.momentFormat(Toolbar.dateInterval);
             Toolbar.dateStart = moment(Toolbar.dateStart).format(format);
             Toolbar.dateEnd = moment(Toolbar.dateEnd).format(format);
-        }
-    },
-
-    timeframe: function(label, dateStart, dateEnd) {
-        switch (label) {
-            case 'Today':
-                return 'today';
-            case 'Yesterday':
-                return 'yesterday';
-            case 'Last 24 Hours':
-                return 'last24Hours';
-            case 'Last 7 Days':
-                return 'last7Days';
-            case 'Last 30 Days':
-                return 'last30Days';
-            case 'This Month':
-                return 'thisMonth';
-            case 'Last Month':
-                return 'lastMonth';
-            case 'Last 60 Minutes':
-                return 'last60Minutes';
-            default:
-                return [ Toolbar.dateStart, Toolbar.dateEnd ];
         }
     }
 };

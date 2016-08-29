@@ -75,7 +75,7 @@ export function setup(app: express.Application, application: IApplication, callb
 
         */
 
-        var definition, qsOptions, options: any = {}, metricOptions, elementOptions, filterOptions, attribOptions, id;
+        var definition, qsOptions, metricOptions, elementOptions, filterOptions, attribOptions, id;
 
         qsOptions = req.query.options ? JSON.parse(req.query.options) : {};
         id = qsOptions.id || req.query.id;        //  there should not be two ids, but if there is, use the one in options
@@ -109,7 +109,7 @@ export function setup(app: express.Application, application: IApplication, callb
 
             for (let key in qsOptions) {
 
-                if (qsOptions.hasOwnProperty(key) && !definition.initialState.hasOwnProperty(key))
+                if (qsOptions.hasOwnProperty(key))
                     definition.initialState[key] = qsOptions[key];
             }
         }
@@ -127,12 +127,12 @@ export function setup(app: express.Application, application: IApplication, callb
 
         var customAttribs = project.data.attributes;
 
-        var isLog = options.settings.renderView == 'log';
+        var isLog = definition.settings.renderView == 'log';
 
-        metricOptions = api.reporting.getAttributeOptions(options.view, api.reporting.AttributeTypes.metrics, customAttribs, isLog);
-        elementOptions = api.reporting.getAttributeOptions(options.view, api.reporting.AttributeTypes.elements, customAttribs, isLog);
-        filterOptions = api.reporting.getFilterOptions(options.view, customAttribs, isLog);
-        attribOptions = api.reporting.getAttributeOptions(options.view, api.reporting.AttributeTypes.all, customAttribs, isLog);
+        metricOptions = api.reporting.getAttributeOptions(definition.settings.view, api.reporting.AttributeTypes.metrics, customAttribs, isLog);
+        elementOptions = api.reporting.getAttributeOptions(definition.settings.view, api.reporting.AttributeTypes.elements, customAttribs, isLog);
+        filterOptions = api.reporting.getFilterOptions(definition.settings.view, customAttribs, isLog);
+        attribOptions = api.reporting.getAttributeOptions(definition.settings.view, api.reporting.AttributeTypes.all, customAttribs, isLog);
 
         utils.noCache(res);
 
@@ -142,7 +142,7 @@ export function setup(app: express.Application, application: IApplication, callb
             if (err)
                 req.flash('error', err.message);
 
-            res.render(options.settings.renderView || 'report', {
+            res.render(definition.settings.renderView || 'report', {
                 settings: utils.config.settings(),
                 application: application,
                 dev: utils.config.dev(),

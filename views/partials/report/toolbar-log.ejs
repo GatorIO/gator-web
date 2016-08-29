@@ -1,4 +1,4 @@
-<% var settings = definition && definition.settings ? definition.settings || {} %>
+<% var reportSettings = definition && definition.settings ? definition.settings : {} %>
 
 <form class="form-inline pull-right expandAt1200" style="margin-top:15px" role="form">
 
@@ -36,31 +36,32 @@
             </button>
         </span>
 
-        <span id="toolbar-bookmark" title="Bookmark this report" class="input-group-btn hideAt1024" style="width:1%">
-            <button type="button" class="btn btn-white" data-toggle="modal" data-target="#bookmarkCreateModal"><i class="fa fa-bookmark"></i></button>
-            <div class="modal inmodal fade" id="bookmarkCreateModal" tabindex="-1" role="dialog" aria-hidden="true">
-                <div class="modal-dialog modal-md">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <i class="fa fa-bookmark modal-icon"></i>
-                            <h2 class="modal-title">Bookmark Report</h2>
-                            <small class="font-bold">Save this report to the 'Bookmarks' menu.</small>
-                        </div>
-                        <div class="modal-body">
-                            <div class="form-group">
-                                <label>Bookmark Name:</label>
-                                <input type="text" id="bookmarkName" class="form-control" />
+        <% if (reportSettings.bookmarks != false) { %>
+            <span id="toolbar-bookmark" title="Bookmark this report" class="input-group-btn hideAt1024" style="width:1%">
+                <button type="button" class="btn btn-white" data-toggle="modal" data-target="#bookmarkCreateModal"><i class="fa fa-bookmark"></i></button>
+                <div class="modal inmodal fade" id="bookmarkCreateModal" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-md">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <i class="fa fa-bookmark modal-icon"></i>
+                                <h2 class="modal-title">Bookmark Report</h2>
+                                <small class="font-bold">Save this report to the 'Bookmarks' menu.</small>
                             </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                            <button type="button" class="btn btn-primary" onclick="Toolbar.createBookmark(); return false">Submit</button>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label>Bookmark Name:</label>
+                                    <input type="text" id="bookmarkName" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-primary" onclick="Toolbar.createBookmark(); return false">Submit</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </span>
-
+            </span>
+        <% } %>
         <span id="toolbar-export" title="Export this report" class="input-group-btn hideAt1024" style="width:1%">
             <button type="button" data-toggle="dropdown" class="btn btn-white dropdown-toggle"><i class="glyphicon glyphicon-share"></i></button>
             <ul class="dropdown-menu pull-right">
@@ -89,11 +90,13 @@
                         <i class="fa fa-th-large"></i>&nbsp; Add to Dashboard
                     </a>
                 </li>
-                <li>
-                    <a href="#" data-toggle="modal" data-target="#bookmarkCreateModal" onclick="return false;">
-                        <i class="fa fa-bookmark"></i>&nbsp; Bookmark
-                    </a>
-                </li>
+                <% if (reportSettings.bookmarks != false) { %>
+                    <li>
+                        <a href="#" data-toggle="modal" data-target="#bookmarkCreateModal" onclick="return false;">
+                            <i class="fa fa-bookmark"></i>&nbsp; Bookmark
+                        </a>
+                    </li>
+                <% } %>
                 <li>
                     <a href="#" data-toggle="modal" data-target="#columnsModal" onclick="return false;">
                         <i class="fa fa-columns"></i>&nbsp; Customize Columns
@@ -136,7 +139,7 @@
                     <br><label>Pick a title:</label>
                     <br><input id="pod-title" type="text" class="form-control" />
 
-                    <% if (settings.map) { %>
+                    <% if (reportSettings.map) { %>
                         <br><label>Select what to display:</label><br>
                         <input type="radio" name="pod-type" value="map" checked> Map &nbsp;&nbsp; <input type="radio" name="pod-type" value="table"> Table
                     <% } else { %>

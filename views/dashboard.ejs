@@ -102,10 +102,10 @@
 
             reports[p].pageOptions = {
                 style: 'dashboard',
-                projectId: $('#projects').val(),
-                timezone: '<%- req.session.user.timezoneId %>'
+                projectId: $('#projects').val()
             }
 
+            reports[p].settings = pod.settings;
             reports[p].state = pod.state;
 
             switch (pod.display) {

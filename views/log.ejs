@@ -40,7 +40,7 @@
                 <div class="col-md-12 col-lg-12">
                     <br><div id="filter-builder"></div>
                 </div>
-                <% if (options.map) { %>
+                <% if (definition.settings.map) { %>
                     <div class="col-md-offset-2 col-md-6 col-md-offset-2">
                         <!-- map goes here -->
                         <div id="world-map" class="hidden" style="width:100%; height: 270px; margin-top: 15px"></div>
@@ -123,7 +123,7 @@
                 onStateChange: pushState
             }
 
-            if (report.state.map)
+            if (report.settings.map)
                 report.pageOptions.mapContainer = 'world-map';
 
             setState();
@@ -160,7 +160,7 @@
 
     //  set the report state from the page elements
     function setState() {
-        if (report.state.map) {
+        if (report.settings.map) {
             $('#world-map').removeClass('hidden');
         }
 

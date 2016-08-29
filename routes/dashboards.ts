@@ -128,13 +128,35 @@ export function setup(app: express.Application, application: IApplication, callb
     app.get('/dashboard', application.enforceSecure, api.authenticate, statusCheck, function (req: express.Request, res: express.Response) {
         utils.noCache(res);
 
-        var name = req.query.name, dashboard = {};
+        var name = req.query.name, dashboard: any = {};
 
         //  find the dashboard to display
         var dashboards = api.reporting.currentDashboards(req);
 
         if (dashboards[name]) {
             dashboard = dashboards[name];
+
+            //  add static report settings to the pod config
+            for (let i = 0; i < dashboard.pods.length; i++) {
+
+                let pod = JSON.parse(dashboard.pods[i]);
+
+                if (pod.state && pod.state.id) {
+                    let report: any = application.reports.definitions[application.reports.Types[pod.state.id]];
+                    pod.settings = report ? report.settings : {};
+
+                    //  fill in initial state from definition where not in pod definition
+                    if (report.initialState) {
+
+                        for (let key in report.initialState) {
+
+                            if (report.initialState.hasOwnProperty(key) && !pod.state.hasOwnProperty(key))
+                                pod.state[key] = report.initialState[key];
+                        }
+                    }
+                }
+                dashboard.pods[i] = JSON.stringify(pod);
+            }
         } else {
             req.flash('error', 'No such dashboard');
         }

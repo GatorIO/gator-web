@@ -83,6 +83,20 @@ function setup(app, application, callback) {
         var dashboards = api.reporting.currentDashboards(req);
         if (dashboards[name]) {
             dashboard = dashboards[name];
+            for (var i = 0; i < dashboard.pods.length; i++) {
+                var pod = JSON.parse(dashboard.pods[i]);
+                if (pod.state && pod.state.id) {
+                    var report = application.reports.definitions[application.reports.Types[pod.state.id]];
+                    pod.settings = report ? report.settings : {};
+                    if (report.initialState) {
+                        for (var key in report.initialState) {
+                            if (report.initialState.hasOwnProperty(key) && !pod.state.hasOwnProperty(key))
+                                pod.state[key] = report.initialState[key];
+                        }
+                    }
+                }
+                dashboard.pods[i] = JSON.stringify(pod);
+            }
         }
         else {
             req.flash('error', 'No such dashboard');
