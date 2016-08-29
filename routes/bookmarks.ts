@@ -62,7 +62,7 @@ export function setup(app: express.Application, application: IApplication, callb
                     bookmarks: bookmarks
                 };
 
-                api.REST.client.put('/v1/analytics/bookmarks', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
+                api.REST.client.put('/v1/projects/bookmarks', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
                     api.REST.sendConditional(res, err);
                 });
             });
@@ -93,7 +93,7 @@ export function setup(app: express.Application, application: IApplication, callb
                 bookmarks: bookmarks
             };
 
-            api.REST.client.put('/v1/analytics/bookmarks', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
+            api.REST.client.put('/v1/projects/bookmarks', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
                 api.REST.sendConditional(res, err);
             });
         });

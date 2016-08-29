@@ -8,10 +8,10 @@
 
     <style>
         #pods { list-style-type: none; margin: 0; padding: 0; width: 100%; }
-        #pods li { margin: 3px 3px 3px 0; float: left; width: 49.5%; height: 323px; overflow: hidden; background-color: white; font-weight: normal }
+        .dashboard-pod { margin: 3px 3px 3px 0; float: left; width: 49.5%; height: 323px; overflow: hidden; background-color: white; font-weight: normal }
 
-        @media (max-width: 1024px) {
-            #pods li {
+        @media (max-width: 1280px) {
+            .dashboard-pod {
                 width: 100%;
             }
         }
@@ -135,7 +135,7 @@
             }
 
             $('#pods').append(
-                '<li id="pod-' + p + '" data-order="' + p + '" class="ui-state-default">' +
+                '<li id="pod-' + p + '" data-order="' + p + '" class="ui-state-default dashboard-pod" ' + (pod.display == 'table' ? 'style="overflow-y:scroll"' : '') + '>' +
                 '<div class="ibox float-e-margins">' +
                 '    <div class="ibox-title">' +
                 '        <h5>' + pod.title + '</h5>' +

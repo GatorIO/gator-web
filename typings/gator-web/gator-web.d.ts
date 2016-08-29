@@ -90,15 +90,15 @@ declare module 'gator-web' {
             export function setup(app, application, callback);
         }
 
-        module paymentsRoutes {
+        module paymentRoutes {
             export function setup(app, application, callback);
         }
 
-        module bookmarksRoutes {
+        module bookmarkRoutes {
             export function setup(app, application, callback);
         }
 
-        module dashboardsRoutes {
+        module dashboardRoutes {
             export function setup(app, application, callback);
         }
 

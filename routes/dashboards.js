@@ -25,7 +25,7 @@ function setup(app, application, callback) {
             projectId: req['session'].currentProjectId,
             dashboards: req.body.dashboards
         };
-        api.REST.client.put('/v1/analytics/dashboards', params, function (err, apiRequest, apiResponse, result) {
+        api.REST.client.put('/v1/projects/dashboards', params, function (err, apiRequest, apiResponse, result) {
             api.REST.sendConditional(res, err);
         });
     });
@@ -43,7 +43,7 @@ function setup(app, application, callback) {
             projectId: req['session'].currentProjectId,
             dashboards: dashboards
         };
-        api.REST.client.put('/v1/analytics/dashboards', params, function (err, apiRequest, apiResponse, result) {
+        api.REST.client.put('/v1/projects/dashboards', params, function (err, apiRequest, apiResponse, result) {
             api.REST.sendConditional(res, err);
         });
     });
@@ -60,7 +60,7 @@ function setup(app, application, callback) {
             projectId: req['session'].currentProjectId,
             dashboards: dashboards
         };
-        api.REST.client.put('/v1/analytics/dashboards', params, function (err, apiRequest, apiResponse, result) {
+        api.REST.client.put('/v1/projects/dashboards', params, function (err, apiRequest, apiResponse, result) {
             api.REST.sendConditional(res, err);
         });
     });
@@ -73,7 +73,7 @@ function setup(app, application, callback) {
             projectId: req['session'].currentProjectId,
             dashboards: dashboards
         };
-        api.REST.client.put('/v1/analytics/dashboards', params, function (err, apiRequest, apiResponse, result) {
+        api.REST.client.put('/v1/projects/dashboards', params, function (err, apiRequest, apiResponse, result) {
             api.REST.sendConditional(res, err);
         });
     });

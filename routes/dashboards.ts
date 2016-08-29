@@ -49,7 +49,7 @@ export function setup(app: express.Application, application: IApplication, callb
             dashboards: req.body.dashboards
         };
 
-        api.REST.client.put('/v1/analytics/dashboards', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
+        api.REST.client.put('/v1/projects/dashboards', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
             api.REST.sendConditional(res, err);
         });
     });
@@ -74,7 +74,7 @@ export function setup(app: express.Application, application: IApplication, callb
             dashboards: dashboards
         };
 
-        api.REST.client.put('/v1/analytics/dashboards', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
+        api.REST.client.put('/v1/projects/dashboards', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
             api.REST.sendConditional(res, err);
         });
     });
@@ -100,7 +100,7 @@ export function setup(app: express.Application, application: IApplication, callb
             dashboards: dashboards
         };
 
-        api.REST.client.put('/v1/analytics/dashboards', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
+        api.REST.client.put('/v1/projects/dashboards', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
             api.REST.sendConditional(res, err);
         });
     });
@@ -119,7 +119,7 @@ export function setup(app: express.Application, application: IApplication, callb
             dashboards: dashboards
         };
 
-        api.REST.client.put('/v1/analytics/dashboards', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
+        api.REST.client.put('/v1/projects/dashboards', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
             api.REST.sendConditional(res, err);
         });
     });

@@ -20,11 +20,11 @@
             <div class="row white-bg">
                 <% include partials/master/message %>
 
-                <div class="col-md-4">
+                <div class="col-md-12 col-lg-7">
                     <h1 id="page-title"></h1>
                     <h2 class="visible-print">Project: <%- application.api.currentProject(req).name %></h2>
                 </div>
-                <div class="col-md-8">
+                <div class="col-md-12 col-lg-5">
                     <% include partials/report/toolbar-log %>
                 </div>
             </div>
@@ -92,20 +92,15 @@
 
     var suppressUpdates = false, title;
     var report = new Report();
+    report.state = <%- JSON.stringify(options) %>;      //  set initial state from options
     report.state.activeStep = 0;
     report.state.eventSteps = [];
 
-    var definition = <%- JSON.stringify(definition) %>;
-
-    definition.title = definition.title || 'Funnel';
-    definition.attributes = definition.attributes || 'users';
-    definition.group = definition.group || null;
-
-    $('#page-title').html(definition.title);
+    $('#page-title').html(report.state.title);
 
     var metricSelectize = $('#metrics').selectize({
         options: <%- JSON.stringify(metricOptions) %>,
-        items: Utils.replaceAll(definition.attributes, ' ', '').split(','),
+        items: Utils.replaceAll(report.state.attributes, ' ', '').split(','),
         plugins: ['drag_drop','remove_button'],
         delimiter: ',',
         closeAfterSelect: true,
@@ -120,7 +115,7 @@
 
     var elementSelectize = $('#elements').selectize({
         options: <%- JSON.stringify(elementOptions) %>,
-        items: definition.group ? Utils.replaceAll(definition.group, ' ', '').split(',') : [],
+        items: report.state.group ? Utils.replaceAll(report.state.group, ' ', '').split(',') : [],
         plugins: ['drag_drop','remove_button'],
         delimiter: ',',
         closeAfterSelect: true,
@@ -215,16 +210,12 @@
     };
 
     function setState() {
-        report.state.view = definition.view || 'users';
+        report.state.view = 'users';
         report.state.title =  $('#page-title').html();
-        report.state.renderView = definition.renderView || 'funnel';
+        report.state.renderView = 'funnel';
         report.state.dateLabel = Toolbar.dateLabel;
         report.state.dateInterval = $("#reportIntervalTitle").html();
         report.state.attributes = $("#metrics").val();
-
-        //  see if already set and if not, set it to the definition
-        report.state.hiddenSeries = report.state.hiddenSeries || definition.hiddenSeries;
-        report.state.tableOrder = report.state.tableOrder || definition.tableOrder;
 
         if ($("#elements").val())
             report.state.group = $("#elements").val();
@@ -260,7 +251,7 @@
         if (report.state.title)
             $('#page-title').html(report.state.title);
 
-        Toolbar.setDateRange(state.dateLabel, state.dateStart, state.dateEnd, state.dateInterval);
+        Toolbar.setValues(state.dateLabel, state.dateStart, state.dateEnd, state.dateInterval);
 
         metricSelectize[0].selectize.clear();
         state.attributes.split(',').forEach(function(item) {metricSelectize[0].selectize.addItem(item.trim());});
@@ -461,9 +452,6 @@
             suppressUpdates = true;
 
             Toolbar.init(report);
-
-            if (definition.dateLabel || definition.dateInterval)
-                Toolbar.setDateRange(definition.dateLabel, null, null, definition.dateInterval);
 
             Filter.init('filter-builder', '<%- settings.apiUrl %>', <%- req.session.currentProjectId %>, null, filterOptions);
 

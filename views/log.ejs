@@ -37,18 +37,15 @@
                 </div>
             </div>
             <div class="row white-bg hidden-print">
+                <div class="col-md-12 col-lg-12">
+                    <br><div id="filter-builder"></div>
+                </div>
                 <% if (options.map) { %>
-                    <div class="col-md-12 col-lg-6">
-                        <br><div id="filter-builder"></div>
-                    </div>
-                    <div class="col-md-12 col-lg-6">
+                    <div class="col-md-offset-2 col-md-6 col-md-offset-2">
                         <!-- map goes here -->
                         <div id="world-map" class="hidden" style="width:100%; height: 270px; margin-top: 15px"></div>
                     </div>
                 <% } else { %>
-                    <div class="col-md-12">
-                        <br><div id="filter-builder"></div>
-                    </div>
                     <div class="hidden">
                         <div id="world-map" class="hidden" style="width:100%; height: 270px; margin-top: 15px"></div>
                     </div>

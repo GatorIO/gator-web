@@ -208,6 +208,21 @@ function Report(pageOptions) {
     }
 }
 
+Report.prototype.intervalAttribute = function(interval) {
+
+    if (this.state.intervals && this.state.intervals.options) {
+        var options = this.state.intervals.options;
+
+        if (options[interval])
+            return options[interval];
+        else if (this.state.intervals.defaultOption && options[this.state.intervals.defaultOption])
+            return options[this.state.intervals.defaultOption];
+    }
+
+    if (this.state.intervals && this.state.intervals.defaultAttribute)
+        return this.state.intervals.defaultAttribute;
+};
+
 Report.prototype.columnEnum = function(data) {
     var val = {};
 
@@ -237,7 +252,7 @@ Report.prototype.getBaseQuery = function() {
     if (state.sort)
         query['sort'] = state.sort;
     else
-        query['sort'] = Toolbar.intervalAttribute(state.dateInterval);     //  default to sorting by time ranges if not grouping by element
+        query['sort'] = this.intervalAttribute(state.dateInterval);     //  default to sorting by time ranges if not grouping by element
 
     if (state.filter) {
         query['filter'] = state.filter;
@@ -248,7 +263,7 @@ Report.prototype.getBaseQuery = function() {
     }
 
     if (!state.isLog)
-        query['group'] = Toolbar.intervalAttribute(state.dateInterval);
+        query['group'] = this.intervalAttribute(state.dateInterval);
 
     var segments = [], segmentsArray = state.segments.split(',');
 
@@ -285,7 +300,7 @@ Report.prototype.getTableQuery = function() {
         query.limit = 100;
 
         //  make sure coordinates are returned for map on log reports
-        if (this.pageOptions.mapContainer) {
+        if (this.state.map) {
 
             if (query.attributes.indexOf('longitude') == -1)
                 query.attributes += ',longitude';
@@ -311,7 +326,7 @@ Report.prototype.getTableQuery = function() {
 Report.prototype.getChartQuery = function() {
     var state = this.state, query = this.getBaseQuery(), pk, filter;
 
-    query.group = Toolbar.intervalAttribute(state.dateInterval) + ',' + state.group;
+    query.group = this.intervalAttribute(state.dateInterval) + ',' + state.group;
     query.sort = query.group;
 
     if (state.group) {
@@ -1279,7 +1294,7 @@ Report.prototype.renderTable = function () {
 
     if (this.pageOptions.style == 'dashboard') {
         dom = 't';
-        state.pageLength = 5;
+        state.pageLength = 100;
     }
 
     this.dataTablesObject = $('#' + tableId).dataTable({
@@ -1547,7 +1562,10 @@ Report.formatValue = function(value, dataType, format) {
             break;
         case Report.dataTypes.date:
         case "date":
-            return moment.utc(value).format(format || 'YYYY-MM-DD h:mm A')
+            if (format)
+                return moment.utc(value).format(format);
+            else
+                return value;
         default:
             return value || '(not set)';
     }
@@ -2249,21 +2267,6 @@ var Toolbar = {
             default:
                 return [ Toolbar.dateStart, Toolbar.dateEnd ];
         }
-    },
-
-    intervalAttribute: function(interval) {
-
-        if (Toolbar.intervals && Toolbar.intervals.options) {
-            var options = Toolbar.intervals.options;
-            
-            if (options[interval])
-                return options[interval];
-            else if (Toolbar.intervals.defaultOption && options[Toolbar.intervals.defaultOption])
-                return options[Toolbar.intervals.defaultOption];
-        }
-
-        if (Toolbar.intervals && Toolbar.intervals.defaultAttribute)
-            return Toolbar.intervals.defaultAttribute;
     }
 };
 

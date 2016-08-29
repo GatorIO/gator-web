@@ -133,8 +133,13 @@
                     </select>
                     <br><label>Pick a title:</label>
                     <br><input id="pod-title" type="text" class="form-control" />
-                    <br><label>Select what to display:</label>
-                    <br><input type="radio" name="pod-type" value="map" checked> Map &nbsp;&nbsp; <input type="radio" name="pod-type" value="table"> Table
+
+                    <% if (options.map) { %>
+                        <br><label>Select what to display:</label><br>
+                        <input type="radio" name="pod-type" value="map" checked> Map &nbsp;&nbsp; <input type="radio" name="pod-type" value="table"> Table
+                    <% } else { %>
+                        <input type="radio" name="pod-type" value="table" checked style="display:none">
+                    <% } %>
                 </div>
             </div>
             <div class="modal-footer">

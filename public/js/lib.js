@@ -273,7 +273,7 @@ var Utils = {
     },
 
     replaceAll: function (str, find, replace) {
-        return str.replace(new RegExp(find, 'g'), replace);
+        return str ? str.replace(new RegExp(find, 'g'), replace) : '';
     },
 
     dateDiff: function (date1, date2) {

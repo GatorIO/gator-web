@@ -35,7 +35,7 @@ function setup(app, application, callback) {
                     projectId: req['session'].currentProjectId,
                     bookmarks: bookmarks
                 };
-                api.REST.client.put('/v1/analytics/bookmarks', params, function (err, apiRequest, apiResponse, result) {
+                api.REST.client.put('/v1/projects/bookmarks', params, function (err, apiRequest, apiResponse, result) {
                     api.REST.sendConditional(res, err);
                 });
             });
@@ -57,7 +57,7 @@ function setup(app, application, callback) {
                 projectId: req['session'].currentProjectId,
                 bookmarks: bookmarks
             };
-            api.REST.client.put('/v1/analytics/bookmarks', params, function (err, apiRequest, apiResponse, result) {
+            api.REST.client.put('/v1/projects/bookmarks', params, function (err, apiRequest, apiResponse, result) {
                 api.REST.sendConditional(res, err);
             });
         });
