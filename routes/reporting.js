@@ -60,28 +60,11 @@ function setup(app, application, callback) {
             options = { renderView: 'report' };
         }
         if (req.query.options) {
-            options.filter = options.filter || qsOptions.filter;
-            options.sort = options.sort || qsOptions.sort;
-            options.title = options.title || qsOptions.title;
-            options.dateStart = options.dateStart || qsOptions.dateStart;
-            options.dateEnd = options.dateEnd || qsOptions.dateEnd;
-            options.dateLabel = options.dateLabel || qsOptions.dateLabel;
-            options.dateInterval = options.dateInterval || qsOptions.dateInterval;
-            options.attributes = options.attributes || qsOptions.attributes;
-            options.group = options.group || qsOptions.group;
-            options.sort = options.sort || qsOptions.sort;
-            options.segments = options.segments || qsOptions.segments;
-            options.filter = options.filter || qsOptions.filter;
-            options.customSegments = options.customSegments || qsOptions.customSegments;
-            options.customCount = options.customCount || qsOptions.customCount;
-            options.tableOrder = options.tableOrder || qsOptions.tableOrder;
-            options.plotKeys = options.plotKeys || qsOptions.plotKeys;
-            options.pageLength = options.pageLength || qsOptions.pageLength;
-            options.eventSteps = options.eventSteps || qsOptions.eventSteps;
-            options.activeStep = options.activeStep || qsOptions.activeStep;
-            options.hiddenSeries = options.hiddenSeries || qsOptions.hiddenSeries;
+            for (var key in qsOptions) {
+                if (qsOptions.hasOwnProperty(key) && !options.hasOwnProperty(key))
+                    options[key] = qsOptions[key];
+            }
         }
-
         var project = api.currentProject(req);
         if (!project)
             project = {};
