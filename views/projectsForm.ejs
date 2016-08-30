@@ -30,7 +30,7 @@
 
                 <div class="col-lg-12">
                     <h1 id="title"></h1>
-                    A project is an app and/or website you wish to track data on.  Multiple project types are available.  An account can have unlimited projects, each with any available type.
+                    An account can have unlimited projects, each with its own data.  Projects can be shared with other users.
                     <br /><br />
 
                     <% if (newUser) { %>
@@ -48,7 +48,7 @@
                             <br><br><input name="projectType" type="radio" value="0" checked>&nbsp; <label>DMP</label>
                         </div>
                         <div>
-                            <button onclick="submitForm(); return false" class="btn btn-sm btn-primary m-t-n-xs" type="submit"><strong id="projectSubmit">Create</strong></button>
+                            <button onclick="submitForm(); return false" class="btn btn-md btn-primary" type="submit"><span id="projectSubmit">Create</span></button>
                             <br><br><br><br><br><br><br>
                         </div>
                     </form>

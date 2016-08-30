@@ -9,7 +9,7 @@
                     <i class="fa fa-bars"></i>
                 </a>
 
-                <span class="projects">
+                <span class="projects<%- application.hideProjects ? ' hidden' : '' %>">
                     <%
                         var currentProjectId = req.session.currentProjectId;
                     %>

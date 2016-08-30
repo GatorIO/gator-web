@@ -1904,7 +1904,7 @@ var Toolbar = {
             minDate: '1999-01-01',
             maxDate: '2100-01-01',  // do not remove - dateRangePicker needs it
             ranges: {
-                'Today': Toolbar.range('Today')
+                'Last 24 Hours': Toolbar.range('Last 24 Hours')
             },
             opens: 'left',
             drops: 'down',
@@ -1937,7 +1937,7 @@ var Toolbar = {
         if (settings.dateLabel)
             Toolbar.dateLabel = settings.dateLabel;
         else
-            Toolbar.dateLabel = 'Today';
+            Toolbar.dateLabel = 'Last 24 Hours';
 
         Toolbar.calculateDates();
         Toolbar.draw();

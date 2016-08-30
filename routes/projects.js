@@ -71,7 +71,7 @@ function setup(app, application, callback) {
                     projectId: result.data.project.id,
                     dashboards: application.defaultDashboard(+req.body.type)
                 };
-                api.REST.client.put('/v1/analytics/dashboards', params, function (err, apiRequest, apiResponse, result) {
+                api.REST.client.put('/v1/projects/dashboards', params, function (err, apiRequest, apiResponse, result) {
                     api.REST.sendConditional(res, err);
                 });
             }

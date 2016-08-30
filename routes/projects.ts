@@ -115,7 +115,7 @@ export function setup(app: express.Application, application: IApplication, callb
                     dashboards: application.defaultDashboard(+req.body.type)
                 };
 
-                api.REST.client.put('/v1/analytics/dashboards', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
+                api.REST.client.put('/v1/projects/dashboards', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
                     api.REST.sendConditional(res, err);
                 });
             } else {

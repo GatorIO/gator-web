@@ -98,6 +98,10 @@ declare module 'gator-web' {
             export function setup(app, application, callback);
         }
 
+        module projectRoutes {
+            export function setup(app, application, callback);
+        }
+
         module dashboardRoutes {
             export function setup(app, application, callback);
         }
