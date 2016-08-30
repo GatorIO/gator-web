@@ -98,6 +98,10 @@ export function setup(app: express.Application, application: IApplication, callb
                 });
                 return;
             }
+            
+            //  got to clone it so it is not modified elsewhere
+            definition = utils.clone(definition);
+            
             definition.initialState = definition.initialState || {};
             definition.initialState.id = id;
         } else {

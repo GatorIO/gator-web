@@ -674,9 +674,9 @@ Report.prototype.renderTimeline = function () {
                     var label = [];
 
                     for (g = 0; g < groupBy.length; g++) {
-                        if (Toolbar.dateInterval == 'Hourly' && columnEnum[groupBy[g]].dataType == 'date')
+                        if (that.state.dateInterval == 'Hourly' && columnEnum[groupBy[g]].dataType == 'date')
                             label.push(Report.formatValue(data.rows[val][groupBy[g]], columnEnum[groupBy[g]].dataType, 'M-DD h A'));
-                        else if (Toolbar.dateInterval == 'Minute' && columnEnum[groupBy[g]].dataType == 'date')
+                        else if (that.state.dateInterval == 'Minute' && columnEnum[groupBy[g]].dataType == 'date')
                             label.push(Report.formatValue(data.rows[val][groupBy[g]], columnEnum[groupBy[g]].dataType, 'h:mm A'));
                         else
                             label.push(Report.formatValue(data.rows[val][groupBy[g]], columnEnum[groupBy[g]].dataType, columnEnum[groupBy[g]].format));
