@@ -1405,9 +1405,6 @@ Report.prototype.renderTable = function () {
             '<a href="#" onclick="report.nextClause = report.tableData.nextClause; runQuery(); return false">Show more...</a>' +
             '</div>');
     }
-
-    //  make search box more subdued
-    $('input[type=search]').css('border', '1px solid rgb(229, 230, 231)');
 };
 
 //  get the value of an attribute from a attribute name that may contain a dot (like event.firstName)
