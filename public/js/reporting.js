@@ -82,8 +82,8 @@ function Report() {
         if (!this.snapshot() && this.state.group)
             return this.colors[i % this.colors.length];
 
-        if (column && column.chartColors) {
-            return column.chartColors;
+        if (column && column.chartOptions && column.chartOptions.colors) {
+            return column.chartOptions.colors;
         } else {
             return this.colors[i % this.colors.length];
         }
@@ -123,7 +123,9 @@ function Report() {
                 this.state.segments = '-1000';   //  default to all data
 
             runningQueries++;
-            Page.showLoading();
+
+            if (this.pageOptions.showLoading != false)
+                Page.showLoading();
 
             //  If a hard-coded query is passed in, use it
             if (this.pageOptions.query)
@@ -146,7 +148,9 @@ function Report() {
                     if (!that.snapshot() && that.state.group && that.pageOptions.chartContainer) {
 
                         runningQueries++;
-                        Page.showLoading();
+
+                        if (that.pageOptions.showLoading != false)
+                            Page.showLoading();
 
                         $.post(that.pageOptions.apiUrl, that.getChartQuery(), function(result) {
                             runningQueries--;
@@ -604,20 +608,34 @@ Report.prototype.renderTimeline = function () {
                 var dataset = {
                     label: column.title,
                     yaxis: metric.yaxis,
-                    points: {show: true},
-                    lines: {show: true},
                     data: []
                 };
 
+                if (column.chartOptions && column.chartOptions.draw) {
+                    dataset.points = {show: column.chartOptions.draw.points};
+                    dataset.lines = {show: column.chartOptions.draw.lines};
+                    dataset.bars = {show: column.chartOptions.draw.bars};
+                } else {
+                    dataset.points = {show: true};
+                    dataset.lines = {show: true};
+                }
+                
                 for (i = 0; i < data.rows.length; i++) {
 
-                    switch (column.gapType) {
+                    switch (column.chartOptions ? column.chartOptions.gapType : null) {
                         case 'open':
                             //  if data is missing, create open gap
                             dataset.data.push([i, data.rows[i][column.name]]);
                             break;
+                        case 'openZeroes':
+                            //  if data is missing or zero, create open gap
+                            if (data.rows[i][column.name] == 0)
+                                dataset.data.push([i, null]);
+                            else
+                                dataset.data.push([i, data.rows[i][column.name]]);
+                            break;
                         case 'drawOver':
-                            //  if data is missing, do not plot at all
+                            //  timeline draws over gaps
                             if (data.rows[i].hasOwnProperty(column.name))
                                 dataset.data.push([i, data.rows[i][column.name]]);
                             break;
@@ -625,7 +643,6 @@ Report.prototype.renderTimeline = function () {
                             dataset.data.push([i, data.rows[i][column.name] || 0]);
                     }
                 }
-
                 datasets.push(dataset);
             }
         }
