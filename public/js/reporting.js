@@ -63,7 +63,6 @@ function Report() {
         { color: "#00aeef", highlight: "#00aeef" },
         { color: "rgba(248,172,89,0.8)", highlight: "rgba(248,172,89,1)" },
         { color: "rgba(172,148,198,0.8)", highlight: "rgba(172,148,198,1)" },
-        { color: "rgba(228,30,66,0.7)", highlight: "rgba(228,30,66,.9)" },
         { color: "#7ea7b5", highlight: "#475188" },
         { color: "rgba(26,179,128,0.8)", highlight: "rgba(26,179,148,1)" },
         { color: "rgba(41,41,41,0.7)", highlight: "rgba(41,41,41,.9)" },
@@ -619,7 +618,7 @@ Report.prototype.renderTimeline = function () {
                     dataset.points = {show: true};
                     dataset.lines = {show: true};
                 }
-                
+
                 for (i = 0; i < data.rows.length; i++) {
 
                     switch (column.chartOptions ? column.chartOptions.gapType : null) {
@@ -681,6 +680,10 @@ Report.prototype.renderTimeline = function () {
             tickColor: "#eee",
             borderWidth: 0,
             hoverable: true //IMPORTANT! this is needed for tooltip to work
+        },
+        bars: {
+            align: "center",
+            barWidth: 0.33
         },
         xaxis: {
             minTickSize: 1,
