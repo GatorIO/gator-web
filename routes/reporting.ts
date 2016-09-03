@@ -63,17 +63,17 @@ export function setup(app: express.Application, application: IApplication, callb
         }
 
         /*
-            The id query string param is the report id in application.reports:  /report?id=log
+         The id query string param is the report id in application.reports:  /report?id=log
 
-            The options query string param is the customized version of the definition.  Its values take priority
-            over the definition.
+         The options query string param is the customized version of the definition.  Its values take priority
+         over the definition.
 
-            To get the options:
-            -   Get report definition from the id param, if it exists
-            -   Override the report definition from the options.id param, if it exists
-            -   Override the report definition options from the options param
+         To get the options:
+         -   Get report definition from the id param, if it exists
+         -   Override the report definition from the options.id param, if it exists
+         -   Override the report definition options from the options param
 
-        */
+         */
 
         var definition, qsOptions, metricOptions, elementOptions, filterOptions, attribOptions, id;
 
@@ -98,14 +98,41 @@ export function setup(app: express.Application, application: IApplication, callb
                 });
                 return;
             }
-            
+
             //  got to clone it so it is not modified elsewhere
             definition = utils.clone(definition);
-            
+
             definition.initialState = definition.initialState || {};
             definition.initialState.id = id;
         } else {
-            definition = { settings: { renderView: 'report' } };      //  default definition
+            //  default definition
+            definition = {
+                settings: {
+                    view: 'sessions',
+                    renderView: 'report'
+                },
+                initialState: {}
+            };
+
+            //  fix up existing settings - this is to support prior formats
+            if (qsOptions.view)
+                definition.settings.view = qsOptions.view;
+
+            if (qsOptions.renderView)
+                definition.settings.renderView = qsOptions.renderView;
+
+            if (qsOptions.title)
+                definition.settings.title = qsOptions.title;
+
+            if (qsOptions.hasOwnProperty('isLog'))
+                definition.settings.isLog = qsOptions.isLog;
+
+            if (!definition.settings.intervals)
+                definition.settings.intervals = application.reports['intervals'];
+
+            if (!definition.settings.ranges)
+                definition.settings.ranges = application.reports['ranges'];
+
         }
 
         //  override options from definition with query string params

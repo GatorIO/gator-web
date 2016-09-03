@@ -279,7 +279,7 @@
 <script type="text/javascript" src="/js/yaml.min.js"></script>
 
 <script>
-    var latestSession = <%- JSON.stringify(latestSession) %>;
+    var latestSession = <%- JSON.stringify(latestSession) %> || {};
 
     $(document).ready(function() {
 

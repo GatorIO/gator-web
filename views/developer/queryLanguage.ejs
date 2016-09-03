@@ -14,36 +14,32 @@
 
         <% include partials/topPanel %>
 
-        <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="wrapper wrapper-content">
 
             <% include ../partials/master/message %>
-            <div class="ibox-content forum-container">
-                <div class="forum-item active">
-                    <div class="row white-bg" style="min-height:900px">
-                        <div class="col-lg-12">
+            <div class="row white-bg" style="min-height:900px">
+                <div class="col-lg-12">
 
-                            <h1>Query Definition Language</h1>
-                            To generate a report, POST JSON with the options below to <code><%- settings.apiUrl %>/analytics/query.</code>
-                            <br /><br />
-                            <a href="/developer/attributes">Click here for the list of standard attributes</a><br />
-                            <br><a href="/developer/tools/querytester">Click here for the query tester</a><br />
-                            <br>
-                            <h3>A minimal call:</h3>
-                            <pre>{ "projectId": "<i>Your project id</i>", "timeframe": "today", "attributes": "sessions", "group": "browser" }</pre>
-                            <br>
-                            <h3>How to use custom attributes on sessions, events and people:</h3>
-                            Use the notation <i>entity.attribute</i> in queries, like <code>event.color</code>.  For example:
-                            <br><br>
-                            <pre>{ "attributes": "event.color, session.multivariateKey" }</pre>
-                            <br><h2>Options:</h2>
-                            <div class="row white-bg">
-                                <div class="col-lg-12">
-                                    <div id="results">&nbsp;</div>
-                                </div>
-                            </div>
-                            <br><br>
+                    <h1>Query Definition Language</h1>
+                    To generate a report, POST JSON with the options below to <code><%- settings.apiUrl %>/analytics/query.</code>
+                    <br /><br />
+                    <a href="/developer/attributes">Click here for the list of standard attributes</a><br />
+                    <br><a href="/developer/tools/querytester">Click here for the query tester</a><br />
+                    <br>
+                    <h3>A minimal call:</h3>
+                    <pre>{ "projectId": "<i>Your project id</i>", "timeframe": "today", "attributes": "sessions", "group": "browser" }</pre>
+                    <br>
+                    <h3>How to use custom attributes on sessions, events and people:</h3>
+                    Use the notation <i>entity.attribute</i> in queries, like <code>event.color</code>.  For example:
+                    <br><br>
+                    <pre>{ "attributes": "event.color, session.multivariateKey" }</pre>
+                    <br><h2>Options:</h2>
+                    <div class="row white-bg">
+                        <div class="col-lg-12">
+                            <div id="results">&nbsp;</div>
                         </div>
                     </div>
+                    <br><br>
                 </div>
             </div>
         </div>

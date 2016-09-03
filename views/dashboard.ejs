@@ -109,7 +109,7 @@
                 projectId: $('#projects').val()
             }
 
-            reports[p].settings = pod.settings;
+            reports[p].settings = pod.settings || {};
             reports[p].state = pod.state;
 
             switch (pod.display) {
@@ -162,6 +162,8 @@
             );
 
             reports[p].run(function(err) {
+                if (err)
+                    console.error(err.message);
             });
         }
 

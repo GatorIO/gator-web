@@ -53,15 +53,30 @@ function setup(app, application, callback) {
                 });
                 return;
             }
-
-            //  got to clone it so it is not modified elsewhere
             definition = utils.clone(definition);
-
             definition.initialState = definition.initialState || {};
             definition.initialState.id = id;
         }
         else {
-            definition = { settings: { renderView: 'report' } };
+            definition = {
+                settings: {
+                    view: 'sessions',
+                    renderView: 'report'
+                },
+                initialState: {}
+            };
+            if (qsOptions.view)
+                definition.settings.view = qsOptions.view;
+            if (qsOptions.renderView)
+                definition.settings.renderView = qsOptions.renderView;
+            if (qsOptions.title)
+                definition.settings.title = qsOptions.title;
+            if (qsOptions.hasOwnProperty('isLog'))
+                definition.settings.isLog = qsOptions.isLog;
+            if (!definition.settings.intervals)
+                definition.settings.intervals = application.reports['intervals'];
+            if (!definition.settings.ranges)
+                definition.settings.ranges = application.reports['ranges'];
         }
         if (req.query.options) {
             for (var key in qsOptions) {

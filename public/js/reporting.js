@@ -277,7 +277,7 @@ Report.prototype.getBaseQuery = function() {
     var state = this.state;
 
     var query = {
-        view: state.view,
+        view: this.settings.view,
         projectId: this.pageOptions.projectId,
         attributes: state.attributes,
         timeframe: this.timeframe(state.dateLabel, state.dateStart, state.dateEnd)
@@ -337,7 +337,7 @@ Report.prototype.getTableQuery = function() {
         query.limit = 100;
 
         //  make sure coordinates are returned for map on log reports
-        if (this.state.map) {
+        if (this.pageOptions.mapContainer || this.state.map) {
 
             if (query.attributes.indexOf('longitude') == -1)
                 query.attributes += ',longitude';

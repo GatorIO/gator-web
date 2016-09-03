@@ -95,6 +95,19 @@ function setup(app, application, callback) {
                         }
                     }
                 }
+                pod.settings = pod.settings || {};
+                if (pod.state.view)
+                    pod.settings.view = pod.state.view;
+                if (pod.state.renderView)
+                    pod.settings.renderView = pod.state.renderView;
+                if (pod.state.title)
+                    pod.settings.title = pod.state.title;
+                if (pod.state.hasOwnProperty('isLog'))
+                    pod.settings.isLog = pod.state.isLog;
+                if (!pod.settings.intervals)
+                    pod.settings.intervals = application.reports['intervals'];
+                if (!pod.settings.ranges)
+                    pod.settings.ranges = application.reports['ranges'];
                 dashboard.pods[i] = JSON.stringify(pod);
             }
         }

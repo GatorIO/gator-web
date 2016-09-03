@@ -14,21 +14,16 @@
 
         <% include partials/topPanel %>
 
-        <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="wrapper wrapper-content">
 
             <% include ../partials/master/message %>
-            <div class="ibox-content forum-container">
-                <div class="forum-item active">
-                    <div class="row white-bg" style="min-height:900px">
-                        <div class="col-lg-12">
-                            <h1>Scoring Test</h1>
-                            <h3>Your Score</h3>
-                            <br><pre><%- JSON.stringify(result, null, 4)%></pre>
-                            <br><h3>Options</h3>
-                            <br><pre><%- JSON.stringify(options, null, 4)%></pre>
-                            <br /><br /><br /><br />
-                        </div>
-                    </div>
+            <div class="row white-bg" style="min-height:900px">
+                <div class="col-lg-12">
+                    <h1>Scoring Test</h1>
+                    <h3>Your Score</h3>
+                    <br><pre><%- JSON.stringify(result, null, 4)%></pre>
+                    <br><h3>Options</h3>
+                    <br><pre><%- JSON.stringify(options, null, 4)%></pre>
                 </div>
             </div>
         </div>
