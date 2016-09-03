@@ -557,7 +557,7 @@ Report.prototype.renderTimeline = function () {
         if (!data.columns[c].baseName)
             data.columns[c].baseName = data.columns[c].name;
 
-        //  Hide 'All Data' column if user removed if from segments field
+        //  Hide 'All Data' column if user removed it from segments field
         if (this.visibleColumn(data.columns[c])) {
             if (data.columns[c].isMetric)
                 chartMetrics.push({ name: data.columns[c].name, baseName: data.columns[c].baseName, max: data.columns[c].max, yaxis: null });
@@ -611,9 +611,14 @@ Report.prototype.renderTimeline = function () {
                 };
 
                 if (column.chartOptions && column.chartOptions.draw) {
-                    dataset.points = {show: column.chartOptions.draw.points};
-                    dataset.lines = {show: column.chartOptions.draw.lines};
-                    dataset.bars = {show: column.chartOptions.draw.bars};
+                    if (column.chartOptions.draw.points)
+                        dataset.points = column.chartOptions.draw.points;
+
+                    if (column.chartOptions.draw.lines)
+                        dataset.lines = column.chartOptions.draw.lines;
+
+                    if (column.chartOptions.draw.bars)
+                        dataset.bars = column.chartOptions.draw.bars;
                 } else {
                     dataset.points = {show: true};
                     dataset.lines = {show: true};
@@ -1689,6 +1694,10 @@ var Filter = {
         }
     },
 
+    reset: function(containerId) {
+        $('#' + containerId).queryBuilder('reset');
+    },
+    
     styleValue: function(rule, apiUrl, projectId) {
 
         switch (rule.filter.type) {

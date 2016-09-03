@@ -17,7 +17,7 @@ function setup(app, application, callback) {
             query: req.body
         };
         api.REST.client.post(api.reporting.API_ENDPOINT + 'query', params, function (err, apiRequest, apiResponse, result) {
-            api.REST.sendConditional(res, err, result.data);
+            api.REST.sendConditional(res, err, result ? result.data : null);
         });
     });
     app.get('/search', application.enforceSecure, api.authenticateNoRedirect, function (req, res) {

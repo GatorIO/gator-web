@@ -145,18 +145,29 @@
         }
     }
 
+    var firstPush = true;
+
     function pushState() {
         if (history.pushState) {
-            history.pushState( { options: report.state, tableData: report.tableData, chartData: report.chartData }, '',
-                    window.location.href.split('?')[0] + '?options=' + encodeURIComponent(JSON.stringify(report.state)))
+
+            if (firstPush)
+                history.replaceState( { reportState: report.state, reportSettings: report.settings, tableData: report.tableData, chartData: report.chartData }, '',
+                        window.location.href.split('?')[0] + '?options=' + encodeURIComponent(JSON.stringify(report.state)));
+            else
+                history.pushState( { reportState: report.state, reportSettings: report.settings, tableData: report.tableData, chartData: report.chartData }, '',
+                        window.location.href.split('?')[0] + '?options=' + encodeURIComponent(JSON.stringify(report.state)));
+
+            firstPush = false;
         }
     }
 
     window.onpopstate = function(settings) {
 
         if (settings && settings.state) {
-            restoreState(settings.state.options);
+            report.settings = settings.state.reportSettings;
+            restoreState(settings.state.reportState);
             report.tableData = settings.state.tableData;
+            report.chartData = settings.state.chartData;
             report.render();
         }
     };
@@ -191,19 +202,22 @@
 
         report.state = state;
 
+        if (state.filter && Object.keys(state.filter).length > 0)
+            Filter.setRules('filter-builder', state.filter);
+        else
+            Filter.reset('filter-builder');
+
         if (report.settings.title)
             $('#page-title').html(report.settings.title);
 
         if (state.map)
             $('#world-map').removeClass('hidden');
 
-            Toolbar.setValues(state.dateLabel, state.dateStart, state.dateEnd, state.dateInterval);
+        Toolbar.setValues(state.dateLabel, state.dateStart, state.dateEnd, state.dateInterval);
+        Toolbar.draw();
 
         attribSelectize[0].selectize.clear();
         state.attributes.split(',').forEach(function(item) {attribSelectize[0].selectize.addItem(item.trim());});
-
-        if (state.filter)
-            Filter.setRules('filter-builder', state.filter);
 
         suppressUpdates = false;
     }

@@ -36,7 +36,7 @@ export function setup(app: express.Application, application: IApplication, callb
         };
 
         api.REST.client.post(api.reporting.API_ENDPOINT + 'query', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
-            api.REST.sendConditional(res, err, result.data);
+            api.REST.sendConditional(res, err, result ? result.data : null);
         });
     });
 
