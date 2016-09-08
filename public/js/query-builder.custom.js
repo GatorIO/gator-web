@@ -40,7 +40,7 @@ QueryBuilder.regional['en'] = {
     "between": "between",
     "not_between": "not between",
     "begins_with": "begins with",
-    "not_begins_with": "doesn't begin with",
+    "not_begins_with": "not begins with",
     "contains": "contains",
     "not_contains": "doesn't contain",
     "ends_with": "ends with",
