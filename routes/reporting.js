@@ -24,12 +24,6 @@ function setup(app, application, callback) {
             accessToken: req['session'].accessToken,
             query: req.body
         };
-        if (req.body.hasOwnProperty('appId')) {
-            endpoint = api.applications.items[+req.body.appId].reporting.apiEndpoint;
-        }
-        else {
-            endpoint = api.applications.items[api.reporting.defaultAppId].reporting.apiEndpoint;
-        }
         api.REST.client.post(getEndpoint(req.body.appId) + 'query', params, function (err, apiRequest, apiResponse, result) {
             api.REST.sendConditional(res, err, result ? result.data : null);
         });

@@ -235,7 +235,7 @@
 
             Toolbar.initLog(report);
 
-            Filter.init('filter-builder', '<%- settings.apiUrl %>', <%- req.session.currentProjectId %>, null, filterOptions);
+            Filter.init('filter-builder', <%- definition.appId %>, <%- req.session.currentProjectId %>, null, filterOptions);
 
             //  'filter-builder' is part of the page and can cause updates
             Filter.configureEmbeddedFilter('filter-builder');

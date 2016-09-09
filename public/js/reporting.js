@@ -19,7 +19,8 @@ function Report() {
         limit: null,
         map: null,
         segmentation: null,
-        view: null
+        view: null,
+        appId: null     //  if not set, the app uses the default
     };
 
     //  The report configuration options and the UI state (selected series, sort order, etc.).  This is what should be persisted on a push state call.
@@ -277,6 +278,7 @@ Report.prototype.getBaseQuery = function() {
     var state = this.state;
 
     var query = {
+        appId: this.settings.appId,
         view: this.settings.view,
         projectId: this.pageOptions.projectId,
         attributes: state.attributes,
@@ -1632,7 +1634,7 @@ Report.formatValue = function(value, dataType, format) {
  */
 var Filter = {
 
-    init: function(containerId, apiUrl, projectId, dataObj, filterOptions) {
+    init: function(containerId, appId, projectId, dataObj, filterOptions) {
 
         if (filterOptions) {
 
@@ -1674,11 +1676,11 @@ var Filter = {
         }
 
         $('#' + containerId).on('afterUpdateRuleOperator.queryBuilder', function(e, rule, error, value) {
-            Filter.styleValue(rule, apiUrl, projectId);
+            Filter.styleValue(rule, appId, projectId);
         });
 
         $('#' + containerId).on('afterUpdateRuleFilter.queryBuilder', function(e, rule, error, value) {
-            Filter.styleValue(rule, apiUrl, projectId);
+            Filter.styleValue(rule, appId, projectId);
         });
     },
 
@@ -1698,7 +1700,7 @@ var Filter = {
         $('#' + containerId).queryBuilder('reset');
     },
     
-    styleValue: function(rule, apiUrl, projectId) {
+    styleValue: function(rule, appId, projectId) {
 
         switch (rule.filter.type) {
             case 'string':
@@ -1706,7 +1708,7 @@ var Filter = {
                 if (rule.filter.searchable && (rule.operator.type == 'equal' || rule.operator.type == 'not_equal')) {
 
                     var matcher = function(query, sync, async) {
-                        var url = '/search?attribute=' + rule.filter.id + '&projectId=' + projectId + '&value=' + encodeURIComponent(query);
+                        var url = '/search?attribute=' + rule.filter.id + '&projectId=' + projectId + '&value=' + encodeURIComponent(query) + '&appId=' + appId;
 
                         $.ajax(url, {
                                 success: function(data, status){

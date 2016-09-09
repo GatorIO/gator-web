@@ -45,13 +45,6 @@ export function setup(app: express.Application, application: IApplication, callb
             query: req.body
         };
 
-        //  figure out endpoint
-        if (req.body.hasOwnProperty('appId')) {
-            endpoint = api.applications.items[+req.body.appId].reporting.apiEndpoint;
-        } else {
-            endpoint = api.applications.items[api.reporting.defaultAppId].reporting.apiEndpoint;
-        }
-
         api.REST.client.post(getEndpoint(req.body.appId) + 'query', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
             api.REST.sendConditional(res, err, result ? result.data : null);
         });
