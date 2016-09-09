@@ -82,8 +82,12 @@ declare module 'gator-api' {
             public host: string;
             public commissions: boolean;
             public permissions: Array<Permission>;     //  the available permissions for the module
+            public reporting: {
+                apiEndpoint: string
+            };
         }
 
+        export var items: Array<Application>;
         export function getAll(callback:(err?:errors.APIError, result?:Array<Application>) => void);
     }
 
@@ -139,6 +143,7 @@ declare module 'gator-api' {
             public accountId:number;
             public name:string;
             public enabled:boolean;
+            public data: any;
         }
 
         export function get(params:any, callback:(err?:errors.APIError, projects?:Array<Project>) => void);
@@ -191,6 +196,8 @@ declare module 'gator-api' {
 
         apiUrl: string;
         apiVersion: string;
+
+        product: string;
     }
 
     export function login(name:string, password:string, appId:number, callback:(err?:errors.APIError, result?:Authorization) => void);
@@ -215,7 +222,6 @@ declare module 'gator-api' {
 
     export module reporting {
 
-        export var API_ENDPOINT;
         export function currentDashboards(req);
         export function currentBookmarks(req);
         export function getCustomAttributes(req, projectId);
@@ -245,6 +251,8 @@ declare module 'gator-api' {
             searchable:boolean;
             supportedViews:Array<string>;
             logAttribute:boolean;
+            gapType: string;
+            chartOptions: Object;
         }
 
         //  segmentation filter definitions suitable for use with jQuery QueryBuilder
@@ -262,7 +270,8 @@ declare module 'gator-api' {
             default_value:string;
         }
 
-        export var attributes:Array<Attribute>;
+        export var defaultAppId: number;
+        export var attributes: { [appId: number] : Array<Attribute> };
 
         export enum AttributeTypes {
             all,
@@ -270,14 +279,15 @@ declare module 'gator-api' {
             elements
         }
 
-        export function getAttributes(view:string, attributeType:AttributeTypes, isLog:boolean): Array<Attribute>;
+        export function applicationAttributes(appId: number): Array<Attribute>;
+        export function getAttributes(view:string, attributeType:AttributeTypes, isLog:boolean, appId?:number): Array<Attribute>;
         export function addAttributeView(options, view:string, attributeType:AttributeTypes, customAttribs:any);
-        export function getAttributeOptions(view:string, attributeType:AttributeTypes, customAttribs:any, isLog?:boolean);
+        export function getAttributeOptions(view:string, attributeType:AttributeTypes, customAttribs:any, isLog?:boolean, appId?:number);
         export function addFilterView(filterOptions, view:string, customAttribs:any);
-        export function getFilterOptions(view:string, customAttribs:any, isLog:boolean):Array<FilterOptions>;
+        export function getFilterOptions(view:string, customAttribs:any, isLog:boolean, appId?:number):Array<FilterOptions>;
         export function getFilterOption(attrib:any):FilterOptions;
-        export function initialize(apiEndpoint: string, callback:Function);
+        export function init(defaultAppId: number, callback:Function);
         export function getSegmentOptions(req);
-        export function getSegments(req, useCache: boolean, callback: (err: errors.APIError, segments?: Array<Segment>) => void);
+        export function getSegments(req, useCache: boolean, appId: number, callback: (err: errors.APIError, segments?: Array<Segment>) => void);
     }
 }

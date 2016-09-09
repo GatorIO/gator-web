@@ -18,6 +18,16 @@ import {IApplication} from "gator-web";
 /*
  Set up routes - this script handles functions required reporting
  */
+
+function getEndpoint(appId: number): string {
+
+    if (typeof appId != 'undefined') {
+        return api.applications.items[+appId].reporting.apiEndpoint;
+    } else {
+        return api.applications.items[api.reporting.defaultAppId].reporting.apiEndpoint;
+    }
+}
+
 export function setup(app: express.Application, application: IApplication, callback) {
 
     var statusCheck: any = typeof application.statusCheck == 'function' ? application.statusCheck : lib.statusCheckPlaceholder;
@@ -30,12 +40,19 @@ export function setup(app: express.Application, application: IApplication, callb
             return;
         }
 
-        var params = {
+        var endpoint, params = {
             accessToken: req['session'].accessToken,
             query: req.body
         };
 
-        api.REST.client.post(api.reporting.API_ENDPOINT + 'query', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
+        //  figure out endpoint
+        if (req.body.hasOwnProperty('appId')) {
+            endpoint = api.applications.items[+req.body.appId].reporting.apiEndpoint;
+        } else {
+            endpoint = api.applications.items[api.reporting.defaultAppId].reporting.apiEndpoint;
+        }
+
+        api.REST.client.post(getEndpoint(req.body.appId) + 'query', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
             api.REST.sendConditional(res, err, result ? result.data : null);
         });
     });
@@ -49,7 +66,7 @@ export function setup(app: express.Application, application: IApplication, callb
             return;
         }
 
-        api.REST.client.get(api.reporting.API_ENDPOINT + 'attributes/search?accessToken=' + req['session'].accessToken + '&attribute=' + encodeURIComponent(req.query.attribute) + '&projectId=' + req.query.projectId + '&value=' + encodeURIComponent(req.query.value), function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
+        api.REST.client.get(getEndpoint(req.query.appId) + 'attributes/search?accessToken=' + req['session'].accessToken + '&attribute=' + encodeURIComponent(req.query.attribute) + '&projectId=' + req.query.projectId + '&value=' + encodeURIComponent(req.query.value), function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
             res.json(result || []);
         });
     });
@@ -168,7 +185,7 @@ export function setup(app: express.Application, application: IApplication, callb
         utils.noCache(res);
 
         //  any route that requires segments should call this first
-        api.reporting.getSegments(req, false, function(err) {
+        api.reporting.getSegments(req, false, definition.appId, function(err) {
 
             if (err)
                 req.flash('error', err.message);
@@ -217,7 +234,7 @@ export function setup(app: express.Application, application: IApplication, callb
 
             running = true;
 
-            api.REST.client.post(api.reporting.API_ENDPOINT + 'query', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
+            api.REST.client.post(getEndpoint(req.query.appId) + 'query', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
 
                 if (err) {
                     clearInterval(interval);
@@ -322,7 +339,7 @@ export function setup(app: express.Application, application: IApplication, callb
         utils.noCache(res);
 
         //  any route that requires segments should call this first
-        api.reporting.getSegments(req, false, function(err) {
+        api.reporting.getSegments(req, false, req.query.appId, function(err) {
 
             if (err)
                 req.flash('error', err.message);

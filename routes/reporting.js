@@ -5,6 +5,14 @@ var lib = require('../lib/index');
 var http = require('http');
 var fs = require('fs');
 var os = require('os');
+function getEndpoint(appId) {
+    if (typeof appId != 'undefined') {
+        return api.applications.items[+appId].reporting.apiEndpoint;
+    }
+    else {
+        return api.applications.items[api.reporting.defaultAppId].reporting.apiEndpoint;
+    }
+}
 function setup(app, application, callback) {
     var statusCheck = typeof application.statusCheck == 'function' ? application.statusCheck : lib.statusCheckPlaceholder;
     app.post('/query', application.enforceSecure, api.authenticateNoRedirect, function (req, res) {
@@ -12,11 +20,17 @@ function setup(app, application, callback) {
             api.REST.sendError(res, new api.errors.AuthenticationTimeoutError('Your session has timed out.'));
             return;
         }
-        var params = {
+        var endpoint, params = {
             accessToken: req['session'].accessToken,
             query: req.body
         };
-        api.REST.client.post(api.reporting.API_ENDPOINT + 'query', params, function (err, apiRequest, apiResponse, result) {
+        if (req.body.hasOwnProperty('appId')) {
+            endpoint = api.applications.items[+req.body.appId].reporting.apiEndpoint;
+        }
+        else {
+            endpoint = api.applications.items[api.reporting.defaultAppId].reporting.apiEndpoint;
+        }
+        api.REST.client.post(getEndpoint(req.body.appId) + 'query', params, function (err, apiRequest, apiResponse, result) {
             api.REST.sendConditional(res, err, result ? result.data : null);
         });
     });
@@ -25,7 +39,7 @@ function setup(app, application, callback) {
             api.REST.sendError(res, new api.errors.AuthenticationTimeoutError('Your session has timed out.'));
             return;
         }
-        api.REST.client.get(api.reporting.API_ENDPOINT + 'attributes/search?accessToken=' + req['session'].accessToken + '&attribute=' + encodeURIComponent(req.query.attribute) + '&projectId=' + req.query.projectId + '&value=' + encodeURIComponent(req.query.value), function (err, apiRequest, apiResponse, result) {
+        api.REST.client.get(getEndpoint(req.query.appId) + 'attributes/search?accessToken=' + req['session'].accessToken + '&attribute=' + encodeURIComponent(req.query.attribute) + '&projectId=' + req.query.projectId + '&value=' + encodeURIComponent(req.query.value), function (err, apiRequest, apiResponse, result) {
             res.json(result || []);
         });
     });
@@ -98,7 +112,7 @@ function setup(app, application, callback) {
         filterOptions = api.reporting.getFilterOptions(definition.settings.view, customAttribs, isLog);
         attribOptions = api.reporting.getAttributeOptions(definition.settings.view, api.reporting.AttributeTypes.all, customAttribs, isLog);
         utils.noCache(res);
-        api.reporting.getSegments(req, false, function (err) {
+        api.reporting.getSegments(req, false, definition.appId, function (err) {
             if (err)
                 req.flash('error', err.message);
             res.render(definition.settings.renderView || 'report', {
@@ -134,7 +148,7 @@ function setup(app, application, callback) {
             if (running)
                 return;
             running = true;
-            api.REST.client.post(api.reporting.API_ENDPOINT + 'query', params, function (err, apiRequest, apiResponse, result) {
+            api.REST.client.post(getEndpoint(req.query.appId) + 'query', params, function (err, apiRequest, apiResponse, result) {
                 if (err) {
                     clearInterval(interval);
                     res.write('ERROR: ' + err.message);
@@ -212,7 +226,7 @@ function setup(app, application, callback) {
     });
     app.get('/visualizations/badtraffic', application.enforceSecure, api.authenticate, statusCheck, function (req, res) {
         utils.noCache(res);
-        api.reporting.getSegments(req, false, function (err) {
+        api.reporting.getSegments(req, false, req.query.appId, function (err) {
             if (err)
                 req.flash('error', err.message);
             res.render('badTraffic', {
