@@ -101,10 +101,12 @@ function setup(app, application, callback) {
             project.data.attributes = {};
         var customAttribs = project.data.attributes;
         var isLog = definition.settings.renderView == 'log';
-        metricOptions = api.reporting.getAttributeOptions(definition.settings.view, api.reporting.AttributeTypes.metrics, customAttribs, isLog);
-        elementOptions = api.reporting.getAttributeOptions(definition.settings.view, api.reporting.AttributeTypes.elements, customAttribs, isLog);
-        filterOptions = api.reporting.getFilterOptions(definition.settings.view, customAttribs, isLog);
-        attribOptions = api.reporting.getAttributeOptions(definition.settings.view, api.reporting.AttributeTypes.all, customAttribs, isLog);
+
+        metricOptions = api.reporting.getAttributeOptions(definition.settings.view, api.reporting.AttributeTypes.metrics, customAttribs, isLog, definition.settings.appId);
+        elementOptions = api.reporting.getAttributeOptions(definition.settings.view, api.reporting.AttributeTypes.elements, customAttribs, isLog, definition.settings.appId);
+        filterOptions = api.reporting.getFilterOptions(definition.settings.view, customAttribs, isLog, definition.settings.appId);
+        attribOptions = api.reporting.getAttributeOptions(definition.settings.view, api.reporting.AttributeTypes.all, customAttribs, isLog, definition.settings.appId);
+
         utils.noCache(res);
         api.reporting.getSegments(req, false, definition.appId, function (err) {
             if (err)

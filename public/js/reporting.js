@@ -280,7 +280,7 @@ Report.prototype.getBaseQuery = function() {
     var query = {
         appId: this.settings.appId,
         view: this.settings.view,
-        projectId: this.pageOptions.projectId,
+        projectId: this.state.projectId || this.pageOptions.projectId,  //  state can hardcode projectid
         attributes: state.attributes,
         timeframe: this.timeframe(state.dateLabel, state.dateStart, state.dateEnd)
     };

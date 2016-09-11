@@ -1,3 +1,8 @@
+<%
+    //  if a project type is specified from controller, it restricts the list of projects to that type
+    var projectType = projectType || null;  // this handles when projectType is not passed in
+%>
+
 <div id="preloader"></div>
 <div class="row border-bottom hidden-print">
     <nav class="navbar navbar-static-top white-bg" role="navigation" style="margin-bottom: 0; z-index: 2011">
@@ -27,10 +32,13 @@
 
                             <%  if (req.session.projects) {
                                     for (var p = 0; p < req.session.projects.length; p++) {
+
+                                        if (!projectType || req.session.projects[p].type == projectType) {
                             %>
-                                        <%- '<option value="' + req.session.projects[p].id + '"' + (req.session.projects[p].id == currentProjectId ? ' selected' : '') + '>' +
-                                            req.session.projects[p].name + '</option>'  %>
+                                            <%- '<option value="' + req.session.projects[p].id + '"' + (req.session.projects[p].id == currentProjectId ? ' selected' : '') + '>' +
+                                                req.session.projects[p].name + '</option>'  %>
                             <%
+                                        }
                                     }
                                 }
                             %>
