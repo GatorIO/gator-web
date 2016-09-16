@@ -128,12 +128,11 @@ export function setup(app: express.Application, application: IApplication, callb
     app.get('/dashboard', application.enforceSecure, api.authenticate, statusCheck, function (req: express.Request, res: express.Response) {
         utils.noCache(res);
 
-        var dashboards, name = req.query.name, template = req.query.template, dashboard: any = {}, projectId = req.query.projectId;
+        var dashboards, name = req.query.name, template = req.query.template, dashboard: any = {};
 
         //  find the dashboard to display
         if (template) {
-            dashboards = application['dashboards'];
-            dashboard = dashboards[template];
+            dashboard = application['getDashboardTemplate'](template, req.query);
         } else {
             dashboards = api.reporting.currentDashboards(req);
             dashboard = dashboards[name];
@@ -182,9 +181,6 @@ export function setup(app: express.Application, application: IApplication, callb
                 if (!pod.settings.ranges)
                     pod.settings.ranges = application.reports['ranges'];
 
-                if (projectId)
-                    pod.state.projectId = +projectId;
-                
                 dashboard.pods[i] = JSON.stringify(pod);
             }
         } else {

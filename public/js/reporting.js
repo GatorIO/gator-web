@@ -889,8 +889,7 @@ Report.prototype.renderSnapshot = function () {
                             barColor = '#f0ed00';
                     }
 
-                    dataset.push({ color: barColor, data: [[ value, index ]] });
-
+                    dataset.push({ label: label, color: barColor, data: [[ value, index ]] });
                 }
             }
 
