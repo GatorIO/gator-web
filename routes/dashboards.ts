@@ -128,13 +128,18 @@ export function setup(app: express.Application, application: IApplication, callb
     app.get('/dashboard', application.enforceSecure, api.authenticate, statusCheck, function (req: express.Request, res: express.Response) {
         utils.noCache(res);
 
-        var name = req.query.name, dashboard: any = {};
+        var dashboards, name = req.query.name, template = req.query.template, dashboard: any = {}, projectId = req.query.projectId;
 
         //  find the dashboard to display
-        var dashboards = api.reporting.currentDashboards(req);
-
-        if (dashboards[name]) {
+        if (template) {
+            dashboards = application['dashboards'];
+            dashboard = dashboards[template];
+        } else {
+            dashboards = api.reporting.currentDashboards(req);
             dashboard = dashboards[name];
+        }
+
+        if (dashboard) {
 
             //  add static report settings to the pod config
             for (let i = 0; i < dashboard.pods.length; i++) {
@@ -177,6 +182,9 @@ export function setup(app: express.Application, application: IApplication, callb
                 if (!pod.settings.ranges)
                     pod.settings.ranges = application.reports['ranges'];
 
+                if (projectId)
+                    pod.state.projectId = +projectId;
+                
                 dashboard.pods[i] = JSON.stringify(pod);
             }
         } else {
@@ -188,7 +196,8 @@ export function setup(app: express.Application, application: IApplication, callb
             settings: utils.config.settings(),
             req: req,
             dashboardName: name,
-            dashboard: dashboard
+            dashboard: dashboard,
+            title: req.query.title || ''
         });
     });
 

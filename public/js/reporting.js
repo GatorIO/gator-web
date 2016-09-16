@@ -171,7 +171,9 @@ function Report() {
                             runningQueries--;
                             Page.doneLoading();
 
-                            if (result && (result.status == 419 || result.status == 401)) {
+                            if (result && result.status == 404) {
+                                Page.alert('Not Found', 'No data has been tracked yet for this project.', 'info');
+                            } else if (result && (result.status == 419 || result.status == 401)) {
                                 window.location = '/login';
                             } else if (result && result.responseJSON && result.responseJSON.message) {
                                 Page.alert('Error', result.responseJSON.message, 'error');
@@ -204,7 +206,9 @@ function Report() {
                 runningQueries--;
                 Page.doneLoading();
 
-                if (result && (result.status == 419 || result.status == 401)) {
+                if (result && result.status == 404) {
+                    Page.alert('Not Found', 'No data has been tracked yet for this project.', 'info');
+                } else if (result && (result.status == 419 || result.status == 401)) {
                     window.location = '/login';
                 } else if (result && result.responseJSON && result.responseJSON.message) {
                     Page.alert('Error', result.responseJSON.message, 'error');
@@ -594,6 +598,16 @@ Report.prototype.renderTimeline = function () {
                 chartMetrics[c].yaxis = yaxes.length;
             }
         }
+    }
+
+    if (chartMetrics.length == 0) {
+        yaxes = [ { min: 0 } ],
+        datasets = [
+            {
+                label: "No data for selected metric(s)",
+                data: []
+            }
+        ]
     }
 
     for (c = 0; c < chartMetrics.length; c++) {

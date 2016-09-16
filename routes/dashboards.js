@@ -79,10 +79,16 @@ function setup(app, application, callback) {
     });
     app.get('/dashboard', application.enforceSecure, api.authenticate, statusCheck, function (req, res) {
         utils.noCache(res);
-        var name = req.query.name, dashboard = {};
-        var dashboards = api.reporting.currentDashboards(req);
-        if (dashboards[name]) {
+        var dashboards, name = req.query.name, template = req.query.template, dashboard = {}, projectId = req.query.projectId;
+        if (template) {
+            dashboards = application['dashboards'];
+            dashboard = dashboards[template];
+        }
+        else {
+            dashboards = api.reporting.currentDashboards(req);
             dashboard = dashboards[name];
+        }
+        if (dashboard) {
             for (var i = 0; i < dashboard.pods.length; i++) {
                 var pod = JSON.parse(dashboard.pods[i]);
                 if (pod.state && pod.state.id) {
@@ -108,6 +114,8 @@ function setup(app, application, callback) {
                     pod.settings.intervals = application.reports['intervals'];
                 if (!pod.settings.ranges)
                     pod.settings.ranges = application.reports['ranges'];
+                if (projectId)
+                    pod.state.projectId = +projectId;
                 dashboard.pods[i] = JSON.stringify(pod);
             }
         }
@@ -119,7 +127,8 @@ function setup(app, application, callback) {
             settings: utils.config.settings(),
             req: req,
             dashboardName: name,
-            dashboard: dashboard
+            dashboard: dashboard,
+            title: req.query.title || ''
         });
     });
     callback();
