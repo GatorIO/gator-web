@@ -20,7 +20,7 @@ export function setup(app: express.Application, application: IApplication, callb
         utils.noCache(res);
 
         //  any route that requires segments should call this first
-        api.reporting.getSegments(req, false, function(err) {
+        api.reporting.getSegments(req, false, req['session'].account.appId, function(err) {
 
             if (err)
                 req.flash('error', err.message);

@@ -4,7 +4,7 @@ var api = require('gator-api');
 function setup(app, application, callback) {
     app.get('/setup/segments', application.enforceSecure, api.authenticate, function (req, res) {
         utils.noCache(res);
-        api.reporting.getSegments(req, false, function (err) {
+        api.reporting.getSegments(req, false, req['session'].account.appId, function (err) {
             if (err)
                 req.flash('error', err.message);
             res.render('segments', {

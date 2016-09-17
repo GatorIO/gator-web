@@ -181,6 +181,16 @@ export function setup(app: express.Application, application: IApplication, callb
                 if (!pod.settings.ranges)
                     pod.settings.ranges = application.reports['ranges'];
 
+                if (!pod.state.dateLabel && pod.settings.intervals && pod.settings.intervals.defaultRange)
+                    pod.state.dateLabel = pod.settings.intervals.defaultRange;
+                else if (!pod.state.dateLabel)
+                    pod.state.dateLabel = 'Last 30 Days';
+
+                if (!pod.state.dateInterval && pod.settings.intervals && pod.settings.intervals.defaultOption)
+                    pod.state.dateInterval = pod.settings.intervals.defaultOption;
+                else if (!pod.state.dateInterval)
+                    pod.state.dateInterval = 'Daily';
+
                 dashboard.pods[i] = JSON.stringify(pod);
             }
         } else {
