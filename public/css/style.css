@@ -2436,6 +2436,13 @@ body.body-small .footer.fixed {
     padding: 8px 8px 0px 8px;
     vertical-align: top;
 }
+
+.table > thead > tr > th,
+.table > tbody > tr > th,
+.table > tfoot > tr > th {
+    padding: 8px 8px 8px 8px;
+}
+
 /* PANELS */
 .panel.blank-panel {
     background: none;

@@ -104,6 +104,9 @@
 
     $(document).ready(function() {
 
+        if (dashboard.pods.length == 0)
+            Page.showMessage('This dashboard does not have any pods to display.  You can create pods from any report by clicking on the <i class="fa fa-th-large"></i> toolbar icon.');
+
         //  populate pods
         for (var p = 0; p < dashboard.pods.length; p++) {
             var pod = JSON.parse(dashboard.pods[p]);

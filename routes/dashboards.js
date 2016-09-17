@@ -88,6 +88,7 @@ function setup(app, application, callback) {
             dashboard = dashboards[name];
         }
         if (dashboard) {
+            dashboard.pods = dashboard.pods || [];
             for (var i = 0; i < dashboard.pods.length; i++) {
                 var pod = JSON.parse(dashboard.pods[i]);
                 if (pod.state && pod.state.id) {

@@ -140,6 +140,8 @@ export function setup(app: express.Application, application: IApplication, callb
 
         if (dashboard) {
 
+            dashboard.pods = dashboard.pods || [];
+            
             //  add static report settings to the pod config
             for (let i = 0; i < dashboard.pods.length; i++) {
 
