@@ -128,10 +128,11 @@ export function setup(app: express.Application, application: IApplication, callb
     app.get('/dashboard', application.enforceSecure, api.authenticate, statusCheck, function (req: express.Request, res: express.Response) {
         utils.noCache(res);
 
-        var dashboards, name = req.query.name, template = req.query.template, dashboard: any = {};
+        var dashboards, name = req.query.name, template = req.query.template, dashboard: any = {}, editable = true;
 
         //  find the dashboard to display
         if (template) {
+            editable = false;
             dashboard = application['getDashboardTemplate'](template, req.query);
         } else {
             dashboards = api.reporting.currentDashboards(req);
@@ -205,7 +206,8 @@ export function setup(app: express.Application, application: IApplication, callb
             req: req,
             dashboardName: name,
             dashboard: dashboard,
-            title: req.query.title || ''
+            title: req.query.title || '',
+            editable: editable
         });
     });
 

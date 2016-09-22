@@ -147,6 +147,15 @@
                     break;
             }
 
+            <%  if (editable) { %>
+
+                var deleteLink = '<a class="close-link">' +
+                '  <i class="fa fa-times" onclick="deletePod(' + p + ')"></i>' +
+                '</a>';
+            <% } else { %>
+                var deleteLink = '';
+            <% } %>
+
             $('#pods').append(
                 '<li id="pod-' + p + '" data-order="' + p + '" class="ui-state-default dashboard-pod" ' + (pod.display == 'table' ? 'style="overflow-y:scroll"' : '') + '>' +
                 '<div class="ibox float-e-margins">' +
@@ -155,10 +164,7 @@
                 '        <div class="ibox-tools">' +
                 '            <a class="close-link">' +
                 '                <i class="fa fa-search-plus" onclick="jump(' + p + ')"></i>' +
-                '            </a>' +
-                '            <a class="close-link">' +
-                '                <i class="fa fa-times" onclick="deletePod(' + p + ')"></i>' +
-                '            </a>' +
+                '            </a>' + deleteLink +
                 '        </div>' +
                 '    </div>' +
                 '    <div class="ibox-content" style="margin:0">' +
@@ -192,21 +198,23 @@
                     order: order
                 };
 
-                $.ajax({
-                    type: 'POST',    //  if the data object has an id, PUT the update
-                    url: '/setup/dashboards/order',
-                    data: data,
-                    success: function() {
+                <%  if (editable) { %>
+                    $.ajax({
+                        type: 'POST',    //  if the data object has an id, PUT the update
+                        url: '/setup/dashboards/order',
+                        data: data,
+                        success: function() {
 
-                        //  reset order attribute of pods
-                        for (var i = 0; i < orders.length; i++) {
-                            $('#pod-' + +orders[i].split('=')[1]).attr('data-order', i);
+                            //  reset order attribute of pods
+                            for (var i = 0; i < orders.length; i++) {
+                                $('#pod-' + +orders[i].split('=')[1]).attr('data-order', i);
+                            }
+                        },
+                        error: function (request, status, error) {
+                            Data.showError(request, status, error);
                         }
-                    },
-                    error: function (request, status, error) {
-                        Data.showError(request, status, error);
-                    }
-                });
+                    });
+                <% } %>
             }
         });
         $( "#dashboard" ).disableSelection();
