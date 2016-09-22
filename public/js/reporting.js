@@ -942,6 +942,7 @@ Report.prototype.renderSnapshot = function () {
                         show: false
                     },
                     xaxis: {
+                        min: 0,
                         show: true
                     },
                     yaxis: {
