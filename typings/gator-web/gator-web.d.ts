@@ -109,6 +109,10 @@ declare module 'gator-web' {
         module reportingRoutes {
             export function setup(app, application, callback);
         }
+
+        module emailRoutes {
+            export function setup(app, application, callback);
+        }
     }
 }
 

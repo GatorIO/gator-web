@@ -80,7 +80,6 @@ function setup(app, application, callback) {
     app.get('/dashboard', application.enforceSecure, api.authenticate, statusCheck, function (req, res) {
         utils.noCache(res);
         var dashboards, name = req.query.name, template = req.query.template, dashboard = {}, editable = true;
-
         if (template) {
             editable = false;
             dashboard = application['getDashboardTemplate'](template, req.query);
