@@ -242,7 +242,12 @@ export function setup(app: express.Application, application: IApplication, callb
                 if (result && result.code == 200) {
 
                     if (req.query.format == 'csv') {
-                        res.write(result.data.csv);
+
+                        if (result.data.csv)
+                            res.write(result.data.csv);
+                        else
+                            res.write('');
+
                     } else {
                         res.json(result.data);
                     }
