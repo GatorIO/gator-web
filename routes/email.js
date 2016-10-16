@@ -14,7 +14,9 @@ function setup(app, application, callback) {
         var params = {
             lid: req.body.lid,
             cid: req.body.cid,
-            sid: req.body.sid
+            sid: req.body.sid,
+            uid: req.body.uid,
+            aid: req.body.aid
         };
         api.REST.client.post('/v1/email/unsubscribe', params, function (err, apiRequest, apiResponse, result) {
             api.REST.sendConditional(res, err, result);

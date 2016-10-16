@@ -6,7 +6,6 @@
 </head>
 
 <body class="landing-page subpage">
-<% include ../partials/home/navbarSub %>
 
 <div class="loginColumns animated fadeInDown">
     <% include ../partials/master/message %>
@@ -21,6 +20,8 @@
                     <input type="hidden" name="lid" value="<%- req.query.lid %>">
                     <input type="hidden" name="sid" value="<%- req.query.sid %>">
                     <input type="hidden" name="cid" value="<%- req.query.cid %>">
+                    <input type="hidden" name="uid" value="<%- req.query.uid %>">
+                    <input type="hidden" name="aid" value="<%- req.query.aid %>">
                     <button type="button" onclick = "window.location='/'" class="btn btn-primary block full-width m-b">Cancel - I do not want to unsubscribe</button>
                     <button type="submit" class="btn btn-primary block full-width m-b">Unsubscribe</button>
                 </form>

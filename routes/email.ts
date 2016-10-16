@@ -31,7 +31,9 @@ export function setup(app: express.Application, application: IApplication, callb
         var params: any = {
             lid: req.body.lid,
             cid: req.body.cid,
-            sid: req.body.sid
+            sid: req.body.sid,
+            uid: req.body.uid,
+            aid: req.body.aid
         };
 
         api.REST.client.post('/v1/email/unsubscribe', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
