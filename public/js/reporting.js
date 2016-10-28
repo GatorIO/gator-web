@@ -2000,10 +2000,10 @@ var Toolbar = {
                 case 'Custom':
                 case 'Last 7 Days':
                 case 'Last 30 Days':
-                    Toolbar.dateInterval = 'Daily';
-                    break;
                 case 'Today':
                 case 'Yesterday':
+                    Toolbar.dateInterval = 'Daily';
+                    break;
                 case 'Last 24 Hours':
                     Toolbar.dateInterval = 'Hourly';
                     break;
