@@ -374,10 +374,10 @@ export function setup(app: express.Application, application: IApplication, callb
                     params: params,
                     application: application,
                     personData: result.data && result.data.personData ? result.data.personData : null,
-                    summary: result.data && result.data.summary && result.data.summary.rows ? result.data.summary.rows[0] : [],
+                    summary: result.data && result.data.summary && result.data.summary.rows ? result.data.summary.rows[0] || [] : [],
                     sessions: result.data && result.data.sessions && result.data.sessions.rows ? result.data.sessions.rows : [],
                     events: result.data && result.data.events && result.data.events.rows ? result.data.events.rows : [],
-                    latestSession: result.data && result.data.latestSession && result.data.latestSession.rows ? result.data.latestSession.rows[0] : [],
+                    latestSession: result.data && result.data.latestSession && result.data.latestSession.rows ? result.data.latestSession.rows[0] || [] : [],
                     req: req
                 });
             });
