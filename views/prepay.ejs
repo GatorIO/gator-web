@@ -24,7 +24,7 @@
                 <div class="col-lg-6">
                     <h1 id="title">Authorize Prepayment</h1>
                     Prepayments will use your primary payment method.  Prepayments create a credit on your account that is used for future invoices.
-                    <br><b>By prepaying, your account will be credited an extra 10% of the amount.</b>
+                    <br><br><b>By prepaying, your account will be credited an extra 10% of the amount.</b>
                     <br><br>
 
                     <% if (paymentMethodCount == 0) { %>
@@ -68,8 +68,8 @@
             if (amount.substr(0, 1) == '$')
                 amount = amount.substr(1);
 
-            if (!Utils.isNumber(amount) || +amount < 100) {
-                Page.showMessage('You must enter a number greater than 100.');
+            if (!Utils.isNumber(amount)) {
+                Page.showMessage('You must enter a numeric value without currency symbols.  All amounts are in USD.');
             } else {
 
                 Page.confirm('Are you sure?', 'Prepay ' + amount + ' (USD) from your primary payment method?', function() {
