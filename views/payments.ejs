@@ -24,33 +24,39 @@
                 <div class="col-lg-12">
 
                     <%
+                    var html = '<h1>Payments</h1>';
 
-                        var html = '<h1>Payments</h1><table class="table table-hover"><br>';
+                    if (discount)
+                        html += 'Your account has a discount of ' + discount + '%.<br>';
 
-                        html += '<thead><tr>';
-                        html += '<th>Date</th>';
-                        html += '<th>Last 4 Digits</th>';
-                        html += '<th>Expiration</th>';
-                        html += '<th>Amount</th>';
-                        html += '</tr></thead>';
+                    if (balance < 0)
+                        html += 'Your account has a credit of $' + (-balance) + ', which will be applied to future invoices.<br>';
 
-                        html += '<tbody>';
+                    html += '<table class="table table-hover"><br>';
+                    html += '<thead><tr>';
+                    html += '<th>Date</th>';
+                    html += '<th>Last 4 Digits</th>';
+                    html += '<th>Expiration</th>';
+                    html += '<th>Amount</th>';
+                    html += '</tr></thead>';
 
-                        if (payments) {
+                    html += '<tbody>';
 
-                            for (var m = 0; m < payments.length; m++) {
-                                var payment = payments[m];
+                    if (payments) {
 
-                                html += '<tr>';
-                                html += '<td>' + new Date(payment.created * 1000) + '</td>';
-                                html += '<td>' + payment.source.last4 + '</td>';
-                                html += '<td>' + payment.source.exp_month + ' / ' + payment.source.exp_year + '</td>';
-                                html += '<td>' + payment.amount + ' (USD)</td>';
-                                html += '</tr>';
-                            }
+                        for (var m = 0; m < payments.length; m++) {
+                            var payment = payments[m];
+
+                            html += '<tr>';
+                            html += '<td>' + new Date(payment.created * 1000) + '</td>';
+                            html += '<td>' + payment.source.last4 + '</td>';
+                            html += '<td>' + payment.source.exp_month + ' / ' + payment.source.exp_year + '</td>';
+                            html += '<td>' + payment.amount + ' (USD)</td>';
+                            html += '</tr>';
                         }
-                        html += '</tbody>';
-                        html += '</table>';
+                    }
+                    html += '</tbody>';
+                    html += '</table>';
                     %>
                     <%- html %>
                 </div>
