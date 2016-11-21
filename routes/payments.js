@@ -75,7 +75,9 @@ function setup(app, application, callback) {
                 settings: utils.config.settings(),
                 application: application,
                 req: req,
-                payments: payments
+                payments: payments,
+                discount: result.data.discount || 0,
+                balance: result.data.balance || 0
             });
         });
     });
