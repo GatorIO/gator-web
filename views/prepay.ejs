@@ -72,7 +72,7 @@
                 amount = amount.substr(1);
 
             if (!Utils.isNumber(amount)) {
-                Page.showMessage('You must enter a numeric value without currency symbols.  All amounts are in USD.');
+                Page.showMessage('You must enter a numeric value without currency symbols. All amounts are in USD.');
             } else {
 
                 Page.confirm('Are you sure?', 'Prepay ' + amount + ' (USD) from your primary payment method?', function() {
