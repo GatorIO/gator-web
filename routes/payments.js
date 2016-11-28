@@ -37,7 +37,7 @@ function setup(app, application, callback) {
         api.REST.client.post('/v1/payments/methods', params, function (err, apiRequest, apiResponse, result) {
             if (!err) {
                 req['session'].account.status = 0;
-                req['session'].account.hasBillingInfo = true;
+                req['session'].account.billingMethod = 'automatic';
                 res.redirect('/billing/paymentmethods');
             }
             else {
@@ -67,17 +67,22 @@ function setup(app, application, callback) {
         });
     });
     app.get('/billing/payments', api.authenticate, application.enforceSecure, function (req, res) {
-        var payments = [];
+        var payments = [], discount = 0, balance = 0;
         api.REST.client.get('/v1/payments?accessToken=' + req['session'].accessToken, function (err, apiRequest, apiResponse, result) {
-            if (result && result.data)
+            if (err)
+                req.flash('error', err.message);
+            if (result && result.data) {
                 payments = result.data.payments;
+                discount = result.data.discount || 0;
+                balance = result.data.balance || 0;
+            }
             res.render('payments', {
                 settings: utils.config.settings(),
                 application: application,
                 req: req,
                 payments: payments,
-                discount: result.data.discount || 0,
-                balance: result.data.balance || 0
+                discount: discount,
+                balance: balance
             });
         });
     });

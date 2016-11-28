@@ -62,7 +62,7 @@ export function setup(app: express.Application, application: IApplication, callb
             if (!err) {
                 //  update account status to active with new payment method
                 req['session'].account.status = 0;
-                req['session'].account.hasBillingInfo = true;
+                req['session'].account.billingMethod = 'automatic';
                 res.redirect('/billing/paymentmethods');
             } else {
 
