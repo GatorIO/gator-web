@@ -1053,7 +1053,7 @@ Report.prototype.configureColumn = function(newCol, column) {
         case Report.dataTypes.object:
             newCol.render = function(data, type, row) {
 
-                if (typeof data == 'string')
+                if (typeof data == 'string' || typeof data == 'number')
                     return data;
                 else
                     return '<pre>' + (YAML ? YAML.stringify(data) : JSON.stringify(data, null, 4)) + '</pre>';
