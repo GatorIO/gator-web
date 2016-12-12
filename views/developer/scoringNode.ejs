@@ -40,15 +40,15 @@ npm install gator-score</pre>
 var gator = require('gator-score');
 
 var options = {
-ip: '72.211.250.156',
-ua: 'Mozilla/5.0 (iPad; U; CPU OS 3_2_1 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko)',
-referrer: 'http://bing.com/search?q=bicycle',
-url: 'http://mysite.com'
+    ip: '72.211.250.156',
+    ua: 'Mozilla/5.0 (iPad; U; CPU OS 3_2_1 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko)',
+    referrer: 'http://bing.com/search?q=bicycle',
+    url: 'http://mysite.com'
 };
 
 gator.score(options, function(err, result) {
-if (result && result.score < 100)
-console.log('Invalid user');
+    if (result && result.score < 100)
+        console.log('Invalid user');
 });</textarea>
 
                 </div>
