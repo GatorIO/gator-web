@@ -53,6 +53,25 @@ export function setup(app: express.Application, application: IApplication, callb
         });
     });
 
+    app.get('/shopify/login', application.enforceSecure, function (req: express.Request, res: express.Response) {
+
+        let params = req.query;
+        params.appId = application.settings.appId;
+
+        api.REST.client.post('/v1/shopify/login', params, function (err, apiRequest, apiResponse, result) {
+            api.setSessionCookie(res, result.data.accessToken);
+
+            res.redirect('/contacts');
+
+            /*
+             if (err) {
+             api.REST.sendError(res, err);
+             } else {
+             api.setSessionCookie(res, authObject.accessToken);
+             }*/
+        });
+    });
+
     //  reset password
     app.get('/reset', application.enforceSecure, function(req, res) {
         res.render('./api/reset', {

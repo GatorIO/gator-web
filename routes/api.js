@@ -29,6 +29,14 @@ function setup(app, application, callback) {
             api.REST.sendConditional(res, err, null, 'success');
         });
     });
+    app.get('/shopify/login', application.enforceSecure, function (req, res) {
+        var params = req.query;
+        params.appId = application.settings.appId;
+        api.REST.client.post('/v1/shopify/login', params, function (err, apiRequest, apiResponse, result) {
+            api.setSessionCookie(res, result.data.accessToken);
+            res.redirect('/contacts');
+        });
+    });
     app.get('/reset', application.enforceSecure, function (req, res) {
         res.render('./api/reset', {
             req: req,
