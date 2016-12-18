@@ -2,6 +2,72 @@
 var utils = require("gator-utils");
 var api = require('gator-api');
 var lib = require('../lib/index');
+function getDashboard(application, req, res) {
+    utils.noCache(res);
+    var dashboards, name = req.query.name, template = req.query.template, dashboard = {}, editable = true;
+    if (template) {
+        editable = false;
+        dashboard = application['getDashboardTemplate'](template, req.query);
+    }
+    else {
+        dashboards = api.reporting.currentDashboards(req);
+        dashboard = dashboards[name];
+    }
+    if (dashboard) {
+        dashboard.pods = dashboard.pods || [];
+        for (var i = 0; i < dashboard.pods.length; i++) {
+            var pod = JSON.parse(dashboard.pods[i]);
+            if (pod.state && pod.state.id) {
+                var report = application.reports.definitions[application.reports.Types[pod.state.id]];
+                pod.settings = report ? report.settings : {};
+                if (report.initialState) {
+                    for (var key in report.initialState) {
+                        if (report.initialState.hasOwnProperty(key) && !pod.state.hasOwnProperty(key))
+                            pod.state[key] = report.initialState[key];
+                    }
+                }
+            }
+            pod.settings = pod.settings || {};
+            if (pod.state.view)
+                pod.settings.view = pod.state.view;
+            if (pod.state.renderView)
+                pod.settings.renderView = pod.state.renderView;
+            if (pod.state.title)
+                pod.settings.title = pod.state.title;
+            if (pod.state.hasOwnProperty('isLog'))
+                pod.settings.isLog = pod.state.isLog;
+            if (!pod.settings.intervals)
+                pod.settings.intervals = application.reports['intervals'];
+            if (!pod.settings.ranges)
+                pod.settings.ranges = application.reports['ranges'];
+            if (!pod.state.dateLabel && pod.settings.intervals && pod.settings.intervals.defaultRange)
+                pod.state.dateLabel = pod.settings.intervals.defaultRange;
+            else if (!pod.state.dateLabel)
+                pod.state.dateLabel = 'Last 30 Days';
+            if (!pod.state.dateInterval && pod.settings.intervals && pod.settings.intervals.defaultOption)
+                pod.state.dateInterval = pod.settings.intervals.defaultOption;
+            else if (!pod.state.dateInterval)
+                pod.state.dateInterval = 'Daily';
+            dashboard.pods[i] = JSON.stringify(pod);
+        }
+    }
+    else {
+        req.flash('error', 'No such dashboard');
+    }
+    var view = 'dashboard';
+    if (typeof application.viewOverride == 'function')
+        view = application.viewOverride(req, view);
+    res.render(view, {
+        application: application,
+        settings: utils.config.settings(),
+        req: req,
+        dashboardName: name,
+        dashboard: dashboard,
+        title: req.query.title || '',
+        editable: editable
+    });
+}
+exports.getDashboard = getDashboard;
 function setup(app, application, callback) {
     var statusCheck = typeof application.statusCheck == 'function' ? application.statusCheck : lib.statusCheckPlaceholder;
     app.get('/setup/dashboards', application.enforceSecure, api.authenticate, function (req, res) {
@@ -78,66 +144,7 @@ function setup(app, application, callback) {
         });
     });
     app.get('/dashboard', application.enforceSecure, api.authenticate, statusCheck, function (req, res) {
-        utils.noCache(res);
-        var dashboards, name = req.query.name, template = req.query.template, dashboard = {}, editable = true;
-        if (template) {
-            editable = false;
-            dashboard = application['getDashboardTemplate'](template, req.query);
-        }
-        else {
-            dashboards = api.reporting.currentDashboards(req);
-            dashboard = dashboards[name];
-        }
-        if (dashboard) {
-            dashboard.pods = dashboard.pods || [];
-            for (var i = 0; i < dashboard.pods.length; i++) {
-                var pod = JSON.parse(dashboard.pods[i]);
-                if (pod.state && pod.state.id) {
-                    var report = application.reports.definitions[application.reports.Types[pod.state.id]];
-                    pod.settings = report ? report.settings : {};
-                    if (report.initialState) {
-                        for (var key in report.initialState) {
-                            if (report.initialState.hasOwnProperty(key) && !pod.state.hasOwnProperty(key))
-                                pod.state[key] = report.initialState[key];
-                        }
-                    }
-                }
-                pod.settings = pod.settings || {};
-                if (pod.state.view)
-                    pod.settings.view = pod.state.view;
-                if (pod.state.renderView)
-                    pod.settings.renderView = pod.state.renderView;
-                if (pod.state.title)
-                    pod.settings.title = pod.state.title;
-                if (pod.state.hasOwnProperty('isLog'))
-                    pod.settings.isLog = pod.state.isLog;
-                if (!pod.settings.intervals)
-                    pod.settings.intervals = application.reports['intervals'];
-                if (!pod.settings.ranges)
-                    pod.settings.ranges = application.reports['ranges'];
-                if (!pod.state.dateLabel && pod.settings.intervals && pod.settings.intervals.defaultRange)
-                    pod.state.dateLabel = pod.settings.intervals.defaultRange;
-                else if (!pod.state.dateLabel)
-                    pod.state.dateLabel = 'Last 30 Days';
-                if (!pod.state.dateInterval && pod.settings.intervals && pod.settings.intervals.defaultOption)
-                    pod.state.dateInterval = pod.settings.intervals.defaultOption;
-                else if (!pod.state.dateInterval)
-                    pod.state.dateInterval = 'Daily';
-                dashboard.pods[i] = JSON.stringify(pod);
-            }
-        }
-        else {
-            req.flash('error', 'No such dashboard');
-        }
-        res.render('dashboard', {
-            application: application,
-            settings: utils.config.settings(),
-            req: req,
-            dashboardName: name,
-            dashboard: dashboard,
-            title: req.query.title || '',
-            editable: editable
-        });
+        getDashboard(application, req, res);
     });
     callback();
 }

@@ -15,9 +15,101 @@ import lib = require('../lib/index');
  Set up routes - this script handles functions required for managing dashboards
  */
 
+export function getDashboard(application, req, res) {
+    utils.noCache(res);
+
+    let dashboards, name = req.query.name, template = req.query.template, dashboard: any = {}, editable = true;
+
+    //  find the dashboard to display
+    if (template) {
+        editable = false;
+        dashboard = application['getDashboardTemplate'](template, req.query);
+    } else {
+        dashboards = api.reporting.currentDashboards(req);
+        dashboard = dashboards[name];
+    }
+
+    if (dashboard) {
+
+        dashboard.pods = dashboard.pods || [];
+
+        //  add static report settings to the pod config
+        for (let i = 0; i < dashboard.pods.length; i++) {
+
+            let pod = JSON.parse(dashboard.pods[i]);
+
+            if (pod.state && pod.state.id) {
+                let report: any = application.reports.definitions[application.reports.Types[pod.state.id]];
+                pod.settings = report ? report.settings : {};
+
+                //  fill in initial state from definition where not in pod definition
+                if (report.initialState) {
+
+                    for (let key in report.initialState) {
+
+                        if (report.initialState.hasOwnProperty(key) && !pod.state.hasOwnProperty(key))
+                            pod.state[key] = report.initialState[key];
+                    }
+                }
+            }
+
+            //  fix up existing settings - this is to support prior formats
+            pod.settings = pod.settings || {};
+
+            if (pod.state.view)
+                pod.settings.view = pod.state.view;
+
+            if (pod.state.renderView)
+                pod.settings.renderView = pod.state.renderView;
+
+            if (pod.state.title)
+                pod.settings.title = pod.state.title;
+
+            if (pod.state.hasOwnProperty('isLog'))
+                pod.settings.isLog = pod.state.isLog;
+
+            if (!pod.settings.intervals)
+                pod.settings.intervals = application.reports['intervals'];
+
+            if (!pod.settings.ranges)
+                pod.settings.ranges = application.reports['ranges'];
+
+            if (!pod.state.dateLabel && pod.settings.intervals && pod.settings.intervals.defaultRange)
+                pod.state.dateLabel = pod.settings.intervals.defaultRange;
+            else if (!pod.state.dateLabel)
+                pod.state.dateLabel = 'Last 30 Days';
+
+            if (!pod.state.dateInterval && pod.settings.intervals && pod.settings.intervals.defaultOption)
+                pod.state.dateInterval = pod.settings.intervals.defaultOption;
+            else if (!pod.state.dateInterval)
+                pod.state.dateInterval = 'Daily';
+
+            dashboard.pods[i] = JSON.stringify(pod);
+        }
+    } else {
+        req.flash('error', 'No such dashboard');
+    }
+
+    let view = 'dashboard';
+
+    //  check if view has an override
+    if (typeof application.viewOverride == 'function')
+        view = application.viewOverride(req, view);
+
+    res.render(view, {
+        application: application,
+        settings: utils.config.settings(),
+        req: req,
+        dashboardName: name,
+        dashboard: dashboard,
+        title: req.query.title || '',
+        editable: editable
+    });
+}
+
 export function setup(app: express.Application, application: IApplication, callback) {
 
-    var statusCheck: any = typeof application.statusCheck == 'function' ? application.statusCheck : lib.statusCheckPlaceholder;
+    let statusCheck: any = typeof application.statusCheck == 'function' ? application.statusCheck : lib.statusCheckPlaceholder;
 
     //  get all dashboards for project and show list of them
     app.get('/setup/dashboards', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
@@ -124,91 +216,10 @@ export function setup(app: express.Application, application: IApplication, callb
         });
     });
 
+
     //  display a dashboard
     app.get('/dashboard', application.enforceSecure, api.authenticate, statusCheck, function (req: express.Request, res: express.Response) {
-        utils.noCache(res);
-
-        var dashboards, name = req.query.name, template = req.query.template, dashboard: any = {}, editable = true;
-
-        //  find the dashboard to display
-        if (template) {
-            editable = false;
-            dashboard = application['getDashboardTemplate'](template, req.query);
-        } else {
-            dashboards = api.reporting.currentDashboards(req);
-            dashboard = dashboards[name];
-        }
-
-        if (dashboard) {
-
-            dashboard.pods = dashboard.pods || [];
-            
-            //  add static report settings to the pod config
-            for (let i = 0; i < dashboard.pods.length; i++) {
-
-                let pod = JSON.parse(dashboard.pods[i]);
-
-                if (pod.state && pod.state.id) {
-                    let report: any = application.reports.definitions[application.reports.Types[pod.state.id]];
-                    pod.settings = report ? report.settings : {};
-
-                    //  fill in initial state from definition where not in pod definition
-                    if (report.initialState) {
-
-                        for (let key in report.initialState) {
-
-                            if (report.initialState.hasOwnProperty(key) && !pod.state.hasOwnProperty(key))
-                                pod.state[key] = report.initialState[key];
-                        }
-                    }
-                }
-
-                //  fix up existing settings - this is to support prior formats
-                pod.settings = pod.settings || {};
-
-                if (pod.state.view)
-                    pod.settings.view = pod.state.view;
-
-                if (pod.state.renderView)
-                    pod.settings.renderView = pod.state.renderView;
-
-                if (pod.state.title)
-                    pod.settings.title = pod.state.title;
-
-                if (pod.state.hasOwnProperty('isLog'))
-                    pod.settings.isLog = pod.state.isLog;
-
-                if (!pod.settings.intervals)
-                    pod.settings.intervals = application.reports['intervals'];
-
-                if (!pod.settings.ranges)
-                    pod.settings.ranges = application.reports['ranges'];
-
-                if (!pod.state.dateLabel && pod.settings.intervals && pod.settings.intervals.defaultRange)
-                    pod.state.dateLabel = pod.settings.intervals.defaultRange;
-                else if (!pod.state.dateLabel)
-                    pod.state.dateLabel = 'Last 30 Days';
-
-                if (!pod.state.dateInterval && pod.settings.intervals && pod.settings.intervals.defaultOption)
-                    pod.state.dateInterval = pod.settings.intervals.defaultOption;
-                else if (!pod.state.dateInterval)
-                    pod.state.dateInterval = 'Daily';
-
-                dashboard.pods[i] = JSON.stringify(pod);
-            }
-        } else {
-            req.flash('error', 'No such dashboard');
-        }
-
-        res.render('dashboard',{
-            application: application,
-            settings: utils.config.settings(),
-            req: req,
-            dashboardName: name,
-            dashboard: dashboard,
-            title: req.query.title || '',
-            editable: editable
-        });
+        getDashboard(application, req, res);
     });
 
     callback();

@@ -13,6 +13,96 @@ function getEndpoint(appId) {
         return api.applications.items[api.reporting.defaultAppId].reporting.apiEndpoint;
     }
 }
+function getReport(application, req, res, view) {
+    if (!req['session'].projects || utils.empty(req['session'].projects)) {
+        res.redirect(application.branding.postSignupUrl);
+        return;
+    }
+    var definition, qsOptions, metricOptions, elementOptions, filterOptions, attribOptions, id;
+    qsOptions = req.query.options ? JSON.parse(req.query.options) : {};
+    id = qsOptions.id || req.query.id;
+    if (id) {
+        if (utils.isNumeric(id))
+            definition = application.reports.definitions[+id];
+        else
+            definition = application.reports.definitions[application.reports.Types[id]];
+        if (!definition) {
+            res.render('message', {
+                title: 'Error',
+                message: 'No such report',
+                settings: utils.config.settings(),
+                application: application,
+                dev: utils.config.dev(),
+                req: req
+            });
+            return;
+        }
+        definition = utils.clone(definition);
+        definition.initialState = definition.initialState || {};
+        definition.initialState.id = id;
+    }
+    else {
+        definition = {
+            settings: {
+                view: 'sessions',
+                renderView: 'report'
+            },
+            initialState: {}
+        };
+        if (qsOptions.view)
+            definition.settings.view = qsOptions.view;
+        if (qsOptions.renderView)
+            definition.settings.renderView = qsOptions.renderView;
+        if (qsOptions.title)
+            definition.settings.title = qsOptions.title;
+        if (qsOptions.hasOwnProperty('isLog'))
+            definition.settings.isLog = qsOptions.isLog;
+        if (!definition.settings.intervals)
+            definition.settings.intervals = application.reports['intervals'];
+        if (!definition.settings.ranges)
+            definition.settings.ranges = application.reports['ranges'];
+    }
+    if (req.query.options) {
+        for (var key in qsOptions) {
+            if (qsOptions.hasOwnProperty(key))
+                definition.initialState[key] = qsOptions[key];
+        }
+    }
+    var project = api.currentProject(req);
+    if (!project)
+        project = {};
+    if (!project.data)
+        project.data = {};
+    if (!project.data.attributes)
+        project.data.attributes = {};
+    var customAttribs = project.data.attributes;
+    var isLog = definition.settings.renderView == 'log';
+    metricOptions = api.reporting.getAttributeOptions(definition.settings.view, api.reporting.AttributeTypes.metrics, customAttribs, isLog, definition.settings.appId);
+    elementOptions = api.reporting.getAttributeOptions(definition.settings.view, api.reporting.AttributeTypes.elements, customAttribs, isLog, definition.settings.appId);
+    filterOptions = api.reporting.getFilterOptions(definition.settings.view, customAttribs, isLog, definition.settings.appId);
+    attribOptions = api.reporting.getAttributeOptions(definition.settings.view, api.reporting.AttributeTypes.all, customAttribs, isLog, definition.settings.appId);
+    utils.noCache(res);
+    api.reporting.getSegments(req, false, definition.appId, function (err) {
+        if (err)
+            req.flash('error', err.message);
+        var view = definition.settings.renderView;
+        if (typeof application.viewOverride == 'function')
+            view = application.viewOverride(req, view);
+        res.render(view || 'report', {
+            settings: utils.config.settings(),
+            application: application,
+            dev: utils.config.dev(),
+            req: req,
+            definition: definition,
+            segmentOptions: api.reporting.getSegmentOptions(req),
+            metricOptions: metricOptions,
+            elementOptions: elementOptions,
+            filterOptions: filterOptions,
+            attribOptions: attribOptions
+        });
+    });
+}
+exports.getReport = getReport;
 function setup(app, application, callback) {
     var statusCheck = typeof application.statusCheck == 'function' ? application.statusCheck : lib.statusCheckPlaceholder;
     app.post('/query', application.enforceSecure, api.authenticateNoRedirect, function (req, res) {
@@ -38,90 +128,7 @@ function setup(app, application, callback) {
         });
     });
     app.get('/report', application.enforceSecure, api.authenticate, statusCheck, function (req, res) {
-        if (!req['session'].projects || utils.empty(req['session'].projects)) {
-            res.redirect(application.branding.postSignupUrl);
-            return;
-        }
-        var definition, qsOptions, metricOptions, elementOptions, filterOptions, attribOptions, id;
-        qsOptions = req.query.options ? JSON.parse(req.query.options) : {};
-        id = qsOptions.id || req.query.id;
-        if (id) {
-            if (utils.isNumeric(id))
-                definition = application.reports.definitions[+id];
-            else
-                definition = application.reports.definitions[application.reports.Types[id]];
-            if (!definition) {
-                res.render('message', {
-                    title: 'Error',
-                    message: 'No such report',
-                    settings: utils.config.settings(),
-                    application: application,
-                    dev: utils.config.dev(),
-                    req: req
-                });
-                return;
-            }
-            definition = utils.clone(definition);
-            definition.initialState = definition.initialState || {};
-            definition.initialState.id = id;
-        }
-        else {
-            definition = {
-                settings: {
-                    view: 'sessions',
-                    renderView: 'report'
-                },
-                initialState: {}
-            };
-            if (qsOptions.view)
-                definition.settings.view = qsOptions.view;
-            if (qsOptions.renderView)
-                definition.settings.renderView = qsOptions.renderView;
-            if (qsOptions.title)
-                definition.settings.title = qsOptions.title;
-            if (qsOptions.hasOwnProperty('isLog'))
-                definition.settings.isLog = qsOptions.isLog;
-            if (!definition.settings.intervals)
-                definition.settings.intervals = application.reports['intervals'];
-            if (!definition.settings.ranges)
-                definition.settings.ranges = application.reports['ranges'];
-        }
-        if (req.query.options) {
-            for (var key in qsOptions) {
-                if (qsOptions.hasOwnProperty(key))
-                    definition.initialState[key] = qsOptions[key];
-            }
-        }
-        var project = api.currentProject(req);
-        if (!project)
-            project = {};
-        if (!project.data)
-            project.data = {};
-        if (!project.data.attributes)
-            project.data.attributes = {};
-        var customAttribs = project.data.attributes;
-        var isLog = definition.settings.renderView == 'log';
-        metricOptions = api.reporting.getAttributeOptions(definition.settings.view, api.reporting.AttributeTypes.metrics, customAttribs, isLog, definition.settings.appId);
-        elementOptions = api.reporting.getAttributeOptions(definition.settings.view, api.reporting.AttributeTypes.elements, customAttribs, isLog, definition.settings.appId);
-        filterOptions = api.reporting.getFilterOptions(definition.settings.view, customAttribs, isLog, definition.settings.appId);
-        attribOptions = api.reporting.getAttributeOptions(definition.settings.view, api.reporting.AttributeTypes.all, customAttribs, isLog, definition.settings.appId);
-        utils.noCache(res);
-        api.reporting.getSegments(req, false, definition.appId, function (err) {
-            if (err)
-                req.flash('error', err.message);
-            res.render(definition.settings.renderView || 'report', {
-                settings: utils.config.settings(),
-                application: application,
-                dev: utils.config.dev(),
-                req: req,
-                definition: definition,
-                segmentOptions: api.reporting.getSegmentOptions(req),
-                metricOptions: metricOptions,
-                elementOptions: elementOptions,
-                filterOptions: filterOptions,
-                attribOptions: attribOptions
-            });
-        });
+        getReport(application, req, res);
     });
     function exportCSV(req, res) {
         var params = {
