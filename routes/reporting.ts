@@ -293,7 +293,7 @@ export function setup(app: express.Application, application: IApplication, callb
             phantomBin = '"../node_modules/gator-web/bin/phantomjs-win"'
         }
 
-        var reportUrl = 'https://' + application.settings.domain;
+        var reportUrl = 'https://' + application.current.consoleHost;
 
         if (utils.config.dev())
             reportUrl = application.settings.nodeUrl;

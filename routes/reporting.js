@@ -190,7 +190,7 @@ function setup(app, application, callback) {
         if (os.platform().substr(0, 3) == 'win') {
             phantomBin = '"../node_modules/gator-web/bin/phantomjs-win"';
         }
-        var reportUrl = 'https://' + application.settings.domain;
+        var reportUrl = 'https://' + application.current.consoleHost;
         if (utils.config.dev())
             reportUrl = application.settings.nodeUrl;
         reportUrl += '/report?format=pdf&accessToken=' + req['session'].accessToken + '&options=' + encodeURIComponent(req.query.options);
