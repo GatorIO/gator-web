@@ -232,7 +232,7 @@ function setup(app, application, callback) {
             }
         }
         catch (err) {
-            api.log(err, "PDF download");
+            api.log(err, "/download");
             res.end("Internal error");
         }
     });

@@ -345,7 +345,7 @@ export function setup(app: express.Application, application: IApplication, callb
                     res.end();
             }
         } catch(err) {
-            api.log(err, "PDF download");
+            api.log(err, "/download");
             res.end("Internal error");
         }
     });
