@@ -190,20 +190,22 @@ function setup(app, application, callback) {
         if (os.platform().substr(0, 3) == 'win') {
             phantomBin = '"../node_modules/gator-web/bin/phantomjs-win"';
         }
-        var reportUrl = 'https://' + application.current.consoleHost;
+        var reportUrl = application.current.consoleHost;
         if (utils.config.dev())
             reportUrl = application.settings.nodeUrl;
         reportUrl += '/report?format=pdf&accessToken=' + req['session'].accessToken + '&options=' + encodeURIComponent(req.query.options);
         var child = exec('cd phantomjs && ' + phantomBin + ' --ignore-ssl-errors=yes ../node_modules/gator-web/lib/renderpdf.js "' + reportUrl + '" ' + file, function (err, stdout, stderr) {
             if (err !== null) {
                 api.log(err, "PDF download");
-                res.end("Internal error - " + err.message);
+                res.end("Internal error");
             }
             else {
                 res.download('phantomjs/' + file, 'report.pdf', function (err) {
                     try {
-                        if (err)
-                            res.end("Internal error - " + err.message);
+                        if (err) {
+                            api.log(err, "PDF download");
+                            res.end("Internal error");
+                        }
                         else {
                             var stat = fs.statSync('phantomjs/' + file);
                             if (stat.isFile())
@@ -216,16 +218,22 @@ function setup(app, application, callback) {
         });
     }
     app.get('/download', application.enforceSecure, api.authenticate, function (req, res) {
-        switch (req.query.format) {
-            case 'csv':
-                exportCSV(req, res);
-                break;
-            case 'pdf':
-                exportPDF(req, res);
-                break;
-            default:
-                res.write('ERROR: No format');
-                res.end();
+        try {
+            switch (req.query.format) {
+                case 'csv':
+                    exportCSV(req, res);
+                    break;
+                case 'pdf':
+                    exportPDF(req, res);
+                    break;
+                default:
+                    res.write('ERROR: No format');
+                    res.end();
+            }
+        }
+        catch (err) {
+            api.log(err, "PDF download");
+            res.end("Internal error");
         }
     });
     app.get('/visualizations/badtraffic', application.enforceSecure, api.authenticate, statusCheck, function (req, res) {

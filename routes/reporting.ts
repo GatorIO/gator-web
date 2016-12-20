@@ -293,7 +293,7 @@ export function setup(app: express.Application, application: IApplication, callb
             phantomBin = '"../node_modules/gator-web/bin/phantomjs-win"'
         }
 
-        var reportUrl = 'https://' + application.current.consoleHost;
+        var reportUrl = application.current.consoleHost;
 
         if (utils.config.dev())
             reportUrl = application.settings.nodeUrl;
@@ -305,15 +305,16 @@ export function setup(app: express.Application, application: IApplication, callb
 
                 if (err !== null) {
                     api.log(err, "PDF download");
-                    res.end("Internal error - " + err.message);
+                    res.end("Internal error");
                 } else {
                     res.download('phantomjs/' + file, 'report.pdf', function(err) {
 
                         try {
 
-                            if (err)
-                                res.end("Internal error - " + err.message);
-                            else {
+                            if (err){
+                                api.log(err, "PDF download");
+                                res.end("Internal error");
+                            } else {
                                 var stat = fs.statSync('phantomjs/' + file);
 
                                 if (stat.isFile())
@@ -328,18 +329,24 @@ export function setup(app: express.Application, application: IApplication, callb
 
     app.get('/download', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
 
-        switch (req.query.format) {
-            case 'csv':
-                exportCSV(req, res);
-                break;
+        try {
 
-            case 'pdf':
-                exportPDF(req, res);
-                break;
+            switch (req.query.format) {
+                case 'csv':
+                    exportCSV(req, res);
+                    break;
 
-            default:
-                res.write('ERROR: No format');
-                res.end();
+                case 'pdf':
+                    exportPDF(req, res);
+                    break;
+
+                default:
+                    res.write('ERROR: No format');
+                    res.end();
+            }
+        } catch(err) {
+            api.log(err, "PDF download");
+            res.end("Internal error");
         }
     });
 
