@@ -92,10 +92,6 @@ export function getDashboard(application, req, res) {
 
     let view = 'dashboard';
 
-    //  check if view has an override
-    if (typeof application.viewOverride == 'function')
-        view = application.viewOverride(req, view);
-
     res.render(view, {
         application: application,
         settings: utils.config.settings(),

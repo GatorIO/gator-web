@@ -149,10 +149,6 @@ export function getReport(application, req, res, view?) {
 
         let view = definition.settings.renderView;
 
-        //  check if view has an override
-        if (typeof application.viewOverride == 'function')
-            view = application.viewOverride(req, view);
-
         res.render(view || 'report', {
             settings: utils.config.settings(),
             application: application,

@@ -86,8 +86,6 @@ function getReport(application, req, res, view) {
         if (err)
             req.flash('error', err.message);
         var view = definition.settings.renderView;
-        if (typeof application.viewOverride == 'function')
-            view = application.viewOverride(req, view);
         res.render(view || 'report', {
             settings: utils.config.settings(),
             application: application,

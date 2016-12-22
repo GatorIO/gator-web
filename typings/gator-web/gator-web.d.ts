@@ -68,10 +68,10 @@ declare module 'gator-web' {
         api: any;
         current: any;
         branding: IBranding;
-        projectTypes: Object;
-        projectDesc(type): string;
+        projectTypes?: Object;
+        projectDesc?(type): string;
         defaultDashboard(type): Object;
-        menuItems(user, account, project): Array<MenuItem>;
+        menuItems?(user, account, project): Array<MenuItem>;
         enforceSecure(req, res, next: Function);
         statusCheck(req, res, next: Function);
         reports: Reports;

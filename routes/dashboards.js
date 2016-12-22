@@ -55,8 +55,6 @@ function getDashboard(application, req, res) {
         req.flash('error', 'No such dashboard');
     }
     var view = 'dashboard';
-    if (typeof application.viewOverride == 'function')
-        view = application.viewOverride(req, view);
     res.render(view, {
         application: application,
         settings: utils.config.settings(),
