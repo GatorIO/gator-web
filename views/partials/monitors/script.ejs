@@ -400,7 +400,7 @@
                 break;
             case monitorTypes.website:
 
-                <% if (application.isLetsMonitor() && !req.session.account.billingMethod) { %>
+                <% if (typeof application.isLetsMonitor == 'function' && application.isLetsMonitor() && !req.session.account.billingMethod) { %>
                     $('#url').val('https://');
                 <% } %>
                 $('#type-description').html('Monitors a website for downtime and load times' +
@@ -500,12 +500,7 @@
         $('#main-form-modal')[0].reset();
         $('#monitor-modal-title').html('Create Monitor');
         $('#modal-create').modal();
-
-        <% if (application.isNS8()) { %>
-            $('#type').val('<%- monitorTypes.scoring %>');
-        <% } else { %>
-            $('#type').val('<%- monitorTypes.website %>');
-        <% } %>
+        $('#type').val('<%- monitorTypes.website %>');
 
         $('#scriptOptionsDiv').hide();
 
@@ -649,7 +644,7 @@
 
     function validateForm(successCallback) {
 
-        <% if (application.isLetsMonitor() && !req.session.account.billingMethod) { %>
+        <% if (typeof application.isLetsMonitor == 'function' && application.isLetsMonitor() && !req.session.account.billingMethod) { %>
 
             if ($('#type').val() == "0" && +$('#interval').val() < 30) {
                 upgrade('To create monitors with intervals less than 30 minutes, an upgrade is required.  Upgrading also enables access to all monitor types.');
