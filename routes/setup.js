@@ -11,6 +11,7 @@ exports.attributeRoutes = require('./attributes');
 exports.paymentRoutes = require('./payments');
 exports.emailRoutes = require('./email');
 exports.accessTokenRoutes = require('./accessTokens');
+exports.contactRoutes = require('./contacts');
 function setup(app, application, callback) {
     try {
         exports.accessTokenRoutes.setup(app, application, function () {

@@ -113,6 +113,10 @@ declare module 'gator-web' {
         module emailRoutes {
             export function setup(app, application, callback);
         }
+
+        module contactRoutes {
+            export function setup(app, application, callback);
+        }
     }
 }
 

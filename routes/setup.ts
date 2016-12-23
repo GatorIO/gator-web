@@ -22,6 +22,7 @@ import _attributeRoutes = require('./attributes');
 import _paymentRoutes = require('./payments');
 import _emailRoutes = require('./email');
 import _accessTokenRoutes = require('./accessTokens');
+import _contactRoutes = require('./contacts');
 
 export var apiRoutes = require('./api');
 export var projectRoutes = require('./projects');
@@ -35,6 +36,7 @@ export var attributeRoutes = require('./attributes');
 export var paymentRoutes = require('./payments');
 export var emailRoutes = require('./email');
 export var accessTokenRoutes = require('./accessTokens');
+export var contactRoutes = require('./contacts');
 
 export function setup(app: express.Application, application: IApplication, callback) {
 
