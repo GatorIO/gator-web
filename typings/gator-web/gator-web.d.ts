@@ -1,12 +1,37 @@
 /// <reference path="../gator-api/gator-api.d.ts" />
-import _dictionaries = require('../../lib/dictionaries');
 
 declare module 'gator-web' {
     import api = require('gator-api');
 
-    export interface dictionaries {
-        MonitorTypes: _dictionaries.MonitorTypes;
-        monitorTypes: _dictionaries.Dictionary<_dictionaries.Item>;
+    export class Item {
+        constructor(key: number, code: string, description?: string);
+        key: number;
+        code: string;
+        description: string;
+    }
+
+    export class Dictionary<T extends Item> {
+        keys: Array<Item>;
+        codes: any;
+        find(index): T
+    }
+
+    export module dictionaries {
+
+        export enum MonitorTypes {
+            website = 0,
+            DBL = 1,
+            email = 2,
+            GSB = 3,
+            performance = 4,
+            scoring = 5,
+            DNS = 6,
+            certificate = 7,
+            ping = 8,
+            port = 9,
+            portScan = 10
+        }
+        export let monitorTypes: Dictionary<Item>
     }
 
     export interface IBranding {

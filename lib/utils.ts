@@ -5,8 +5,9 @@ import api = require("gator-api");
 const urlLib = require('url');
 
 /*
-    Utility functions for the monitoring module
+    Utility functions
  */
+
 //  return the hostname from a url
 export function hostname(url: string): string {
 

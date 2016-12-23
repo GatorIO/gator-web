@@ -185,79 +185,109 @@
                 intro: "This is a tour of a log page.  It will guide you through the elements on the page and what they are for.  <br><br>Click 'next' to start."
             });
 
-            Page.intro.steps.push({
-                element: document.querySelector('#filter-builder'),
-                intro: "This is used to filter all the data on the report.  Multiple filters can be created and grouped together by logical ANDs and ORs."
-            });
-
-            Page.intro.steps.push({
-                element: document.querySelector('.group-actions'),
-                intro: "Create multiple filter criteria by adding and grouping rules."
-            });
-
-            Page.intro.steps.push({
-                element: document.querySelector('.group-conditions'),
-                intro: "When you have multiple filter criteria, you can choose whether to logically AND them or OR them."
-            });
-
-            if (report.settings.map) {
+            if ($('#filter-builder').is(':visible')) {
 
                 Page.intro.steps.push({
-                    element: document.querySelector('#world-map'),
-                    intro: "This map shows the location of each item in the table.  You can hover over each pin to see the attributes of the item.",
-                    position: "left"
+                    element: document.querySelector('#filter-builder'),
+                    intro: "This is used to filter all the data on the report.  Multiple filters can be created and grouped together by logical ANDs and ORs."
+                });
+
+                Page.intro.steps.push({
+                    element: document.querySelector('.group-actions'),
+                    intro: "Create multiple filter criteria by adding and grouping rules."
+                });
+
+                Page.intro.steps.push({
+                    element: document.querySelector('.group-conditions'),
+                    intro: "When you have multiple filter criteria, you can choose whether to logically AND them or OR them."
                 });
             }
 
-            Page.intro.steps.push({
-                element: document.querySelector('#toolbar-prior'),
-                intro: "By clicking on this, the report will change the timeframe one unit back.  For example, if the report is for the month of June, it will move to May and refresh."
-            });
 
-            Page.intro.steps.push({
-                element: document.querySelector('#reportRange'),
-                intro: "This lets you pick predefined timeframes, like 'Today'.  It also lets you select custom timeframes from the 'Custom' menu option."
-            });
+            if ($('#world-map').is(':visible')) {
 
-            Page.intro.steps.push({
-                element: document.querySelector('#toolbar-next'),
-                intro: "By clicking on this, the report will change the timeframe one unit forward.  For example, if the report is for the month of May, it will move to June and refresh."
-            });
+                if (report.settings.map) {
 
-            Page.intro.steps.push({
-                element: document.querySelector('#toolbar-refresh'),
-                intro: "This button refreshes the report without reloading the whole page.",
-                position: 'left'
-            });
+                    Page.intro.steps.push({
+                        element: document.querySelector('#world-map'),
+                        intro: "This map shows the location of each item in the table.  You can hover over each pin to see the attributes of the item.",
+                        position: "left"
+                    });
+                }
+            }
 
-            Page.intro.steps.push({
-                element: document.querySelector('#toolbar-dashboard'),
-                intro: "This adds the current report to an existing dashboard.  The report will show up as a pod on the dashboard you select.",
-                position: 'left'
-            });
+            if ($('#toolbar-prior').is(':visible')) {
+                Page.intro.steps.push({
+                    element: document.querySelector('#toolbar-prior'),
+                    intro: "By clicking on this, the report will change the timeframe one unit back.  For example, if the report is for the month of June, it will move to May and refresh."
+                });
+            }
 
-            if (report.settings.bookmarks) {
+            if ($('#reportRange').is(':visible')) {
 
                 Page.intro.steps.push({
-                    element: document.querySelector('#toolbar-bookmark'),
-                    intro: "This creates a bookmark for the current report.  The bookmark will show up on the menu's 'Bookmark' item.",
+                    element: document.querySelector('#reportRange'),
+                    intro: "This lets you pick predefined timeframes, like 'Today'.  It also lets you select custom timeframes from the 'Custom' menu option."
+                });
+            }
+
+            if ($('#toolbar-next').is(':visible')) {
+
+                Page.intro.steps.push({
+                    element: document.querySelector('#toolbar-next'),
+                    intro: "By clicking on this, the report will change the timeframe one unit forward.  For example, if the report is for the month of May, it will move to June and refresh."
+                });
+            }
+
+            if ($('#toolbar-refresh').is(':visible')) {
+
+                Page.intro.steps.push({
+                    element: document.querySelector('#toolbar-refresh'),
+                    intro: "This button refreshes the report without reloading the whole page.",
                     position: 'left'
                 });
             }
 
-            Page.intro.steps.push({
-                element: document.querySelector('#toolbar-columns'),
-                intro: 'This shows a dialog that allows you to:<br>' +
-                '<ul><li>Customize what columns to display on the table.  You can reorder the columns by dragging and dropping them.</li>' +
-                '<li>Choose what to group the report on.</li></ul>',
-                position: 'left'
-            });
+            if ($('#toolbar-dashboard').is(':visible')) {
 
-            Page.intro.steps.push({
-                element: document.querySelector('#toolbar-export'),
-                intro: "This exports the report to a specific format you select, like PDF or CSV.",
-                position: 'left'
-            });
+                Page.intro.steps.push({
+                    element: document.querySelector('#toolbar-dashboard'),
+                    intro: "This adds the current report to an existing dashboard.  The report will show up as a pod on the dashboard you select.",
+                    position: 'left'
+                });
+            }
+
+            if ($('#toolbar-bookmark').is(':visible')) {
+
+                if (report.settings.bookmarks) {
+
+                    Page.intro.steps.push({
+                        element: document.querySelector('#toolbar-bookmark'),
+                        intro: "This creates a bookmark for the current report.  The bookmark will show up on the menu's 'Bookmark' item.",
+                        position: 'left'
+                    });
+                }
+            }
+
+
+            if ($('#toolbar-columns').is(':visible')) {
+                Page.intro.steps.push({
+                    element: document.querySelector('#toolbar-columns'),
+                    intro: 'This shows a dialog that allows you to:<br>' +
+                    '<ul><li>Customize what columns to display on the table.  You can reorder the columns by dragging and dropping them.</li>' +
+                    '<li>Choose what to group the report on.</li></ul>',
+                    position: 'left'
+                });
+            }
+
+            if ($('#toolbar-export').is(':visible')) {
+
+                Page.intro.steps.push({
+                    element: document.querySelector('#toolbar-export'),
+                    intro: "This exports the report to a specific format you select, like PDF or CSV.",
+                    position: 'left'
+                });
+            }
 
             runQuery();
         } catch(err) {
