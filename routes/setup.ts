@@ -23,6 +23,8 @@ import _paymentRoutes = require('./payments');
 import _emailRoutes = require('./email');
 import _accessTokenRoutes = require('./accessTokens');
 import _contactRoutes = require('./contacts');
+import _monitorRoutes = require('./monitors');
+import _stationRoutes = require('./stations');
 
 export var apiRoutes = require('./api');
 export var projectRoutes = require('./projects');
@@ -37,6 +39,8 @@ export var paymentRoutes = require('./payments');
 export var emailRoutes = require('./email');
 export var accessTokenRoutes = require('./accessTokens');
 export var contactRoutes = require('./contacts');
+export var monitorRoutes = require('./monitors');
+export var stationRoutes = require('./stations');
 
 export function setup(app: express.Application, application: IApplication, callback) {
 

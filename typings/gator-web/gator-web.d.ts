@@ -117,6 +117,14 @@ declare module 'gator-web' {
         module contactRoutes {
             export function setup(app, application, callback);
         }
+
+        module monitorRoutes {
+            export function setup(app, application, callback);
+        }
+
+        module stationRoutes {
+            export function setup(app, application, callback);
+        }
     }
 }
 
