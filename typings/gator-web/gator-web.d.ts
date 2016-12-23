@@ -1,7 +1,13 @@
 /// <reference path="../gator-api/gator-api.d.ts" />
+import _dictionaries = require('../../lib/dictionaries');
 
 declare module 'gator-web' {
     import api = require('gator-api');
+
+    export interface dictionaries {
+        MonitorTypes: _dictionaries.MonitorTypes;
+        monitorTypes: _dictionaries.Dictionary<_dictionaries.Item>;
+    }
 
     export interface IBranding {
         productName: string;
@@ -77,7 +83,7 @@ declare module 'gator-web' {
         reports: Reports;
     }
 
-    export var trackingProjectId: number;
+    export let trackingProjectId: number;
 
     module routes {
         export function setup(app, application, callback);
