@@ -1,7 +1,9 @@
 import _routes = require('../routes/setup');
+import _shopify = require('../lib/shopify');
 import _dictionaries = require('./dictionaries');
 
 export var routes = _routes;
+export var shopify = _shopify;
 export var dictionaries = _dictionaries;
 
 var _flash = require('./flash');

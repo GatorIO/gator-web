@@ -157,5 +157,9 @@ declare module 'gator-web' {
             export function setup(app, application, callback);
         }
     }
+
+    module shopify {
+        export function launch(req, res, callback);
+    }
 }
 
