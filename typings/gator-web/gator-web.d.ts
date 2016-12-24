@@ -159,7 +159,9 @@ declare module 'gator-web' {
     }
 
     module shopify {
-        export function launch(req, res, callback);
+        export function launch(settings, application, req, res, callback?: (launched: boolean) => void);
+        export function install(settings, req, res, callback: (err?: api.errors.APIError) => void);
+        export function uninstall(settings, req, res, callback: (err?: api.errors.APIError) => void);
     }
 }
 

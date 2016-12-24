@@ -33,7 +33,7 @@ export function launch(settings, application, req, res, callback?: (launched: bo
                 callback(false);
         } else {
             api.setSessionCookie(res, result.data.accessToken);
-            res.redirect(application.postLoginUrl);
+            res.redirect(application.branding.postLoginUrl);
 
             if (callback)
                 callback(true);
