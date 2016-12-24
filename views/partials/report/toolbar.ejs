@@ -57,7 +57,7 @@
             <button type="button" class="btn btn-white" onclick="runQuery(); return false;"><i class="fa fa-refresh"></i></button>
         </span>
 
-        <span id="toolbar-dashboard" title="Add this report to a dashboard" class="input-group-btn hideAt1024" style="width:1%">
+        <span id="toolbar-dashboard" class="toolbar-dashboard" title="Add this report to a dashboard" class="input-group-btn hideAt1024" style="width:1%">
             <button type="button" class="btn btn-white" data-toggle="modal" data-target="#dashboardModal" onclick="getSuggestedTitle()">
                 <i class="fa fa-th-large"></i>
             </button>
@@ -116,7 +116,7 @@
                         <li><a href="#" onclick="return false">Tab Delimited</a></li>
                         <li><a href="#" onclick="return false">JSON</a></li>
                 -->
-                <li><a href="#" onclick="report.download('pdf'); return false">Adobe PDF</a></li>
+                <li class="toolbar-pdf"><a href="#" onclick="report.download('pdf'); return false">Adobe PDF</a></li>
                 <li><a href="#" onclick="report.download('csv'); return false">Comma Separated Values</a></li>
             </ul>
         </span>
@@ -127,7 +127,7 @@
             </button>
             <ul class="dropdown-menu pull-right">
                 <li><a href="#" onclick="runQuery(); return false"><i class="fa fa-refresh"></i>&nbsp; Refresh</a></li>
-                <li>
+                <li class="toolbar-dashboard">
                     <a href="#" data-toggle="modal" data-target="#dashboardModal" onclick="return false;">
                         <i class="fa fa-th-large"></i>&nbsp; Add to Dashboard
                     </a>
@@ -144,7 +144,7 @@
                         <i class="fa fa-columns"></i>&nbsp; Customize Columns
                     </a>
                 </li>
-                <li><a href="#" onclick="report.download('pdf'); return false"><i class="glyphicon glyphicon-share"></i>&nbsp; Export Adobe PDF</a></li>
+                <li class="toolbar-pdf"><a href="#" onclick="report.download('pdf'); return false"><i class="glyphicon glyphicon-share"></i>&nbsp; Export Adobe PDF</a></li>
                 <li><a href="#" onclick="report.download('csv'); return false"><i class="glyphicon glyphicon-share"></i>&nbsp; Export CSV</a></li>
             </ul>
         </span>
