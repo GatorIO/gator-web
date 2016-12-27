@@ -19,7 +19,7 @@ export function launch(application, req, res, callback?: (launched: boolean) => 
     //  this checks for a valid user name equal to the shop name and that the shop has the app installed
     api.REST.client.post('/v1/shopify/launch', params, function (err, apiRequest, apiResponse, result) {
 
-        //  if the user does not exist or the app is not installed, redirect to the app's authorization or activation url
+        //  if the user does not exist or the app is not installed, redirect to the app's authorization or billing activation url
         if (apiResponse && apiResponse.statusCode == 300 && result && result.location) {
             res.redirect(result.location);
 
@@ -72,40 +72,6 @@ export function uninstall(application, req, res, callback: (err?: api.errors.API
 
     //  perform uninstall
     api.REST.client.post('/v1/shopify/uninstall', params, function (err, apiRequest, apiResponse, result) {
-        callback(err);
-    });
-}
-
-//  set up recurring billing - if it succeeds, return the confirmation URL
-export function recurring(plan, req, callback: (err?: api.errors.APIError, confirmationUrl?: string) => void) {
-
-    let params = {
-        accessToken: req.session.accessToken,
-        endpoint: '/admin/recurring_application_charges.json',
-        data: {
-            "recurring_application_charge": plan
-        }
-    };
-
-    api.REST.client.post('/v1/shopify', params, function(err, apiRequest, apiResponse, result: any) {
-
-        if (err)
-            callback(err);
-        else
-            callback(null, result.data.recurring_application_charge.confirmation_url);
-
-    });
-}
-
-//  activate recurring billing
-export function activate(req, callback: (err?: api.errors.APIError) => void) {
-
-    let params = {
-        accessToken: req.session.accessToken,
-        endpoint: '/admin/recurring_application_charges/' + req.query.charge_id + '/activate.json'
-    };
-
-    api.REST.client.post('/v1/shopify', params, function(err, apiRequest, apiResponse, result: any) {
         callback(err);
     });
 }

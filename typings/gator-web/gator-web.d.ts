@@ -162,8 +162,6 @@ declare module 'gator-web' {
         export function launch(application: IApplication, req, res, callback?: (launched: boolean) => void);
         export function install(application: IApplication, req, res, callback: (err?: api.errors.APIError) => void);
         export function uninstall(application: IApplication, req, res, callback: (err?: api.errors.APIError) => void);
-        export function recurring(plan, req, callback: (err?: api.errors.APIError, confirmationUrl?: string) => void);
-        export function activate(req, callback: (err?: api.errors.APIError) => void);
     }
 }
 
