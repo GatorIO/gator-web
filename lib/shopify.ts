@@ -8,20 +8,20 @@ import api = require("gator-api");
  */
 
 //  Launch a Shopify app.  Return whether app launch/login was successful.  Possible outcomes are errors, an OAuth redirect or success.
-export function launch(settings, application, req, res, callback?: (launched: boolean) => void) {
+export function launch(application, req, res, callback?: (launched: boolean) => void) {
 
     let params = {
-        settings: settings,
+        appId: application.current.appId,
         query: req.query,
         redirect_uri: utils.config.dev() ? 'https://' + req.headers['host'] + '/shopify/install' : 'https://' + utils.config.settings().domain + '/shopify/install'
     };
 
     //  this checks for a valid user name equal to the shop name and that the shop has the app installed
-    api.REST.client.post('/v1/shopify/login', params, function (err, apiRequest, apiResponse, result) {
+    api.REST.client.post('/v1/shopify/launch', params, function (err, apiRequest, apiResponse, result) {
 
-        //  if the user does not exist or the app is not installed, redirect to the app's authorization url
-        if (apiResponse && apiResponse.statusCode == 300 && result && result.authUrl) {
-            res.redirect(result.authUrl);
+        //  if the user does not exist or the app is not installed, redirect to the app's authorization or activation url
+        if (apiResponse && apiResponse.statusCode == 300 && result && result.location) {
+            res.redirect(result.location);
 
             if (callback)
                 callback(false);
@@ -41,10 +41,10 @@ export function launch(settings, application, req, res, callback?: (launched: bo
     });
 }
 
-export function install(settings, req, res, callback: (err?: api.errors.APIError) => void) {
+export function install(application, req, res, callback: (err?: api.errors.APIError) => void) {
 
     let params = {
-        settings: settings,
+        appId: application.current.appId,
         query: req.query,
         uri: utils.config.dev() ? 'https://' + req.headers['host'] : 'https://' + utils.config.settings().domain
     };
@@ -62,10 +62,10 @@ export function install(settings, req, res, callback: (err?: api.errors.APIError
     });
 }
 
-export function uninstall(settings, req, res, callback: (err?: api.errors.APIError) => void) {
+export function uninstall(application, req, res, callback: (err?: api.errors.APIError) => void) {
 
     let params = {
-        settings: settings,
+        appId: application.current.appId,
         headers: req.headers,
         body: req['rawBody'],
     };
@@ -77,12 +77,10 @@ export function uninstall(settings, req, res, callback: (err?: api.errors.APIErr
 }
 
 //  set up recurring billing - if it succeeds, return the confirmation URL
-export function recurring(settings, plan, req, callback: (err?: api.errors.APIError, confirmationUrl?: string) => void) {
+export function recurring(plan, req, callback: (err?: api.errors.APIError, confirmationUrl?: string) => void) {
 
     let params = {
-        settings: settings,
-        shop: req['session'].user.name,
-        shopifyAccessToken: req['session'].account.data.accessToken,
+        accessToken: req.session.accessToken,
         endpoint: '/admin/recurring_application_charges.json',
         data: {
             "recurring_application_charge": plan
@@ -100,12 +98,10 @@ export function recurring(settings, plan, req, callback: (err?: api.errors.APIEr
 }
 
 //  activate recurring billing
-export function activate(settings, req, callback: (err?: api.errors.APIError) => void) {
+export function activate(req, callback: (err?: api.errors.APIError) => void) {
 
     let params = {
-        settings: settings,
-        shop: req['session'].user.name,
-        shopifyAccessToken: req['session'].account.data.accessToken,
+        accessToken: req.session.accessToken,
         endpoint: '/admin/recurring_application_charges/' + req.query.charge_id + '/activate.json'
     };
 
