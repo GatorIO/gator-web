@@ -77,7 +77,7 @@ export function uninstall(settings, req, res, callback: (err?: api.errors.APIErr
 }
 
 //  set up recurring billing - if it succeeds, return the confirmation URL
-export function recurring(settings, plan, req, res, callback: (err?: api.errors.APIError, confirmationUrl?: string) => void) {
+export function recurring(settings, plan, req, callback: (err?: api.errors.APIError, confirmationUrl?: string) => void) {
 
     let params = {
         settings: settings,
@@ -94,7 +94,22 @@ export function recurring(settings, plan, req, res, callback: (err?: api.errors.
         if (err)
             callback(err);
         else
-            callback(null, result.confirmation_url);
+            callback(null, result.data.recurring_application_charge.confirmation_url);
 
+    });
+}
+
+//  activate recurring billing
+export function activate(settings, req, callback: (err?: api.errors.APIError) => void) {
+
+    let params = {
+        settings: settings,
+        shop: req['session'].user.name,
+        shopifyAccessToken: req['session'].account.data.accessToken,
+        endpoint: '/admin/recurring_application_charges/#' + req.query.charge_id + '/activate.json'
+    };
+
+    api.REST.client.post('/v1/shopify', params, function(err, apiRequest, apiResponse, result: any) {
+        callback(err);
     });
 }
