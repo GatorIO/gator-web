@@ -70,8 +70,31 @@ export function uninstall(settings, req, res, callback: (err?: api.errors.APIErr
         body: req['rawBody'],
     };
 
-    //  perform base install/authentication
+    //  perform uninstall
     api.REST.client.post('/v1/shopify/uninstall', params, function (err, apiRequest, apiResponse, result) {
         callback(err);
+    });
+}
+
+//  set up recurring billing - if it succeeds, return the confirmation URL
+export function recurring(settings, plan, req, res, callback: (err?: api.errors.APIError, confirmationUrl?: string) => void) {
+
+    let params = {
+        settings: settings,
+        shop: req['session'].user.name,
+        shopifyAccessToken: req['session'].account.data.accessToken,
+        endpoint: '/admin/recurring_application_charges.json',
+        data: {
+            "recurring_application_charge": plan
+        }
+    };
+
+    api.REST.client.post('/v1/shopify', params, function(err, apiRequest, apiResponse, result: any) {
+
+        if (err)
+            callback(err);
+        else
+            callback(null, result.confirmation_url);
+
     });
 }
