@@ -11,7 +11,7 @@ import api = require("gator-api");
 export function launch(application, req, res, callback?: (launched: boolean) => void) {
 
     let params = {
-        appId: application.current.appId,
+        appId: application.current.id,
         query: req.query,
         redirect_uri: utils.config.dev() ? 'https://' + req.headers['host'] + '/shopify/install' : 'https://' + utils.config.settings().domain + '/shopify/install'
     };
@@ -44,7 +44,7 @@ export function launch(application, req, res, callback?: (launched: boolean) => 
 export function install(application, req, res, callback: (err?: api.errors.APIError) => void) {
 
     let params = {
-        appId: application.current.appId,
+        appId: application.current.id,
         query: req.query,
         uri: utils.config.dev() ? 'https://' + req.headers['host'] : 'https://' + utils.config.settings().domain
     };
@@ -65,7 +65,7 @@ export function install(application, req, res, callback: (err?: api.errors.APIEr
 export function uninstall(application, req, res, callback: (err?: api.errors.APIError) => void) {
 
     let params = {
-        appId: application.current.appId,
+        appId: application.current.id,
         headers: req.headers,
         body: req['rawBody'],
     };
