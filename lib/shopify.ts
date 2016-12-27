@@ -106,7 +106,7 @@ export function activate(settings, req, callback: (err?: api.errors.APIError) =>
         settings: settings,
         shop: req['session'].user.name,
         shopifyAccessToken: req['session'].account.data.accessToken,
-        endpoint: '/admin/recurring_application_charges/#' + req.query.charge_id + '/activate.json'
+        endpoint: '/admin/recurring_application_charges/' + req.query.charge_id + '/activate.json'
     };
 
     api.REST.client.post('/v1/shopify', params, function(err, apiRequest, apiResponse, result: any) {
