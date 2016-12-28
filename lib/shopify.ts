@@ -33,10 +33,20 @@ export function launch(application, req, res, callback?: (launched: boolean) => 
                 callback(false);
         } else {
             api.setSessionCookie(res, result.data.accessToken);
-            res.redirect(application.branding.postLoginUrl);
 
-            if (callback)
-                callback(true);
+            //  refresh the project list
+            api.REST.client.get('/v1/projects?accessToken=' + result.data.accessToken, function(err, apiRequest, apiResponse, result: any) {
+
+                if (err)
+                    req.flash('error', err.message);
+                else
+                    req['session'].projects = result.data.projects;
+
+                res.redirect(application.branding.postLoginUrl);
+
+                if (callback)
+                    callback(true);
+            });
         }
     });
 }
