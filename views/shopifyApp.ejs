@@ -22,7 +22,7 @@
                 <br><label>To install this app, enter your shop name:</label>
                 <form class="form-inline">
                     <div class="form-group">
-                        <input name="shop" id="shop" placeholder="Enter shop..." class="form-control" />
+                        <input name="shop" id="shop" placeholder="Enter shop..." class="form-control" style="min-width:350px"/>
                     </div>
                     <button onclick="createAuthLink(); return false;" type="button" class="btn btn-primary btn-md">Get Authorization Link</button>
                 </form>
@@ -39,10 +39,15 @@
         <%
             var redirect = dev ? 'https://' + req.headers['host'] + '/shopify/install' : 'https://' + settings.domain + '/shopify/install';
         %>
+        var shop = $('#shop').val().toLocaleLowerCase();
+
+        if (shop.indexOf('.') == -1)
+            shop += '.myshopify.com';
+
         var params = {
             appId: <%- application.current.id %>,
             query: {
-                shop: $('#shop').val(),
+                shop: shop,
                 timestamp: Math.floor(new Date().getTime() / 1000)
             },
             redirect_uri: '<%- redirect %>'
