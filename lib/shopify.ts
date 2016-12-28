@@ -33,6 +33,7 @@ export function launch(application, req, res, callback?: (launched: boolean) => 
                 callback(false);
         } else {
             api.setSessionCookie(res, result.data.accessToken);
+            req['session'] = result.data;
 
             //  refresh the project list
             api.REST.client.get('/v1/projects?accessToken=' + result.data.accessToken, function(err, apiRequest, apiResponse, result: any) {
