@@ -20,148 +20,20 @@
                 <% include partials/master/message %>
 
                 <div class="col-lg-12">
-                    <h1>Assign Campaigns to Referrers</h1>
-                    <br />
-                    This page is used to assign a campaign name to specific referrers.  If you wish to track campaigns from an existing referrer where you cannot place the campaign identifier on the link, you
-                    can manually assign the campaign name here.
-                    <br /><br />For example, you can assign and existing partner site to a campaign:
-                    <br /><pre>Referrer: www.partnerx.com<br>Campaign: PartnerX</pre>
-                    <br />
-                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal-create"><strong>Create new assignment</strong></button>
-                    <br /><br />
-                    <div id="dataTable"></div>
+                    <% include partials/campaignReferrers/explanation %>
                     <br /><br /><br /><br />
                 </div>
             </div>
         </div>
 
-        <div class="modal inmodal fade" id="modal-create" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-md">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                        <h2 class="modal-title">Assign Campaign to Referrer</h2>
-                    </div>
-                    <div class="modal-body">
-                        <form role="form" id="form-modal">
-                            <div class="form-group" id="form-referrer">
-                                <label>Referrer</label>
-                                <br />No http:// required.  This can be a domain or path.
-                                <br><br>For example: <strong>www.partnersite.com</strong>, or: <strong>www.partnersite.com/offers/offer1.php</strong>
-                                <input name="referrer" id="referrer" placeholder="Enter referrer..." class="form-control" autocomplete="off">
-                            </div>
-                            <div class="form-group" id="form-campaign">
-                                <br><label>Campaign</label>
-                                <input name="campaign" id="campaign" placeholder="Enter campaign to assign referrer to..." class="form-control" autocomplete="off">
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                        <a onclick="submitForm(); return false" id="modal-create-ok" class="btn btn-primary btn-ok">OK</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+        <% include partials/campaignReferrers/dialogs %>
         <% include partials/master/footer %>
     </div>
 </div>
 
 <% include partials/master/footerScripts %>
 <% include partials/report/footerScripts %>
+<% include partials/campaignReferrers/script %>
 
-<script>
-
-    var assignmentData = <%- JSON.stringify(campaignReferrers) %>;
-
-    function setFormData() {
-        var table = '<table class="table table-hover"><thead><tr><th>Referrer</th><th>Campaign</th><th>Action</th></tr></thead><tbody>';
-
-        for (var row = 0; row < assignmentData.length; row++) {
-            table += '<tr><td>' + assignmentData[row].referrer + '</td><td>' + assignmentData[row].campaign + '</td>' +
-                    '<td><button onclick="deleteRow(' + row + '); return false" type="button" class="btn btn-delete btn-xs">Delete</button></td></tr>';
-        }
-
-        $('#dataTable').html(table + '</tbody></table>');
-        $('#form-modal').trigger('reset');
-    }
-
-    function deleteRow(row) {
-
-        Page.confirm('Are you sure?', 'Permanently delete assignment?', function() {
-            assignmentData.splice(row, 1);
-            putData();
-        });
-    }
-
-    function validateForm() {
-        var val = $('#referrer').val();
-
-        if (!val) {
-            $('#form-referrer').addClass('has-error');
-            return false;
-        }
-
-        if (val.indexOf('\'') > -1 || val.indexOf('"') > -1 || val.indexOf('&') > -1 || val.indexOf('<') > -1 || val.indexOf('>') > -1) {
-            $('#form-referrer').addClass('has-error');
-            Page.alert('Referrers cannot contain \' " & < >.');
-            return false;
-        }
-
-        val = $('#campaign').val();
-
-        if (!val) {
-            $('#form-campaign').addClass('has-error');
-            return false;
-        }
-
-        if (val.indexOf('\'') > -1 || val.indexOf('"') > -1 || val.indexOf('&') > -1 || val.indexOf('<') > -1 || val.indexOf('>') > -1) {
-            $('#form-campaign').addClass('has-error');
-            Page.alert('Campaigns cannot contain \' " & < >.');
-            return false;
-        }
-
-        return true;
-    }
-
-    function submitForm() {
-
-        if (!validateForm()) {
-            return;
-        }
-
-        assignmentData.push({referrer: $('#referrer').val(), campaign: $('#campaign').val()});
-        putData();
-    }
-
-    function putData() {
-
-        $.ajax({
-            type: "PUT",
-            data: { campaignReferrers: assignmentData },
-            success: function (data, status) {
-                setFormData();
-                $('#modal-create').modal('hide');
-            },
-            error: function (request, status, error) {
-                $('#modal-create').modal('hide');
-                Data.showError(request, status, error);
-            }
-        });
-    }
-
-    $(document).ready(function() {
-        setFormData();
-
-        $('#referrer').focus(function() {
-            $('#form-referrer').removeClass('has-error');
-        });
-
-        $('#campaign').focus(function() {
-            $('#form-campaign').removeClass('has-error');
-        });
-    });
-</script>
 </body>
 </html>
