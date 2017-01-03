@@ -9,9 +9,12 @@ function getDashboard(application, req, res) {
         editable = false;
         dashboard = application['getDashboardTemplate'](template, req.query);
     }
-    else {
+    else if (name) {
         dashboards = api.reporting.currentDashboards(req);
         dashboard = dashboards[name];
+    }
+    else if (typeof application.defaultDashboard == 'function') {
+        dashboard = application.defaultDashboard();
     }
     if (dashboard) {
         dashboard.pods = dashboard.pods || [];

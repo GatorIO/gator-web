@@ -1,4 +1,7 @@
 <script>
+    var type = '<%- req.query.type %>';
+    var title = type.substr(0, 1).toLocaleUpperCase() + type.substr(1);
+
     var attributes = [], attributeObj = <%- JSON.stringify(attributes[req.query.type] || {}) %>;
 
     for (var key in attributeObj) {
