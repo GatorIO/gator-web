@@ -35,7 +35,7 @@
 <script>
 
     function createAuthLink() {
-        var redirect = '<%- dev ? '' : 'https:' %>' || location.protocol + '//' + '<%- dev ? req.headers['host'] + '/shopify/install' : 'https://' + settings.domain + '/shopify/install'; %>';
+        var redirect = ('<%- dev ? '' : 'https:' %>' || location.protocol) + '//' + '<%- dev ? req.headers['host'] + '/shopify/install' : settings.domain + '/shopify/install'; %>';
 
         var shop = $('#shop').val().toLocaleLowerCase();
 
