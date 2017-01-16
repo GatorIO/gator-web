@@ -14,9 +14,11 @@ function getEndpoint(appId) {
     }
 }
 function getReport(application, req, res, view) {
-    if (!req['session'].projects || utils.empty(req['session'].projects)) {
-        res.redirect(application.branding.postSignupUrl);
-        return;
+    if (utils.config.settings().appId != 2) {
+        if (!req['session'].projects || utils.empty(req['session'].projects)) {
+            res.redirect(application.branding.postSignupUrl);
+            return;
+        }
     }
     var definition, qsOptions, metricOptions, elementOptions, filterOptions, attribOptions, id;
     qsOptions = req.query.options ? JSON.parse(req.query.options) : {};

@@ -30,10 +30,14 @@ function getEndpoint(appId: number): string {
 
 export function getReport(application, req, res, view?) {
 
-    //  if trying to run a report with no projects, redirect to the new login destination
-    if (!req['session'].projects || utils.empty(req['session'].projects)) {
-        res.redirect(application.branding.postSignupUrl);
-        return;
+
+    if (utils.config.settings().appId != 2) {   //  this doesn't apply to marketshare
+
+        //  if trying to run a report with no projects, redirect to the new login destination
+        if (!req['session'].projects || utils.empty(req['session'].projects)) {
+            res.redirect(application.branding.postSignupUrl);
+            return;
+        }
     }
 
     /*

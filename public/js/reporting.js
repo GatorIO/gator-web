@@ -404,6 +404,7 @@ Report.prototype.getChartQuery = function() {
 
         //  if a filter has been created for plot keys, merge it with the existing filter, if it exists
         if (filter) {
+            query.filterIncludesPlotKeys = true;
 
             if (query.filter) {
                 query.filter = { $and: [query.filter, filter ]}
