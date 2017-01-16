@@ -998,7 +998,7 @@ Report.prototype.renderSnapshot = function () {
             if (item) {
                 var tooltip;
 
-                if (item.series.label) {        //  if pie
+                if (chartType == 'pie') {        //  if pie
                     tooltip = item.series.label;
 
                     if (tooltip != 'No data') {
