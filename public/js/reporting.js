@@ -1860,6 +1860,7 @@ var Filter = {
 var Toolbar = {
     intervals: null,
     ranges: null,
+    customRanges: {},
     dateStart: 0,
     dateEnd: 0,
     dateLabel: '',
@@ -1870,15 +1871,28 @@ var Toolbar = {
         var state = (report ? report.state : {}) || {};
 
         Toolbar.intervals = settings.intervals;
-        Toolbar.ranges = settings.ranges || ['Today', 'Yesterday', 'Last 24 Hours', 'Last 7 Days', 'Last 30 Days', 'This Month', 'Last Month'];
+        Toolbar.ranges = Utils.clone(settings.ranges) || ['Today', 'Yesterday', 'Last 24 Hours', 'Last 7 Days', 'Last 30 Days', 'This Month', 'Last Month'];
 
         var ranges = {};
 
         for (var r = 0; r < Toolbar.ranges.length; r++) {
-            ranges[Toolbar.ranges[r]] = Toolbar.range(Toolbar.ranges[r]);
+
+            if (typeof Toolbar.ranges[r] == 'string') {
+                ranges[Toolbar.ranges[r]] = Toolbar.range(Toolbar.ranges[r]);
+            } else {
+
+                //  create a custom range
+                var rkey = Object.keys(Toolbar.ranges[r])[0];
+                ranges[rkey] = [ Toolbar.ranges[r][rkey][0], Toolbar.ranges[r][rkey][1] ];
+                Toolbar.ranges[r] = rkey;
+                Toolbar.customRanges[rkey] = ranges[rkey];
+            }
         }
-        
+
         $('#reportRange').daterangepicker({
+            alwaysShowCalendars: settings.alwaysShowCalendars,
+            showCustomRangeLabel: settings.showCustomRangeLabel,
+            autoUpdateInput: false,
             linkedCalendars: false,
             startDate: moment().subtract(29, 'days'),
             endDate: moment(),
@@ -1998,6 +2012,11 @@ var Toolbar = {
             switch (label) {
                 case 'This Month':
                 case 'Last Month':
+                    if (!Toolbar.intervals || !Toolbar.intervals.options || Toolbar.intervals.options.Daily)
+                        Toolbar.dateInterval = 'Daily';
+                    else
+                        Toolbar.dateInterval = 'Monthly';
+                    break;
                 case 'Custom':
                 case 'Last 7 Days':
                 case 'Last 30 Days':
@@ -2042,6 +2061,9 @@ var Toolbar = {
             else
                 $('#reportRange').val(moment(Toolbar.dateStart).format(format) + ' to ' + moment(Toolbar.dateEnd).format(format));
         }
+
+        if (Toolbar.intervals && Toolbar.intervals.options && Object.keys(Toolbar.intervals.options).length == 1)
+            $('#reportInterval').addClass('hidden');
 
         //  draw interval
         $('#reportIntervalTitle').html(Toolbar.dateInterval);
@@ -2307,6 +2329,13 @@ var Toolbar = {
                 return [moment().subtract(1, 'month').startOf('month').format(format), moment().subtract(1, 'month').endOf('month').format(format)];
             case 'Last 60 Minutes':
                 return [moment().subtract(59, 'minutes').format(format), moment().format(format)];
+            case 'Custom':
+                return;
+            default:
+
+                if (Toolbar.customRanges[label]) {
+                    return [Toolbar.customRanges[label][0], Toolbar.customRanges[label][1]];
+                }
         }
     },
 

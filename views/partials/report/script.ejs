@@ -200,7 +200,7 @@
             delete report.state.customCount;
         }
 
-        if (Toolbar.dateLabel == 'Custom') {
+        if (Toolbar.dateLabel == 'Custom' || Toolbar.customRanges[Toolbar.dateLabel]) {
             report.state.dateStart = Toolbar.dateStart;
             report.state.dateEnd = Toolbar.dateEnd;
         } else {
