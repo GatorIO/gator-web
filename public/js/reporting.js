@@ -246,7 +246,21 @@ Report.prototype.timeframe = function(label, dateStart, dateEnd) {
         case 'Last 60 Minutes':
             return 'last60Minutes';
         default:
-            return [ dateStart, dateEnd ];
+
+            //  if timeframe not standard, look for a custom timeframe
+            if (this.settings.ranges) {
+
+                for (var r = 0; r < this.settings.ranges.length; r++) {
+                    var range = this.settings.ranges[r];
+                    var key = Object.keys(range)[0];
+
+                    if (key == label) {
+                        return [ range[key][0], range[key][1] ];
+                    }
+                }
+            } else {
+                return [ dateStart, dateEnd ];
+            }
     }
 };
 
@@ -525,6 +539,8 @@ Report.prototype.groupByArray = function (data) {
 
 Report.prototype.snapshot = function () {
 
+    var start = this.state.dateStart, end = this.state.dateEnd;
+
     if ((this.state.dateLabel == 'This Month' || this.state.dateLabel == 'Last Month') && this.state.dateInterval == 'Monthly')
         return true;
 
@@ -534,8 +550,15 @@ Report.prototype.snapshot = function () {
     if (this.state.dateLabel.substr(0, 4) == 'Last' || this.state.dateLabel.substr(0, 4) == 'This')
         return false;
 
-    if (this.state.dateStart == this.state.dateEnd && (this.state.dateInterval == 'Daily' || this.state.dateInterval == 'Weekly' || this.state.dateInterval == 'Monthly'))
-        return true;
+    if (start) {
+        if (start == end && (this.state.dateInterval == 'Daily' || this.state.dateInterval == 'Weekly' || this.state.dateInterval == 'Monthly'))
+            return true;
+    } else {
+        var tframe = this.timeframe(this.state.dateLabel, this.state.dateStart, this.state.dateEnd);
+
+        if (tframe[0] == tframe[1] && (this.state.dateInterval == 'Daily' || this.state.dateInterval == 'Weekly' || this.state.dateInterval == 'Monthly'))
+            return true;
+    }
 
     return false;
 };
