@@ -2082,11 +2082,15 @@ var Toolbar = {
             else if (Toolbar.dateInterval == 'Minute')
                 $('#reportRange').val(moment(Toolbar.dateStart).format(friendlyMinute) + ' to ' + moment(Toolbar.dateEnd).format(friendlyMinute));
             else
-                $('#reportRange').val(moment(Toolbar.dateStart).format(format) + ' to ' + moment(Toolbar.dateEnd).format(format));
+
+                if (Toolbar.dateStart == Toolbar.dateEnd)
+                    $('#reportRange').val(moment(Toolbar.dateStart).format(format));
+                else
+                    $('#reportRange').val(moment(Toolbar.dateStart).format(format) + ' to ' + moment(Toolbar.dateEnd).format(format));
         }
 
         if (Toolbar.intervals && Toolbar.intervals.options && Object.keys(Toolbar.intervals.options).length == 1)
-            $('#reportInterval').addClass('hidden');
+            $('#toolbar-interval').addClass('hidden');
 
         //  draw interval
         $('#reportIntervalTitle').html(Toolbar.dateInterval);
