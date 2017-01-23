@@ -258,9 +258,9 @@ Report.prototype.timeframe = function(label, dateStart, dateEnd) {
                         return [ range[key][0], range[key][1] ];
                     }
                 }
-            } else {
-                return [ dateStart, dateEnd ];
             }
+
+            return [ dateStart, dateEnd ];
     }
 };
 
