@@ -252,10 +252,13 @@ Report.prototype.timeframe = function(label, dateStart, dateEnd) {
 
                 for (var r = 0; r < this.settings.ranges.length; r++) {
                     var range = this.settings.ranges[r];
-                    var key = Object.keys(range)[0];
 
-                    if (key == label) {
-                        return [ range[key][0], range[key][1] ];
+                    if (typeof range == 'object') {
+                        var key = Object.keys(range)[0];
+
+                        if (key == label) {
+                            return [ range[key][0], range[key][1] ];
+                        }
                     }
                 }
             }
