@@ -1977,6 +1977,7 @@ var Toolbar = {
         Toolbar.dateInterval = 'Minute';
 
         $('#reportRange').daterangepicker({
+            autoUpdateInput: false,
             linkedCalendars: false,
             timePicker: true,
             startDate: moment(),
@@ -2009,6 +2010,7 @@ var Toolbar = {
 
         $('#reportRange').on('apply.daterangepicker', function(ev, picker) {
             Toolbar.rangeChanged(picker.startDate, picker.endDate, picker.chosenLabel);
+            runQuery();
         });
 
         Toolbar.dateStart = state.dateStart;
