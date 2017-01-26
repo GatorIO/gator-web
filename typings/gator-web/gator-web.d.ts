@@ -109,6 +109,8 @@ declare module 'gator-web' {
     }
 
     export let trackingProjectId: number;
+    export let GATrackingId: string;
+    export let GARemarketingId: string;
 
     module routes {
         export function setup(app, application, callback);
