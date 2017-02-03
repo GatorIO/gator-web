@@ -646,16 +646,6 @@
 
         <% if (typeof application.isLetsMonitor == 'function' && application.isLetsMonitor() && !req.session.account.billingMethod) { %>
 
-            if ($('#type').val() == "0" && +$('#interval').val() < 30) {
-                upgrade('To create monitors with intervals less than 30 minutes, an upgrade is required.  Upgrading also enables access to all monitor types.');
-                return;
-            }
-
-            if ($('#type').val() == "0" && $('#url').val().substr(0, 8) != 'https://') {
-                upgrade('To create HTTP monitors, an upgrade is required.  Upgrading also enables access to all monitor types.');
-                return;
-            }
-
             if ($('#type').val() != "0" && $('#type').val() != "7") {
                 upgrade('To create advanced monitors, an upgrade is required.  Upgrading enables access to all monitor types.');
                 return;
