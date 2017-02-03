@@ -98,7 +98,7 @@
                                 <optgroup label="Performance and Availability">
                                     <% if (typeof application.isLetsMonitor == 'function' && application.isLetsMonitor() && !req.session.account.billingMethod) { %>
                                         <option value="<%- monitorTypes.certificate %>">Certificate Validity (free)</option>
-                                        <option value="<%- monitorTypes.website %>" selected>Website via HTTPS (free)</option>
+                                        <option value="<%- monitorTypes.website %>">Website</option>
                                     <% } else { %>
                                         <option value="<%- monitorTypes.website %>">Website</option>
                                         <option value="<%- monitorTypes.certificate %>">Certificate Validity</option>

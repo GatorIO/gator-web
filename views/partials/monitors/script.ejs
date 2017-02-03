@@ -500,7 +500,12 @@
         $('#main-form-modal')[0].reset();
         $('#monitor-modal-title').html('Create Monitor');
         $('#modal-create').modal();
-        $('#type').val('<%- monitorTypes.website %>');
+
+        <% if (typeof application.isLetsMonitor == 'function' && application.isLetsMonitor()) { %>
+            $('#type').val('<%- monitorTypes.certificate %>');
+        <% } else { %>
+            $('#type').val('<%- monitorTypes.website %>');
+        <% } %>
 
         $('#scriptOptionsDiv').hide();
 
@@ -646,7 +651,7 @@
 
         <% if (typeof application.isLetsMonitor == 'function' && application.isLetsMonitor() && !req.session.account.billingMethod) { %>
 
-            if ($('#type').val() != "0" && $('#type').val() != "7") {
+            if ($('#type').val() != "7") {
                 upgrade('To create advanced monitors, an upgrade is required.  Upgrading enables access to all monitor types.');
                 return;
             }
