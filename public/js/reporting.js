@@ -4,6 +4,53 @@
 var runningQueries = 0;
 var ALL_SEGMENT = '-1000';
 
+var ReportGlobals = {
+    themes: {
+        base: {
+            colors: [
+                {color: "#1cb14f", highlight: "#1cb14f"},
+                {color: "#00aeef", highlight: "#00aeef"},
+                {color: "rgba(248,172,89,0.8)", highlight: "rgba(248,172,89,1)"},
+                {color: "rgba(172,148,198,0.8)", highlight: "rgba(172,148,198,1)"},
+                {color: "#7ea7b5", highlight: "#475188"},
+                {color: "rgba(26,179,128,0.8)", highlight: "rgba(26,179,148,1)"},
+                {color: "rgba(41,41,41,0.7)", highlight: "rgba(41,41,41,.9)"},
+                {color: "rgba(30,65,155,0.8)", highlight: "rgba(30,65,155,1)"},
+                {color: "rgba(242,229,88,0.8)", highlight: "rgba(242,229,88,1)"},
+                {color: "rgba(99,99,99,0.7)", highlight: "rgba(99,99,99,.9)"},
+                {color: "rgba(99,98,166,0.7)", highlight: "rgba(99,98,166,.9)"},
+                {color: "rgba(228,30,66,0.4)", highlight: "rgba(228,30,66,.7)"},
+                {color: "rgba(28,132,198,0.5)", highlight: "rgba(28,132,198,0.8)"},
+                {color: "rgba(26,179,148,0.5)", highlight: "rgba(26,179,148,0.8)"}
+            ]
+        },
+        shopify: {
+            colors: [
+                {color: "rgba(118,192,68,0.8)", highlight: "rgba(118,192,68,1)"},
+                {color: "#00aeef", highlight: "#00aeef"},
+                {color: "rgba(248,172,89,0.8)", highlight: "rgba(248,172,89,1)"},
+                {color: "rgba(172,148,198,0.8)", highlight: "rgba(172,148,198,1)"},
+                {color: "#7ea7b5", highlight: "#475188"},
+                {color: "rgba(26,179,128,0.8)", highlight: "rgba(26,179,148,1)"},
+                {color: "rgba(41,41,41,0.7)", highlight: "rgba(41,41,41,.9)"},
+                {color: "rgba(30,65,155,0.8)", highlight: "rgba(30,65,155,1)"},
+                {color: "rgba(242,229,88,0.8)", highlight: "rgba(242,229,88,1)"},
+                {color: "rgba(99,99,99,0.7)", highlight: "rgba(99,99,99,.9)"},
+                {color: "rgba(99,98,166,0.7)", highlight: "rgba(99,98,166,.9)"},
+                {color: "rgba(228,30,66,0.4)", highlight: "rgba(228,30,66,.7)"},
+                {color: "rgba(28,132,198,0.5)", highlight: "rgba(28,132,198,0.8)"},
+                {color: "rgba(26,179,148,0.5)", highlight: "rgba(26,179,148,0.8)"}
+            ]
+        }
+    }
+};
+
+ReportGlobals.setTheme = function(theme) {
+    ReportGlobals.colors = ReportGlobals.themes[theme].colors;
+}
+
+ReportGlobals.setTheme('base');
+
 function Report() {
 
     //  Options specific to the page calling the report, like the projectId, timezone, and HTML elements to target.  These
@@ -59,33 +106,16 @@ function Report() {
     this.chartData = null;
     this.plotRows = [];
 
-    this.colors = [
-        { color: "#1cb14f", highlight: "#1cb14f" },
-        { color: "#00aeef", highlight: "#00aeef" },
-        { color: "rgba(248,172,89,0.8)", highlight: "rgba(248,172,89,1)" },
-        { color: "rgba(172,148,198,0.8)", highlight: "rgba(172,148,198,1)" },
-        { color: "#7ea7b5", highlight: "#475188" },
-        { color: "rgba(26,179,128,0.8)", highlight: "rgba(26,179,148,1)" },
-        { color: "rgba(41,41,41,0.7)", highlight: "rgba(41,41,41,.9)" },
-        { color: "rgba(30,65,155,0.8)", highlight: "rgba(30,65,155,1)" },
-        { color: "rgba(242,229,88,0.8)", highlight: "rgba(242,229,88,1)" },
-        { color: "rgba(99,99,99,0.7)", highlight: "rgba(99,99,99,.9)" },
-        { color: "rgba(99,98,166,0.7)", highlight: "rgba(99,98,166,.9)" },
-        { color: "rgba(228,30,66,0.4)", highlight: "rgba(228,30,66,.7)" },
-        { color: "rgba(28,132,198,0.5)", highlight: "rgba(28,132,198,0.8)" },
-        { color: "rgba(26,179,148,0.5)", highlight: "rgba(26,179,148,0.8)" }
-    ];
-
     this.getColors = function(i, column) {
 
         //  if grouping by an element, then use system colors to display metrics
         if (!this.snapshot() && this.state.group)
-            return this.colors[i % this.colors.length];
+            return ReportGlobals.colors[i % Report.colors.length];
 
         if (column && column.chartOptions && column.chartOptions.colors) {
             return column.chartOptions.colors;
         } else {
-            return this.colors[i % this.colors.length];
+            return ReportGlobals.colors[i % ReportGlobals.colors.length];
         }
     };
 
@@ -865,7 +895,7 @@ Report.prototype.renderSnapshot = function () {
         }
     }
 
-    for (c = 0; c < this.colors.length; c++)
+    for (c = 0; c < ReportGlobals.colors.length; c++)
         colors.push(this.getColors(c).color);
 
     var colSize = 12 / numCharts;
