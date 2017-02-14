@@ -5,9 +5,14 @@ var runningQueries = 0;
 var ALL_SEGMENT = '-1000';
 
 var ReportGlobals = {
+    theme: null,
     themes: {
         base: {
-            colors: [
+            successColor: '#1cb14f',
+            warningColor: '#ffc309',
+            infoColor: '#00aeef',
+            dangerColor: 'rgba(228,30,66,.7)',
+            reportColors: [
                 {color: "#1cb14f", highlight: "#1cb14f"},
                 {color: "#00aeef", highlight: "#00aeef"},
                 {color: "rgba(248,172,89,0.8)", highlight: "rgba(248,172,89,1)"},
@@ -25,7 +30,11 @@ var ReportGlobals = {
             ]
         },
         shopify: {
-            colors: [
+            successColor: 'rgba(118,192,68,1)',
+            warningColor: '#ffc309',
+            infoColor: '#607f8e',
+            dangerColor: '#eb1762',
+            reportColors: [
                 {color: "rgba(118,192,68,0.8)", highlight: "rgba(118,192,68,1)"},
                 {color: "#00aeef", highlight: "#00aeef"},
                 {color: "rgba(248,172,89,0.8)", highlight: "rgba(248,172,89,1)"},
@@ -46,8 +55,8 @@ var ReportGlobals = {
 };
 
 ReportGlobals.setTheme = function(theme) {
-    ReportGlobals.colors = ReportGlobals.themes[theme].colors;
-}
+    ReportGlobals.theme = ReportGlobals.themes[theme];
+};
 
 ReportGlobals.setTheme('base');
 
@@ -110,12 +119,12 @@ function Report() {
 
         //  if grouping by an element, then use system colors to display metrics
         if (!this.snapshot() && this.state.group)
-            return ReportGlobals.colors[i % Report.colors.length];
+            return ReportGlobals.theme.reportColors[i % Report.colors.length];
 
         if (column && column.chartOptions && column.chartOptions.colors) {
             return column.chartOptions.colors;
         } else {
-            return ReportGlobals.colors[i % ReportGlobals.colors.length];
+            return ReportGlobals.theme.reportColors[i % ReportGlobals.theme.reportColors.length];
         }
     };
 
@@ -755,7 +764,7 @@ Report.prototype.renderTimeline = function () {
         colors: colors,
         grid: {
             clickable: true,
-            tickColor: "#eee",
+            tickColor: this.pageOptions.tickColor ? this.pageOptions.tickColor : "#eee",
             borderWidth: 0,
             hoverable: true //IMPORTANT! this is needed for tooltip to work
         },
@@ -895,7 +904,7 @@ Report.prototype.renderSnapshot = function () {
         }
     }
 
-    for (c = 0; c < ReportGlobals.colors.length; c++)
+    for (c = 0; c < ReportGlobals.theme.reportColors.length; c++)
         colors.push(this.getColors(c).color);
 
     var colSize = 12 / numCharts;
