@@ -75,14 +75,13 @@ function Report() {
         limit: null,
         map: null,
         segmentation: null,
-        view: null,
-        appId: null     //  if not set, the app uses the default
+        entity: null
     };
 
     //  The report configuration options and the UI state (selected series, sort order, etc.).  This is what should be persisted on a push state call.
     this.state = {
         id: null,       //  the report id from the definition
-        view: null,     //  the data view (sessions, events, users or pages)
+        entity: null,     //  the data entity (sessions, events, users or pages)
         isLog: null,    //  if it's a log report, don't group results
         title: null,
         dateStart: null,
@@ -338,8 +337,7 @@ Report.prototype.getBaseQuery = function() {
     var state = this.state;
 
     var query = {
-        appId: this.settings.appId,
-        view: this.settings.view,
+        entity: this.settings.entity,
         projectId: this.state.projectId || this.pageOptions.projectId,  //  state can hardcode projectid
         attributes: state.attributes,
         timeframe: this.timeframe(state.dateLabel, state.dateStart, state.dateEnd)

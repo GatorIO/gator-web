@@ -141,7 +141,7 @@ declare module 'gator-web' {
 
         module reportingRoutes {
             export function setup(app, application, callback);
-            export function getReport(application, req, res, view?);
+            export function getReport(application, req, res);
         }
 
         module emailRoutes {

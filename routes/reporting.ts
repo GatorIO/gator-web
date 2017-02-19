@@ -10,25 +10,20 @@ import express = require('express');
 import api = require('gator-api');
 import projectRoutes = require('./projects');
 import lib = require('../lib/index');
-var http = require('http');
-var fs = require('fs');
-var os = require('os');
+let http = require('http');
+let fs = require('fs');
+let os = require('os');
 import {IApplication} from "gator-web";
 
 /*
  Set up routes - this script handles functions required reporting
  */
 
-function getEndpoint(appId: number): string {
-
-    if (typeof appId != 'undefined') {
-        return api.applications.items[+appId].reporting.apiEndpoint;
-    } else {
-        return api.applications.items[api.reporting.defaultAppId].reporting.apiEndpoint;
-    }
+function getEndpoint(): string {
+    return api.applications.items[utils.config.settings().appId].reporting.apiEndpoint;
 }
 
-export function getReport(application, req, res, view?) {
+export function getReport(application, req, res) {
 
 
     if (utils.config.settings().appId != 2) {   //  this doesn't apply to marketshare
@@ -53,7 +48,7 @@ export function getReport(application, req, res, view?) {
 
      */
 
-    var definition, qsOptions, metricOptions, elementOptions, filterOptions, attribOptions, id;
+    let definition, qsOptions, metricOptions, elementOptions, filterOptions, attribOptions, id;
 
     qsOptions = req.query.options ? JSON.parse(req.query.options) : {};
     id = qsOptions.id || req.query.id;        //  there should not be two ids, but if there is, use the one in options
@@ -86,15 +81,14 @@ export function getReport(application, req, res, view?) {
         //  default definition
         definition = {
             settings: {
-                view: 'sessions',
                 renderView: 'report'
             },
             initialState: {}
         };
 
         //  fix up existing settings - this is to support prior formats
-        if (qsOptions.view)
-            definition.settings.view = qsOptions.view;
+        if (qsOptions.entity)
+            definition.settings.entity = qsOptions.entity;
 
         if (qsOptions.renderView)
             definition.settings.renderView = qsOptions.renderView;
@@ -123,7 +117,7 @@ export function getReport(application, req, res, view?) {
         }
     }
 
-    var project: any = api.currentProject(req);
+    let project: any = api.currentProject(req);
 
     if (!project)
         project = {};
@@ -134,14 +128,14 @@ export function getReport(application, req, res, view?) {
     if (!project.data.attributes)
         project.data.attributes = {};
 
-    var customAttribs = project.data.attributes;
+    let customAttribs = project.data.attributes;
 
-    var isLog = definition.settings.renderView == 'log';
+    let isLog = definition.settings.renderView == 'log';
 
-    metricOptions = api.reporting.getAttributeOptions(definition.settings.view, api.reporting.AttributeTypes.metrics, customAttribs, isLog, definition.settings.appId);
-    elementOptions = api.reporting.getAttributeOptions(definition.settings.view, api.reporting.AttributeTypes.elements, customAttribs, isLog, definition.settings.appId);
-    filterOptions = api.reporting.getFilterOptions(definition.settings.view, customAttribs, isLog, definition.settings.appId);
-    attribOptions = api.reporting.getAttributeOptions(definition.settings.view, api.reporting.AttributeTypes.all, customAttribs, isLog, definition.settings.appId);
+    metricOptions = api.reporting.getAttributeOptions(definition.settings.entity, api.reporting.AttributeTypes.metrics, customAttribs, isLog, definition.settings.appId);
+    elementOptions = api.reporting.getAttributeOptions(definition.settings.entity, api.reporting.AttributeTypes.elements, customAttribs, isLog, definition.settings.appId);
+    filterOptions = api.reporting.getFilterOptions(definition.settings.entity, customAttribs, isLog, definition.settings.appId);
+    attribOptions = api.reporting.getAttributeOptions(definition.settings.entity, api.reporting.AttributeTypes.all, customAttribs, isLog, definition.settings.appId);
 
     utils.noCache(res);
 
@@ -151,9 +145,9 @@ export function getReport(application, req, res, view?) {
         if (err)
             req.flash('error', err.message);
 
-        let view = definition.settings.renderView;
+        let renderView = definition.settings.renderView;
 
-        res.render(view || 'report', {
+        res.render(renderView || 'report', {
             settings: utils.config.settings(),
             application: application,
             dev: utils.config.dev(),
@@ -170,7 +164,7 @@ export function getReport(application, req, res, view?) {
 
 export function setup(app: express.Application, application: IApplication, callback) {
 
-    var statusCheck: any = typeof application.statusCheck == 'function' ? application.statusCheck : lib.statusCheckPlaceholder;
+    let statusCheck: any = typeof application.statusCheck == 'function' ? application.statusCheck : lib.statusCheckPlaceholder;
 
     app.post('/query', application.enforceSecure, api.authenticateNoRedirect, function (req: express.Request, res: express.Response) {
 
@@ -180,12 +174,12 @@ export function setup(app: express.Application, application: IApplication, callb
             return;
         }
 
-        var endpoint, params = {
+        let endpoint, params = {
             accessToken: req['session'].accessToken,
             query: req.body
         };
 
-        api.REST.client.post(getEndpoint(req.body.appId) + 'query', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
+        api.REST.client.post(getEndpoint() + 'query', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
             api.REST.sendConditional(res, err, result ? result.data : null);
         });
     });
@@ -199,7 +193,7 @@ export function setup(app: express.Application, application: IApplication, callb
             return;
         }
 
-        api.REST.client.get(getEndpoint(req.query.appId) + 'attributes/search?accessToken=' + req['session'].accessToken + '&attribute=' + encodeURIComponent(req.query.attribute) + '&projectId=' + req.query.projectId + '&value=' + encodeURIComponent(req.query.value), function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
+        api.REST.client.get(getEndpoint() + 'attributes/search?accessToken=' + req['session'].accessToken + '&attribute=' + encodeURIComponent(req.query.attribute) + '&projectId=' + req.query.projectId + '&value=' + encodeURIComponent(req.query.value), function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
             res.json(result || []);
         });
     });
@@ -210,7 +204,7 @@ export function setup(app: express.Application, application: IApplication, callb
 
     function exportCSV(req: express.Request, res: express.Response) {
 
-        var params = {
+        let params = {
             accessToken: req['session'].accessToken,
             query: JSON.parse(req.query.query)
         };
@@ -220,9 +214,9 @@ export function setup(app: express.Application, application: IApplication, callb
 
         res.attachment('data.' + req.query.format);
 
-        var cycles = 0, running: boolean = false;
+        let cycles = 0, running: boolean = false;
 
-        var interval = setInterval(function() {
+        let interval = setInterval(function() {
 
             //  if this somehow gets into a loop that is too big, close it
             if (cycles++ >= 100000) {
@@ -237,7 +231,7 @@ export function setup(app: express.Application, application: IApplication, callb
 
             running = true;
 
-            api.REST.client.post(getEndpoint(req.query.appId) + 'query', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
+            api.REST.client.post(getEndpoint() + 'query', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
 
                 if (err) {
                     clearInterval(interval);
@@ -285,7 +279,7 @@ export function setup(app: express.Application, application: IApplication, callb
 
     function exportPDF(req: express.Request, res: express.Response) {
 
-        var phantomBin = 'phantomjs', dest = 'data.' + req.query.format, file = utils.guid() + '.pdf';
+        let phantomBin = 'phantomjs', dest = 'data.' + req.query.format, file = utils.guid() + '.pdf';
 
         const exec = require('child_process').exec;
 
@@ -293,7 +287,7 @@ export function setup(app: express.Application, application: IApplication, callb
             phantomBin = '"../node_modules/gator-web/bin/phantomjs-win"'
         }
 
-        var reportUrl = application.current.consoleHost;
+        let reportUrl = application.current.consoleHost;
 
         if (utils.config.dev())
             reportUrl = application.settings.nodeUrl;
@@ -315,7 +309,7 @@ export function setup(app: express.Application, application: IApplication, callb
                                 api.log(err, "PDF download");
                                 res.end("Internal error");
                             } else {
-                                var stat = fs.statSync('phantomjs/' + file);
+                                let stat = fs.statSync('phantomjs/' + file);
 
                                 if (stat.isFile())
                                     fs.unlink('phantomjs/' + file);
@@ -371,7 +365,7 @@ export function setup(app: express.Application, application: IApplication, callb
     app.get('/person/profile', application.enforceSecure, api.authenticate, statusCheck, function (req: express.Request, res: express.Response) {
         utils.noCache(res);
 
-        var params = {
+        let params = {
             accessToken: req['session'].accessToken,
             projectId: req['session'].currentProjectId
         };

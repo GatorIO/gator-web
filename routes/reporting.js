@@ -5,15 +5,10 @@ var lib = require('../lib/index');
 var http = require('http');
 var fs = require('fs');
 var os = require('os');
-function getEndpoint(appId) {
-    if (typeof appId != 'undefined') {
-        return api.applications.items[+appId].reporting.apiEndpoint;
-    }
-    else {
-        return api.applications.items[api.reporting.defaultAppId].reporting.apiEndpoint;
-    }
+function getEndpoint() {
+    return api.applications.items[utils.config.settings().appId].reporting.apiEndpoint;
 }
-function getReport(application, req, res, view) {
+function getReport(application, req, res) {
     if (utils.config.settings().appId != 2) {
         if (!req['session'].projects || utils.empty(req['session'].projects)) {
             res.redirect(application.branding.postSignupUrl);
@@ -46,13 +41,12 @@ function getReport(application, req, res, view) {
     else {
         definition = {
             settings: {
-                view: 'sessions',
                 renderView: 'report'
             },
             initialState: {}
         };
-        if (qsOptions.view)
-            definition.settings.view = qsOptions.view;
+        if (qsOptions.entity)
+            definition.settings.entity = qsOptions.entity;
         if (qsOptions.renderView)
             definition.settings.renderView = qsOptions.renderView;
         if (qsOptions.title)
@@ -79,16 +73,16 @@ function getReport(application, req, res, view) {
         project.data.attributes = {};
     var customAttribs = project.data.attributes;
     var isLog = definition.settings.renderView == 'log';
-    metricOptions = api.reporting.getAttributeOptions(definition.settings.view, api.reporting.AttributeTypes.metrics, customAttribs, isLog, definition.settings.appId);
-    elementOptions = api.reporting.getAttributeOptions(definition.settings.view, api.reporting.AttributeTypes.elements, customAttribs, isLog, definition.settings.appId);
-    filterOptions = api.reporting.getFilterOptions(definition.settings.view, customAttribs, isLog, definition.settings.appId);
-    attribOptions = api.reporting.getAttributeOptions(definition.settings.view, api.reporting.AttributeTypes.all, customAttribs, isLog, definition.settings.appId);
+    metricOptions = api.reporting.getAttributeOptions(definition.settings.entity, api.reporting.AttributeTypes.metrics, customAttribs, isLog, definition.settings.appId);
+    elementOptions = api.reporting.getAttributeOptions(definition.settings.entity, api.reporting.AttributeTypes.elements, customAttribs, isLog, definition.settings.appId);
+    filterOptions = api.reporting.getFilterOptions(definition.settings.entity, customAttribs, isLog, definition.settings.appId);
+    attribOptions = api.reporting.getAttributeOptions(definition.settings.entity, api.reporting.AttributeTypes.all, customAttribs, isLog, definition.settings.appId);
     utils.noCache(res);
     api.reporting.getSegments(req, false, definition.appId, function (err) {
         if (err)
             req.flash('error', err.message);
-        var view = definition.settings.renderView;
-        res.render(view || 'report', {
+        var renderView = definition.settings.renderView;
+        res.render(renderView || 'report', {
             settings: utils.config.settings(),
             application: application,
             dev: utils.config.dev(),
@@ -114,7 +108,7 @@ function setup(app, application, callback) {
             accessToken: req['session'].accessToken,
             query: req.body
         };
-        api.REST.client.post(getEndpoint(req.body.appId) + 'query', params, function (err, apiRequest, apiResponse, result) {
+        api.REST.client.post(getEndpoint() + 'query', params, function (err, apiRequest, apiResponse, result) {
             api.REST.sendConditional(res, err, result ? result.data : null);
         });
     });
@@ -123,7 +117,7 @@ function setup(app, application, callback) {
             api.REST.sendError(res, new api.errors.AuthenticationTimeoutError('Your session has timed out.'));
             return;
         }
-        api.REST.client.get(getEndpoint(req.query.appId) + 'attributes/search?accessToken=' + req['session'].accessToken + '&attribute=' + encodeURIComponent(req.query.attribute) + '&projectId=' + req.query.projectId + '&value=' + encodeURIComponent(req.query.value), function (err, apiRequest, apiResponse, result) {
+        api.REST.client.get(getEndpoint() + 'attributes/search?accessToken=' + req['session'].accessToken + '&attribute=' + encodeURIComponent(req.query.attribute) + '&projectId=' + req.query.projectId + '&value=' + encodeURIComponent(req.query.value), function (err, apiRequest, apiResponse, result) {
             res.json(result || []);
         });
     });
@@ -149,7 +143,7 @@ function setup(app, application, callback) {
             if (running)
                 return;
             running = true;
-            api.REST.client.post(getEndpoint(req.query.appId) + 'query', params, function (err, apiRequest, apiResponse, result) {
+            api.REST.client.post(getEndpoint() + 'query', params, function (err, apiRequest, apiResponse, result) {
                 if (err) {
                     clearInterval(interval);
                     res.write('ERROR: ' + err.message);
