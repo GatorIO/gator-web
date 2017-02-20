@@ -3,7 +3,7 @@
 declare module 'gator-api' {
     import restify = require('restify');
 
-    export var client;
+    export let client;
 
     export module errors {
 
@@ -87,7 +87,7 @@ declare module 'gator-api' {
             };
         }
 
-        export var items: Array<Application>;
+        export let items: Array<Application>;
         export function getAll(callback:(err?:errors.APIError, result?:Array<Application>) => void);
     }
 
@@ -161,12 +161,12 @@ declare module 'gator-api' {
 
     export module sessions {
         export function set(authObject:any);
-
         export function get(accessToken:string);
+        export function remove(accessToken:string);
     }
 
     export module REST {
-        export var client:restify.Client;
+        export let client:restify.Client;
         export class ResponseResult {
             constructor(code?:number, data?:Object, message?:string);
 
@@ -210,6 +210,7 @@ declare module 'gator-api' {
     }
 
     export function authenticate(req, res, next);
+    export function reauthenticate(req, res, next);
     export function authenticateNoRedirect(req, res, next);
     export function signup(params:any, callback:(err?:errors.APIError, result?:Authorization) => void);
     export function setSessionCookie(res:any, accessToken:string);
@@ -226,7 +227,7 @@ declare module 'gator-api' {
         export function currentBookmarks(req);
         export function getCustomAttributes(req, projectId);
 
-        export var Operators;
+        export let Operators;
         export class Segment {
             id:number;
             accountId:number;
@@ -235,7 +236,7 @@ declare module 'gator-api' {
             global:boolean;
         }
 
-        export var DataTypes;
+        export let DataTypes;
 
         export class Attribute {
             name:string;
@@ -249,7 +250,7 @@ declare module 'gator-api' {
             inputFormat:string;
             filterable:boolean;
             searchable:boolean;
-            supportedViews:Array<string>;
+            supportedEntities:Array<string>;
             logAttribute:boolean;
             gapType: string;
             chartOptions: Object;
@@ -270,8 +271,17 @@ declare module 'gator-api' {
             default_value:string;
         }
 
-        export var defaultAppId: number;
-        export var attributes: { [appId: number] : Array<Attribute> };
+        export interface IEntity {
+            name: string
+            attributes: Array<Attribute>;
+            dictionaries: any;
+        }
+
+        export interface IEntities {
+            [name: string]: IEntity;
+        }
+
+        export let entities: { [name: string] : any };
 
         export enum AttributeTypes {
             all,
@@ -279,14 +289,13 @@ declare module 'gator-api' {
             elements
         }
 
-        export function applicationAttributes(appId: number): Array<Attribute>;
-        export function getAttributes(view:string, attributeType:AttributeTypes, isLog:boolean, appId?:number): Array<Attribute>;
-        export function addAttributeView(options, view:string, attributeType:AttributeTypes, customAttribs:any);
-        export function getAttributeOptions(view:string, attributeType:AttributeTypes, customAttribs:any, isLog?:boolean, appId?:number);
-        export function addFilterView(filterOptions, view:string, customAttribs:any);
-        export function getFilterOptions(view:string, customAttribs:any, isLog:boolean, appId?:number):Array<FilterOptions>;
+        export function init(callback:Function);
+        export function getAttributes(entityName:string, attributeType:AttributeTypes, isLog:boolean): Array<Attribute>;
+        export function addAttributeView(options, entityName:string, attributeType:AttributeTypes, customAttribs:any);
+        export function getAttributeOptions(entityName:string, attributeType:AttributeTypes, customAttribs:any, isLog?:boolean);
+        export function addFilterView(filterOptions, entityName:string, customAttribs:any);
+        export function getFilterOptions(entityName:string, customAttribs:any, isLog:boolean):Array<FilterOptions>;
         export function getFilterOption(attrib:any):FilterOptions;
-        export function init(defaultAppId: number, callback:Function);
         export function getSegmentOptions(req);
         export function getSegments(req, useCache: boolean, appId: number, callback: (err: errors.APIError, segments?: Array<Segment>) => void);
     }

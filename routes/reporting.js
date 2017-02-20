@@ -84,10 +84,10 @@ function getReport(application, req, res) {
         project.data.attributes = {};
     var customAttribs = project.data.attributes;
     var isLog = definition.settings.renderView == 'log';
-    metricOptions = api.reporting.getAttributeOptions(definition.settings.entity, api.reporting.AttributeTypes.metrics, customAttribs, isLog, definition.settings.appId);
-    elementOptions = api.reporting.getAttributeOptions(definition.settings.entity, api.reporting.AttributeTypes.elements, customAttribs, isLog, definition.settings.appId);
-    filterOptions = api.reporting.getFilterOptions(definition.settings.entity, customAttribs, isLog, definition.settings.appId);
-    attribOptions = api.reporting.getAttributeOptions(definition.settings.entity, api.reporting.AttributeTypes.all, customAttribs, isLog, definition.settings.appId);
+    metricOptions = api.reporting.getAttributeOptions(definition.settings.entity, api.reporting.AttributeTypes.metrics, customAttribs, isLog);
+    elementOptions = api.reporting.getAttributeOptions(definition.settings.entity, api.reporting.AttributeTypes.elements, customAttribs, isLog);
+    filterOptions = api.reporting.getFilterOptions(definition.settings.entity, customAttribs, isLog);
+    attribOptions = api.reporting.getAttributeOptions(definition.settings.entity, api.reporting.AttributeTypes.all, customAttribs, isLog);
     utils.noCache(res);
     api.reporting.getSegments(req, false, definition.appId, function (err) {
         if (err)

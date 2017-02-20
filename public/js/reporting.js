@@ -117,7 +117,7 @@ function Report() {
 
         //  if grouping by an element, then use system colors to display metrics
         if (!this.snapshot() && this.state.group)
-            return ReportGlobals.theme.reportColors[i % Report.colors.length];
+            return ReportGlobals.theme.reportColors[i % ReportGlobals.theme.reportColors.length];
 
         if (column && column.chartOptions && column.chartOptions.colors) {
             return column.chartOptions.colors;
@@ -1134,6 +1134,8 @@ Report.prototype.configureColumn = function(newCol, column) {
             newCol['className'] = 'dt-body-right';
             newCol.render = function(data, type, row, meta) {
                 var colNo = meta.col - (that.plotKeysEnabled() ? 1 : 0);
+
+                data = data || 0;
 
                 if (colNo < reportData.columns.length) {
 
