@@ -75,13 +75,12 @@ function Report() {
         limit: null,
         map: null,
         segmentation: null,
-        entity: null
+        entity: null            //  the data entity (like sessions, events, users or pages)
     };
 
     //  The report configuration options and the UI state (selected series, sort order, etc.).  This is what should be persisted on a push state call.
     this.state = {
         id: null,       //  the report id from the definition
-        entity: null,     //  the data entity (sessions, events, users or pages)
         isLog: null,    //  if it's a log report, don't group results
         title: null,
         dateStart: null,

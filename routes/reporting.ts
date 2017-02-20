@@ -107,6 +107,18 @@ export function getReport(application, req, res) {
 
     }
 
+    if (!definition.settings.entity) {
+        res.render('message', {
+            title: 'Error',
+            message: 'No data entity specified for report',
+            settings: utils.config.settings(),
+            application: application,
+            dev: utils.config.dev(),
+            req: req
+        });
+        return;
+    }
+
     //  override options from definition with query string params
     if (req.query.options) {
 

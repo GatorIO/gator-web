@@ -31,8 +31,6 @@ function getDashboard(application, req, res) {
                 }
             }
             pod.settings = pod.settings || {};
-            if (pod.state.view)
-                pod.settings.view = pod.state.view;
             if (pod.state.renderView)
                 pod.settings.renderView = pod.state.renderView;
             if (pod.state.title)

@@ -58,6 +58,17 @@ function getReport(application, req, res) {
         if (!definition.settings.ranges)
             definition.settings.ranges = application.reports['ranges'];
     }
+    if (!definition.settings.entity) {
+        res.render('message', {
+            title: 'Error',
+            message: 'No data entity specified for report',
+            settings: utils.config.settings(),
+            application: application,
+            dev: utils.config.dev(),
+            req: req
+        });
+        return;
+    }
     if (req.query.options) {
         for (var key in qsOptions) {
             if (qsOptions.hasOwnProperty(key))

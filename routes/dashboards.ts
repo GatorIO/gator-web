@@ -58,9 +58,6 @@ export function getDashboard(application, req, res) {
             //  fix up existing settings - this is to support prior formats
             pod.settings = pod.settings || {};
 
-            if (pod.state.view)
-                pod.settings.view = pod.state.view;
-
             if (pod.state.renderView)
                 pod.settings.renderView = pod.state.renderView;
 
