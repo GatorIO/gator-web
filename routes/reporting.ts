@@ -87,8 +87,8 @@ export function getReport(application, req, res) {
         };
 
         //  fix up existing settings - this is to support prior formats
-        if (qsOptions.entity)
-            definition.settings.entity = qsOptions.entity;
+        if (qsOptions.entity || qsOptions.view)     //  view is legacy format
+            definition.settings.entity = qsOptions.entity || qsOptions.view;
 
         if (qsOptions.renderView)
             definition.settings.renderView = qsOptions.renderView;

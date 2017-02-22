@@ -45,8 +45,8 @@ function getReport(application, req, res) {
             },
             initialState: {}
         };
-        if (qsOptions.entity)
-            definition.settings.entity = qsOptions.entity;
+        if (qsOptions.entity || qsOptions.view)
+            definition.settings.entity = qsOptions.entity || qsOptions.view;
         if (qsOptions.renderView)
             definition.settings.renderView = qsOptions.renderView;
         if (qsOptions.title)

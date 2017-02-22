@@ -336,7 +336,7 @@ Report.prototype.getBaseQuery = function() {
     var state = this.state;
 
     var query = {
-        entity: this.settings.entity,
+        entity: this.settings.entity || this.state.view,     //  view is legacy
         projectId: this.state.projectId || this.pageOptions.projectId,  //  state can hardcode projectid
         attributes: state.attributes,
         timeframe: this.timeframe(state.dateLabel, state.dateStart, state.dateEnd)

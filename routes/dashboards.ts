@@ -130,7 +130,7 @@ export function setup(app: express.Application, application: IApplication, callb
     //  update existing data
     app.put('/setup/dashboards', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
 
-        var params = {
+        let params = {
             accessToken: req['session'].accessToken,
             projectId: req['session'].currentProjectId,
             dashboards: req.body.dashboards
@@ -144,9 +144,9 @@ export function setup(app: express.Application, application: IApplication, callb
     //  add a pod to a dashboard
     app.post('/setup/dashboards/pods', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
 
-        var dashboards = api.reporting.currentDashboards(req);
+        let dashboards = api.reporting.currentDashboards(req);
 
-        var pod = {
+        let pod = {
             display: req.body.display,
             title:  req.body.title,
             state: req.body.state
@@ -155,7 +155,7 @@ export function setup(app: express.Application, application: IApplication, callb
         dashboards[req.body.name].pods = dashboards[req.body.name].pods || [];
         dashboards[req.body.name].pods.push(JSON.stringify(pod));   //  need to stringify it or mongo won't store it (the $'s are a problem)
 
-        var params = {
+        let params = {
             accessToken: req['session'].accessToken,
             projectId: req['session'].currentProjectId,
             dashboards: dashboards
@@ -169,11 +169,11 @@ export function setup(app: express.Application, application: IApplication, callb
     //  update the pod display order
     app.post('/setup/dashboards/order', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
 
-        var dashboards = api.reporting.currentDashboards(req);
+        let dashboards = api.reporting.currentDashboards(req);
 
-        var newOrder = [];
+        let newOrder = [];
 
-        for (var i = 0; i < req.body.order.length; i++) {
+        for (let i = 0; i < req.body.order.length; i++) {
 
             if (dashboards[req.body.name].pods[req.body.order[i]])
                 newOrder.push(utils.clone(dashboards[req.body.name].pods[req.body.order[i]]));
@@ -181,7 +181,7 @@ export function setup(app: express.Application, application: IApplication, callb
 
         dashboards[req.body.name].pods = newOrder;
 
-        var params = {
+        let params = {
             accessToken: req['session'].accessToken,
             projectId: req['session'].currentProjectId,
             dashboards: dashboards
@@ -195,12 +195,12 @@ export function setup(app: express.Application, application: IApplication, callb
     //  delete a pod
     app.delete('/setup/dashboards/pods', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
 
-        var dashboards = api.reporting.currentDashboards(req);
-        var dashboard = dashboards[req.body.name];
+        let dashboards = api.reporting.currentDashboards(req);
+        let dashboard = dashboards[req.body.name];
 
         dashboard.pods.splice(+req.body.pod, 1);
 
-        var params = {
+        let params = {
             accessToken: req['session'].accessToken,
             projectId: req['session'].currentProjectId,
             dashboards: dashboards
