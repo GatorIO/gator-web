@@ -191,6 +191,12 @@ export function setup(app: express.Application, application: IApplication, callb
             query: req.body
         };
 
+        //  support change from 'view' to 'entity'
+        if (params.query && params.query.view) {
+            params.query.entity = params.query.view;
+            delete params.query.view;
+        }
+
         api.REST.client.post(getEndpoint() + 'query', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
             api.REST.sendConditional(res, err, result ? result.data : null);
         });

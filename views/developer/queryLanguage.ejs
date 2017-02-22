@@ -27,7 +27,7 @@
                     <br><a href="/developer/tools/querytester">Click here for the query tester</a><br />
                     <br>
                     <h3>A minimal call:</h3>
-                    <pre>{ "projectId": "<i>Your project id</i>", "timeframe": "today", "attributes": "sessions", "group": "browser" }</pre>
+                    <pre>{ "entity": "sessions", "projectId": "<i>Your project id</i>", "timeframe": "today", "attributes": "sessions", "group": "browser" }</pre>
                     <br>
                     <h3>How to use custom attributes on sessions, events and people:</h3>
                     Use the notation <i>entity.attribute</i> in queries, like <code>event.color</code>.  For example:
@@ -58,10 +58,12 @@
     }
 
     var elements = [
-        { name: "view", required: false, type: "string", description: "What data category to query on.  Defaults to \"sessions\".  Possible values are \"sessions\", \"events\" and \"people\".  For example, a session query may look like this: " +
-        "<br><br><pre>{ \"view\": \"sessions\", \"projectId\": \"<i>Your project id</i>\", \"timeframe\": \"today\", \"attributes\": \"country, score\" }</pre>" +
+        { name: "projectId", required: true, type: "integer", description: "What project to query.  This is the same project id that is on the tracking script."
+        },
+        { name: "entity", required: true, type: "string", description: "What data entity to query on.  Defaults to \"sessions\".  Possible values are \"sessions\", \"events\" and \"people\".  For example, a session query may look like this: " +
+        "<br><br><pre>{ \"entity\": \"sessions\", \"projectId\": \"<i>Your project id</i>\", \"timeframe\": \"today\", \"attributes\": \"country, score\" }</pre>" +
         "and an event query example that shows the day's events:" +
-        "<br><pre>{ \"view\": \"events\", \"projectId\": \"<i>Your project id</i>\", \"timeframe\": \"today\", \"attributes\": \"eventName, eventDateTime\" }</pre>"
+        "<br><pre>{ \"entity\": \"events\", \"projectId\": \"<i>Your project id</i>\", \"timeframe\": \"today\", \"attributes\": \"eventName, eventDateTime\" }</pre>"
         },
         { name: "timeframe", required: true, type: "string or array", description: "The timeframe of the report.  This can have the following formats:<br /><br />" +
         "<ul><li>A simple date string in yyyy-mm-dd format: <code>\"2016-01-01\"</code><br>This will return the data from this value for the full day specified." +

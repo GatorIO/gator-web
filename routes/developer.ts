@@ -171,6 +171,7 @@ export function setup(app: express.Application, application: IApplication, callb
 
         if (!req.params.query) {
             req.params.query = {
+                entity: 'sessions',
                 projectId: req['session'].currentProjectId,
                 timezone: req['session'].user.timezoneId,
                 timeframe: 'today',

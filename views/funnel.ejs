@@ -164,6 +164,7 @@
 
                 for (var i = step; i < report.state.eventSteps.length; i++) {
                     reports[i] = new Report();
+                    reports[i].settings.entity = 'users';
                     reports[i].state = Utils.clone(report.state);
                     reports[i].pageOptions = Utils.clone(report.pageOptions);
                     reports[i].pageOptions.tableContainer = 'results-table-' + i;

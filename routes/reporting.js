@@ -119,6 +119,10 @@ function setup(app, application, callback) {
             accessToken: req['session'].accessToken,
             query: req.body
         };
+        if (params.query && params.query.view) {
+            params.query.entity = params.query.view;
+            delete params.query.view;
+        }
         api.REST.client.post(getEndpoint() + 'query', params, function (err, apiRequest, apiResponse, result) {
             api.REST.sendConditional(res, err, result ? result.data : null);
         });

@@ -301,17 +301,6 @@
                 editSegment($(e.target).attr('data-value'));
             });
 
-            //  Run query when form values are changed by the user - make sure they actually changed, since the change event fires for other reasons
-            var oldSegments = $("#segments").val();
-
-            segmentsSelectize[0].selectize.on('change', function() {
-
-                if ($("#segments").val() != oldSegments) {
-                    oldSegments = $("#segments").val();
-                    runQuery();
-                }
-            });
-
             Page.intro.steps.push({
                 intro: "This is a tour of a report page.  It will guide you through the elements on the page and what they are for.  <br><br>Click 'next' to start."
             });

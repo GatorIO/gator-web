@@ -46,7 +46,7 @@
     function runQuery() {
 
         var queryScore = {
-            view: 'sessions',
+            entity: 'sessions',
             projectId: $('#projects').val(),
             attributes: 'sessionDateTime, sessionId, score, offense, organization, country, region, city, latitude, longitude',
             timeframe: 'last24Hours',
@@ -56,7 +56,7 @@
         };
 
         var queryHidden = {
-            view: 'sessions',
+            entity: 'sessions',
             projectId: $('#projects').val(),
             attributes: 'sessionDateTime, sessionId, score, offense, organization, country, region, city, latitude, longitude',
             timeframe: 'last24Hours',
