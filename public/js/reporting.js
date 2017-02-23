@@ -859,7 +859,7 @@ Report.prototype.renderTimeline = function () {
 
                     tooltip += '<tr><td><span class="fa fa-square" style="color:' + that.getColors(colorIndex, column).highlight + '"></span>&nbsp; ' +
                         column.title + ':&nbsp; </td><td style="text-align:right">' +
-                        Report.formatValue(data.rows[item.datapoint[0]][chartMetrics[c].name], column.dataType, column.format) + pct + '</td></tr>';
+                        (Report.formatValue(data.rows[item.datapoint[0]][chartMetrics[c].name], column.dataType, column.format) || '0') + pct + '</td></tr>';
                 }
                 colorIndex++;
             }
@@ -1071,7 +1071,7 @@ Report.prototype.renderSnapshot = function () {
                     }
                 } else {                        //  bar
 
-                    tooltip = item.series.yaxis.ticks[item.dataIndex].label + ': ' + item.datapoint[0];
+                    tooltip = item.series.yaxis.ticks[item.seriesIndex].label + ': ' + item.datapoint[0];
                 }
 
                 $("#chart-tooltip").html(tooltip)
