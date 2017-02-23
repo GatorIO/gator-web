@@ -23,7 +23,7 @@
                     <h1>Query Definition Language</h1>
                     To generate a report, POST JSON with the options below to <code><%- settings.apiUrl %>/analytics/query.</code>
                     <br /><br />
-                    <a href="/developer/attributes">Click here for the list of standard attributes</a><br />
+                    <a href="/developer/entities">Click here for the list of standard entities and attributes</a><br />
                     <br><a href="/developer/tools/querytester">Click here for the query tester</a><br />
                     <br>
                     <h3>A minimal call:</h3>
@@ -83,7 +83,7 @@
         { name: "group", required: false, type: "string", description: "Example: <code>\"countryCode, searchEngine\"</code><br /><br />The data grouping for the report. Results are grouped by " +
         "this element or elements." },
         { name: "attributes", required: true, type: "string", description: "Example: <code>\"avgPageViews, bounceRate\"</code><br /><br />A comma separated list of attribute names to include in the results.  " +
-        "For a list of standard attributes, see our <a href='/developer/attributes'>list of attributes</a>." },
+        "For a list of standard entities and attributes, see our <a href='/developer/entities'>list of entities and their attributes</a>." },
         { name: "sort", required: false, type: "object or string", description: "Examples:<br /><br /><code>\"bounceRate\"</code><br /><code>{ \"sessions\": -1 }</code>" +
         "<br /><code>{ \"platform\": 1, \"sessions\": -1 }</code><br /><br />The sort order to return the results in.  The order of the sorting is determined by the 1 or -1. " +
         " Ascending order is 1, descending order is -1." },

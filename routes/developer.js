@@ -91,15 +91,15 @@ function setup(app, application, callback) {
             });
         });
     });
-    app.get('/developer/attributes', application.enforceSecure, function (req, res) {
+    app.get('/developer/entities', application.enforceSecure, function (req, res) {
         utils.noCache(res);
         req['noRedirect'] = true;
         api.authenticate(req, req, function () {
-            res.render('attributeList', {
+            res.render('entities', {
                 settings: utils.config.settings(),
                 application: application,
                 req: req,
-                attributes: api.reporting.getAttributes('all', api.reporting.AttributeTypes.all, false)
+                entities: api.reporting.entities
             });
         });
     });

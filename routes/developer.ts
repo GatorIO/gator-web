@@ -9,7 +9,7 @@ import restify = require('restify');
 import api = require('gator-api');
 import {IApplication} from "gator-web";
 
-var gator = require('gator-score');
+let gator = require('gator-score');
 
 /*
  Set up routes - this script handles functions required for managing segments
@@ -145,7 +145,7 @@ export function setup(app: express.Application, application: IApplication, callb
         });
     });
 
-    app.get('/developer/attributes', application.enforceSecure, function (req: express.Request, res: express.Response) {
+    app.get('/developer/entities', application.enforceSecure, function (req: express.Request, res: express.Response) {
         utils.noCache(res);
 
         //  non authenticated access is allowed
@@ -153,11 +153,11 @@ export function setup(app: express.Application, application: IApplication, callb
 
         api.authenticate(req, req, function () {
 
-            res.render('attributeList',{
+            res.render('entities',{
                 settings: utils.config.settings(),
                 application: application,
                 req: req,
-                attributes: api.reporting.getAttributes('all', api.reporting.AttributeTypes.all, false)
+                entities: api.reporting.entities
             });
         });
     });
@@ -325,7 +325,7 @@ export function setup(app: express.Application, application: IApplication, callb
 
         api.authenticate(req, req, function () {
 
-            var options: any = {
+            let options: any = {
                 accessToken: 'cB9nC1h5OHB19ABdePAyLiJgT0BN1JMm',
                 ip: utils.ip.remoteAddress(req),
                 ua: req.headers['user-agent'],
