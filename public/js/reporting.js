@@ -88,6 +88,7 @@ function Report() {
         dateLabel: Toolbar.dateLabel,
         dateInterval: null,
         attributes: null,
+        having: null,
         group: null,
         sort: null,
         segments: null,
@@ -350,9 +351,11 @@ Report.prototype.getBaseQuery = function() {
     else
         query['sort'] = this.intervalAttribute(state.dateInterval);     //  default to sorting by time ranges if not grouping by element
 
-    if (state.filter) {
+    if (state.filter)
         query['filter'] = state.filter;
-    }
+
+    if (state.having)
+        query['having'] = state.having;
 
     if (this.nextClause) {
         query['nextClause'] = this.nextClause;

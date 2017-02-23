@@ -9,12 +9,6 @@ function getEndpoint() {
     return api.applications.items[utils.config.settings().appId].reporting.apiEndpoint;
 }
 function getReport(application, req, res) {
-    if (utils.config.settings().appId != 2) {
-        if (!req['session'].projects || utils.empty(req['session'].projects)) {
-            res.redirect(application.branding.postSignupUrl);
-            return;
-        }
-    }
     var definition, qsOptions, metricOptions, elementOptions, filterOptions, attribOptions, id;
     qsOptions = req.query.options ? JSON.parse(req.query.options) : {};
     id = qsOptions.id || req.query.id;
@@ -69,6 +63,8 @@ function getReport(application, req, res) {
         });
         return;
     }
+    if (typeof definition.settings.filter == 'function')
+        definition.settings.filter = definition.settings.filter(application, req);
     if (req.query.options) {
         for (var key in qsOptions) {
             if (qsOptions.hasOwnProperty(key))

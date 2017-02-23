@@ -25,16 +25,6 @@ function getEndpoint(): string {
 
 export function getReport(application, req, res) {
 
-
-    if (utils.config.settings().appId != 2) {   //  this doesn't apply to marketshare
-
-        //  if trying to run a report with no projects, redirect to the new login destination
-        if (!req['session'].projects || utils.empty(req['session'].projects)) {
-            res.redirect(application.branding.postSignupUrl);
-            return;
-        }
-    }
-
     /*
      The id query string param is the report id in application.reports:  /report?id=log
 
@@ -104,7 +94,6 @@ export function getReport(application, req, res) {
 
         if (!definition.settings.ranges)
             definition.settings.ranges = application.reports['ranges'];
-
     }
 
     if (!definition.settings.entity) {
@@ -118,6 +107,10 @@ export function getReport(application, req, res) {
         });
         return;
     }
+
+    //  call functions for dynamic settings
+    if (typeof definition.settings.filter == 'function')
+        definition.settings.filter = definition.settings.filter(application, req);
 
     //  override options from definition with query string params
     if (req.query.options) {
