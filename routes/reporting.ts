@@ -109,8 +109,8 @@ export function getReport(application, req, res) {
     }
 
     //  call functions for dynamic settings
-    if (typeof definition.settings.filter == 'function')
-        definition.settings.filter = definition.settings.filter(application, req);
+    if (typeof definition.initialState.filter == 'function')
+        definition.initialState.filter = definition.initialState.filter(application, req);
 
     //  override options from definition with query string params
     if (req.query.options) {

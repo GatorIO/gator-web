@@ -63,8 +63,8 @@ function getReport(application, req, res) {
         });
         return;
     }
-    if (typeof definition.settings.filter == 'function')
-        definition.settings.filter = definition.settings.filter(application, req);
+    if (typeof definition.initialState.filter == 'function')
+        definition.initialState.filter = definition.initialState.filter(application, req);
     if (req.query.options) {
         for (var key in qsOptions) {
             if (qsOptions.hasOwnProperty(key))
