@@ -165,6 +165,7 @@ declare module 'gator-web' {
         export function launch(application: IApplication, req, res, callback?: (launched: boolean) => void);
         export function install(application: IApplication, req, res, callback: (err?: api.errors.APIError) => void);
         export function uninstall(application: IApplication, req, res, callback: (err?: api.errors.APIError) => void);
+        export function apiHost(): string;
     }
 }
 

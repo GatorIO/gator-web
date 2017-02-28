@@ -7,6 +7,11 @@ import api = require("gator-api");
     Shopify OAuth and API helpers
  */
 
+//  the API host Shopify should use.  In local mode, it is an Ngrok tunnel to the development machine
+export function apiHost(): string {
+    return utils.config.env() == 'local' ? 'https://api-host.ngrok.io' : utils.config.settings().apiUrl;
+}
+
 //  Launch a Shopify app.  Return whether app launch/login was successful.  Possible outcomes are errors, an OAuth redirect or success.
 export function launch(application, req, res, callback?: (launched: boolean) => void) {
 
@@ -68,7 +73,21 @@ export function install(application, req, res, callback: (err?: api.errors.APIEr
         } else {
             api.setSessionCookie(res, result.data.accessToken);
             req['session'] = result.data;
-            callback();
+
+            /*
+             Create the webhook to update the shop data on the account automatically when it changes
+             */
+            let path = '/v1/protect/webhooks/shop/update';
+
+            let hookParams = {
+                topic: 'shop/updated',
+                address: apiHost() + path,
+                accessToken: req['session'].accessToken
+            };
+
+            api.REST.client.post('/v1/shopify/webhooks', hookParams, function(err, apiRequest, apiResponse, result: any) {
+                callback(err);
+            });
         }
     });
 }
