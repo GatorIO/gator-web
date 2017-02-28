@@ -74,20 +74,7 @@ export function install(application, req, res, callback: (err?: api.errors.APIEr
             api.setSessionCookie(res, result.data.accessToken);
             req['session'] = result.data;
 
-            /*
-             Create the webhook to update the shop data on the account automatically when it changes
-             */
-            let path = '/v1/protect/webhooks/shop/update';
-
-            let hookParams = {
-                topic: 'shop/updated',
-                address: apiHost() + path,
-                accessToken: req['session'].accessToken
-            };
-
-            api.REST.client.post('/v1/shopify/webhooks', hookParams, function(err, apiRequest, apiResponse, result: any) {
-                callback(err);
-            });
+            callback();
         }
     });
 }
