@@ -509,7 +509,7 @@
     });
 
     var matcher = function(query, sync, async) {
-        var url = '<%- settings.apiUrl %>/v1/analytics/attributes/search?attribute=eventName&projectId=' + $('#projects').val() + '&value=' + encodeURIComponent(query);
+        var url = '/search?attribute=eventName&projectId=' + $('#projects').val() + '&value=' + encodeURIComponent(query);
 
         $.ajax(url, {
                 success: function(data, status){
