@@ -88,6 +88,7 @@ function Report() {
         dateLabel: Toolbar.dateLabel,
         dateInterval: null,
         attributes: null,
+        match: null,
         having: null,
         group: null,
         sort: null,
@@ -356,6 +357,9 @@ Report.prototype.getBaseQuery = function() {
 
     if (state.having)
         query['having'] = state.having;
+
+    if (state.match)
+        query['match'] = state.match;
 
     if (this.nextClause) {
         query['nextClause'] = this.nextClause;
