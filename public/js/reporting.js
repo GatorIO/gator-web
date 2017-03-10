@@ -88,7 +88,6 @@ function Report() {
         dateLabel: Toolbar.dateLabel,
         dateInterval: null,
         attributes: null,
-        match: null,
         having: null,
         group: null,
         sort: null,
@@ -357,9 +356,6 @@ Report.prototype.getBaseQuery = function() {
 
     if (state.having)
         query['having'] = state.having;
-
-    if (state.match)
-        query['match'] = state.match;
 
     if (this.nextClause) {
         query['nextClause'] = this.nextClause;
@@ -1098,6 +1094,14 @@ Report.prototype.renderSnapshot = function () {
 Report.prototype.configureColumn = function(newCol, column) {
     var reportData = this.tableData, that = this;
 
+    switch (Report.dataTypes[column.dataType]) {
+        case Report.dataTypes.percent:
+        case Report.dataTypes.integer:
+        case Report.dataTypes.numeric:
+        case Report.dataTypes.currency:
+            newCol['className'] = 'dt-body-right';
+    }
+
     //  See if there is a formatter for this column.  If so, use it, otherwise do generic formatting.
     if (typeof this.formatters[column.name] == 'function') {
 
@@ -1130,7 +1134,6 @@ Report.prototype.configureColumn = function(newCol, column) {
             };
             break;
         case Report.dataTypes.percent:
-            newCol['className'] = 'dt-body-right';
             newCol.render = function(data, type, row) {
                 return Report.formatValue(data, Report.dataTypes.percent, column.format);
             };
@@ -1138,7 +1141,6 @@ Report.prototype.configureColumn = function(newCol, column) {
         case Report.dataTypes.integer:
         case Report.dataTypes.numeric:
         case Report.dataTypes.currency:
-            newCol['className'] = 'dt-body-right';
             newCol.render = function(data, type, row, meta) {
                 var colNo = meta.col - (that.plotKeysEnabled() ? 1 : 0);
 
