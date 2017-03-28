@@ -1,6 +1,7 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var utils = require("gator-utils");
-var api = require('gator-api');
+var api = require("gator-api");
 function getStations(req, res, application) {
     api.REST.client.get('/v1/monitoring/stations', function (err, apiRequest, apiResponse, result) {
         if (err)

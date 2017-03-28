@@ -1,7 +1,8 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var utils = require("gator-utils");
-var api = require('gator-api');
-var lib = require('../lib/index');
+var api = require("gator-api");
+var lib = require("../lib/index");
 function getDashboard(application, req, res) {
     utils.noCache(res);
     var dashboards, name = req.query.name, template = req.query.template, dashboard = {}, editable = true;

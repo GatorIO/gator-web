@@ -1,7 +1,8 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var utils = require("gator-utils");
-var api = require('gator-api');
-var lib = require('../lib/index');
+var api = require("gator-api");
+var lib = require("../lib/index");
 var http = require('http');
 var fs = require('fs');
 var os = require('os');

@@ -1,6 +1,7 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var utils = require("gator-utils");
-var api = require('gator-api');
+var api = require("gator-api");
 function getContactParams(req) {
     var items, params = req.body;
     if (params.id)

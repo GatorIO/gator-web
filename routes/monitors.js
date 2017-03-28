@@ -1,7 +1,8 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var utils = require("gator-utils");
-var api = require('gator-api');
-var dictionaries = require('../lib/dictionaries');
+var api = require("gator-api");
+var dictionaries = require("../lib/dictionaries");
 var monitorTypes = dictionaries.MonitorTypes;
 function getMonitorParams(req) {
     var params = req.body;

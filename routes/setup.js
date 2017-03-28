@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.apiRoutes = require('./api');
 exports.projectRoutes = require('./projects');
 exports.reportingRoutes = require('./reporting');

@@ -1,6 +1,7 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var utils = require("gator-utils");
-var api = require('gator-api');
+var api = require("gator-api");
 var gator = require('gator-score');
 function setup(app, application, callback) {
     app.get('/developer/overview', application.enforceSecure, function (req, res) {
