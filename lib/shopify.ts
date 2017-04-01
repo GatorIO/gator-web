@@ -62,7 +62,8 @@ export function install(application, req, res, callback: (err?: api.errors.APIEr
     let params = {
         appId: application.current.id,
         query: req.query,
-        uri: utils.config.dev() ? 'https://' + req.headers['host'] : 'https://' + utils.config.settings().domain
+        uri: utils.config.dev() ? 'https://' + req.headers['host'] : 'https://' + utils.config.settings().domain,
+        partnerId: req.cookies ? req.cookies.partnerId : null
     };
 
     //  perform base install/authentication
