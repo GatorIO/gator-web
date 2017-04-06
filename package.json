@@ -1,7 +1,7 @@
 {
   "name": "gator-web",
   "description": "Gator.IO base web views and components",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "author": {
     "name": "Gator.IO"
   },
@@ -20,15 +20,19 @@
     "node": ">=4.2.0"
   },
   "dependencies": {
-    "async": "^2.1.4",
+    "@types/node": "^6.0.68",
+    "@types/async": "^2.0.40",
+    "async": "^2.3.0",
     "body-parser": "*",
     "cookie-parser": "*",
     "ejs": "^2.5.5",
     "express": "^4.14.0",
     "json-bigint": "^0.2.1",
+    "@types/lru-cache": "^2.5.32",
     "lru-cache": "^4.0.2",
     "gator-api": "GatorIO/gator-api",
     "gator-utils": "GatorIO/gator-utils",
+    "@types/restify": "^2.0.42",
     "restify": "^4.2.0",
     "serve-favicon": "*"
   },
