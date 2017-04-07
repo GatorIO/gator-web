@@ -1,5 +1,3 @@
-/// <reference path="../typings/gator-utils/gator-utils.d.ts" />
-/// <reference path="../typings/gator-api/gator-api.d.ts" />
 import utils = require("gator-utils");
 import api = require("gator-api");
 

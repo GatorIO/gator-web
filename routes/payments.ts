@@ -1,8 +1,3 @@
-/// <reference path="../typings/node/node.d.ts" />
-/// <reference path="../typings/gator-utils/gator-utils.d.ts" />
-/// <reference path="../typings/gator-api/gator-api.d.ts" />
-/// <reference path="../typings/express/express.d.ts" />
-/// <reference path="../typings/connect-flash/connect-flash.d.ts" />
 import utils = require("gator-utils");
 import express = require('express');
 import restify = require('restify');
@@ -17,7 +12,7 @@ export function setup(app: express.Application, application: IApplication, callb
 
     app.get('/billing/paymentmethods', api.authenticate, application.enforceSecure, function (req: express.Request, res: express.Response) {
 
-        var cards = [];
+        let cards = [];
 
         api.REST.client.get('/v1/payments/methods?accessToken=' + req['session'].accessToken, function(err, apiRequest, apiResponse, result) {
 
@@ -52,7 +47,7 @@ export function setup(app: express.Application, application: IApplication, callb
 
     app.post('/billing/paymentmethods/form', api.authenticate, application.enforceSecure, function (req: express.Request, res: express.Response) {
 
-        var params = {
+        let params = {
             accessToken: req['session'].accessToken,
             stripeToken: req.body.stripeToken
         };
@@ -88,7 +83,7 @@ export function setup(app: express.Application, application: IApplication, callb
 
     app.put('/billing/paymentmethods/primary', api.authenticate, application.enforceSecure, function (req: express.Request, res: express.Response) {
 
-        var params = {
+        let params = {
             accessToken: req['session'].accessToken,
             id: req.body['id']
         };
@@ -100,7 +95,7 @@ export function setup(app: express.Application, application: IApplication, callb
 
     app.get('/billing/payments', api.authenticate, application.enforceSecure, function (req: express.Request, res: express.Response) {
 
-        var payments = [], discount = 0, balance = 0;
+        let payments = [], discount = 0, balance = 0;
 
         api.REST.client.get('/v1/payments?accessToken=' + req['session'].accessToken, function(err, apiRequest, apiResponse, result) {
 
@@ -126,7 +121,7 @@ export function setup(app: express.Application, application: IApplication, callb
 
     app.get('/billing/prepay', api.authenticate, application.enforceSecure, function (req: express.Request, res: express.Response) {
 
-        var cards = [];
+        let cards = [];
 
         api.REST.client.get('/v1/payments/methods?accessToken=' + req['session'].accessToken, function(err, apiRequest, apiResponse, result) {
 
@@ -144,7 +139,7 @@ export function setup(app: express.Application, application: IApplication, callb
 
     app.post('/billing/prepay', api.authenticate, application.enforceSecure, function (req: express.Request, res: express.Response) {
 
-        var params = {
+        let params = {
             accessToken: req['session'].accessToken,
             amount: req.body.amount,
             description: 'Prepayment'

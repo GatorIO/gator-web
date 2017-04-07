@@ -1,5 +1,3 @@
-/// <reference path="../gator-api/gator-api.d.ts" />
-
 declare module 'gator-web' {
     import api = require('gator-api');
 

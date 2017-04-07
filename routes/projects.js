@@ -1,12 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils = require("gator-utils");
-var api = require("gator-api");
+const utils = require("gator-utils");
+const api = require("gator-api");
 function setup(app, application, callback) {
     app.get('/defaultproject/:id/', application.enforceSecure, api.authenticate, function (req, res) {
         utils.noCache(res);
         req['session']['currentProjectId'] = req.params.id;
-        var params = {
+        let params = {
             accessToken: req['session']['accessToken'],
             projectId: req.params.id
         };
@@ -21,9 +21,9 @@ function setup(app, application, callback) {
                 req.flash('error', err.message);
             else
                 req['session'].projects = result.data.projects;
-            var found = false;
+            let found = false;
             if (req['session'].currentProjectId && req['session'].projects) {
-                for (var p = 0; p < req['session'].projects.length; p++) {
+                for (let p = 0; p < req['session'].projects.length; p++) {
                     if (req['session'].projects[p].id == req['session'].currentProjectId) {
                         found = true;
                         break;
@@ -44,7 +44,7 @@ function setup(app, application, callback) {
     });
     app.get('/setup/projects/form', application.enforceSecure, api.authenticate, function (req, res) {
         utils.noCache(res);
-        var projects = req['session']['projects'], project = null;
+        let projects = req['session']['projects'], project = null;
         project = api.getProject(req, req.query.id);
         if (!req['session'].projects)
             req['session'].projects = [];
@@ -59,7 +59,7 @@ function setup(app, application, callback) {
     });
     app.post('/setup/projects', application.enforceSecure, api.authenticate, function (req, res) {
         utils.noCache(res);
-        var params = {
+        let params = {
             accessToken: req['session'].accessToken,
             name: req.body.name,
             type: +req.body.type
@@ -67,7 +67,7 @@ function setup(app, application, callback) {
         api.REST.client.post('/v1/projects', params, function (err, apiRequest, apiResponse, result) {
             if (!err) {
                 req['session'].currentProjectId = result.data.project.id;
-                var params = {
+                let params = {
                     accessToken: req['session'].accessToken,
                     projectId: result.data.project.id,
                     dashboards: application.defaultDashboard(+req.body.type)
@@ -82,7 +82,7 @@ function setup(app, application, callback) {
         });
     });
     app.put('/setup/projects', application.enforceSecure, api.authenticate, function (req, res) {
-        var params = {
+        let params = {
             id: +req.body.id,
             accessToken: req['session'].accessToken,
             name: req.body.name,
@@ -105,7 +105,7 @@ function setup(app, application, callback) {
             return;
         }
         api.REST.client.get('/v1/projectshares?projectId=' + req.query.projectId + '&accessToken=' + req['session']['accessToken'], function (err, apiRequest, apiResponse, result) {
-            var projectShares = [], project = api.getProject(req, req.query.projectId);
+            let projectShares = [], project = api.getProject(req, req.query.projectId);
             if (err)
                 req.flash('error', err.message);
             else
@@ -121,7 +121,7 @@ function setup(app, application, callback) {
     });
     app.get('/setup/projectshares/form', application.enforceSecure, api.authenticate, function (req, res) {
         utils.noCache(res);
-        var project = api.getProject(req, req.query.projectId);
+        let project = api.getProject(req, req.query.projectId);
         if (req.query.userId) {
             api.REST.client.get('/v1/projectshares?userId=' + req.query.userId + '&projectId=' + req.query.projectId + '&accessToken=' + req['session']['accessToken'], function (err, apiRequest, apiResponse, result) {
                 res.render('projectSharesForm', {
@@ -147,7 +147,7 @@ function setup(app, application, callback) {
     });
     app.post('/setup/projectshares', application.enforceSecure, api.authenticate, function (req, res) {
         utils.noCache(res);
-        var params = {
+        let params = {
             accessToken: req['session'].accessToken,
             projectId: req.body.projectId,
             userName: req.body.userName,

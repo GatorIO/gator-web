@@ -1,9 +1,3 @@
-/// <reference path="../typings/node/node.d.ts" />
-/// <reference path="../typings/gator-utils/gator-utils.d.ts" />
-/// <reference path="../typings/gator-api/gator-api.d.ts" />
-/// <reference path="../typings/express/express.d.ts" />
-/// <reference path="../typings/connect-flash/connect-flash.d.ts" />
-/// <reference path="../typings/restify/restify.d.ts" />
 import utils = require("gator-utils");
 import express = require('express');
 import restify = require('restify');
@@ -21,7 +15,7 @@ export function setup(app: express.Application, application: IApplication, callb
         utils.noCache(res);
         req['session']['currentProjectId'] = req.params.id;
 
-        var params = {
+        let params = {
             accessToken: req['session']['accessToken'],
             projectId: req.params.id
         };
@@ -44,11 +38,11 @@ export function setup(app: express.Application, application: IApplication, callb
                 req['session'].projects = result.data.projects;
 
             //  make sure the default project exists in the project list
-            var found = false;
+            let found = false;
 
             if (req['session'].currentProjectId && req['session'].projects) {
 
-                for (var p = 0; p < req['session'].projects.length; p++) {
+                for (let p = 0; p < req['session'].projects.length; p++) {
                     if (req['session'].projects[p].id == req['session'].currentProjectId) {
                         found = true;
                         break;
@@ -76,7 +70,7 @@ export function setup(app: express.Application, application: IApplication, callb
         utils.noCache(res);
 
         //  get project to edit
-        var projects = req['session']['projects'], project = null;
+        let projects = req['session']['projects'], project = null;
 
         project = api.getProject(req, req.query.id);
 
@@ -97,7 +91,7 @@ export function setup(app: express.Application, application: IApplication, callb
     app.post('/setup/projects', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
         utils.noCache(res);
 
-        var params = {
+        let params = {
             accessToken: req['session'].accessToken,
             name: req.body.name,
             type: +req.body.type
@@ -109,7 +103,7 @@ export function setup(app: express.Application, application: IApplication, callb
                 req['session'].currentProjectId = result.data.project.id;
 
                 //  successful project creation, so add default dashboard
-                var params = {
+                let params = {
                     accessToken: req['session'].accessToken,
                     projectId: result.data.project.id,
                     dashboards: application.defaultDashboard(+req.body.type)
@@ -127,7 +121,7 @@ export function setup(app: express.Application, application: IApplication, callb
     //  update an existing project
     app.put('/setup/projects', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
 
-        var params = {
+        let params = {
             id: +req.body.id,
             accessToken: req['session'].accessToken,
             name: req.body.name,
@@ -160,7 +154,7 @@ export function setup(app: express.Application, application: IApplication, callb
         api.REST.client.get('/v1/projectshares?projectId=' + req.query.projectId + '&accessToken=' + req['session']['accessToken'], function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
 
             //  get project to edit
-            var projectShares = [], project = api.getProject(req, req.query.projectId);
+            let projectShares = [], project = api.getProject(req, req.query.projectId);
 
             if (err)
                 req.flash('error', err.message);
@@ -182,7 +176,7 @@ export function setup(app: express.Application, application: IApplication, callb
         utils.noCache(res);
 
         //  get project share to edit
-        var project = api.getProject(req, req.query.projectId);
+        let project = api.getProject(req, req.query.projectId);
 
         if (req.query.userId) {
             api.REST.client.get('/v1/projectshares?userId=' + req.query.userId + '&projectId=' + req.query.projectId + '&accessToken=' + req['session']['accessToken'], function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
@@ -213,7 +207,7 @@ export function setup(app: express.Application, application: IApplication, callb
     app.post('/setup/projectshares', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
         utils.noCache(res);
 
-        var params = {
+        let params = {
             accessToken: req['session'].accessToken,
             projectId: req.body.projectId,
             userName: req.body.userName,

@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils = require("gator-utils");
-var api = require("gator-api");
-var gator = require('gator-score');
+const utils = require("gator-utils");
+const api = require("gator-api");
+let gator = require('gator-score');
 function setup(app, application, callback) {
     app.get('/developer/overview', application.enforceSecure, function (req, res) {
         utils.noCache(res);
@@ -219,7 +219,7 @@ function setup(app, application, callback) {
         utils.noCache(res);
         req['noRedirect'] = true;
         api.authenticate(req, req, function () {
-            var options = {
+            let options = {
                 accessToken: 'cB9nC1h5OHB19ABdePAyLiJgT0BN1JMm',
                 ip: utils.ip.remoteAddress(req),
                 ua: req.headers['user-agent'],

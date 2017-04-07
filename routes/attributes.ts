@@ -1,8 +1,3 @@
-/// <reference path="../typings/node/node.d.ts" />
-/// <reference path="../typings/gator-utils/gator-utils.d.ts" />
-/// <reference path="../typings/gator-api/gator-api.d.ts" />
-/// <reference path="../typings/express/express.d.ts" />
-/// <reference path="../typings/connect-flash/connect-flash.d.ts" />
 import utils = require("gator-utils");
 import express = require('express');
 import restify = require('restify');
@@ -29,8 +24,8 @@ export function setup(app: express.Application, application: IApplication, callb
             else
                 req['session'].projects = result.data.projects;
 
-            var project = api.getProject(req, +req.params['id']);
-            var attribs = api.reporting.getCustomAttributes(req, +req.params['id']);      //  specific to user
+            let project = api.getProject(req, +req.params['id']);
+            let attribs = api.reporting.getCustomAttributes(req, +req.params['id']);      //  specific to user
 
             res.render('attributes',{
                 settings: utils.config.settings(),
@@ -48,15 +43,15 @@ export function setup(app: express.Application, application: IApplication, callb
 
         //  refresh the project list
         api.REST.client.get('/v1/projects?accessToken=' + req['session']['accessToken'], function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
-            var dataObj = null, project: any = null;
+            let dataObj = null, project: any;
 
             if (err)
                 req.flash('error', err.message);
             else
                 req['session'].projects = result.data.projects;
 
-            var project = api.getProject(req, +req.params['id']);
-            var attribs = api.reporting.getCustomAttributes(req, +req.params['id']);      //  specific to user
+            project = api.getProject(req, +req.params['id']);
+            let attribs = api.reporting.getCustomAttributes(req, +req.params['id']);      //  specific to user
 
             if (req.query.name) {
 
@@ -86,12 +81,12 @@ export function setup(app: express.Application, application: IApplication, callb
             api.REST.sendError(res, new api.errors.MissingParameterError('You must specify a name and destination.'));
         else {
 
-            var project = api.getProject(req, +req.params['id']);
-            var attribs = api.reporting.getCustomAttributes(req, +req.params['id']);      //  specific to user
+            let project = api.getProject(req, +req.params['id']);
+            let attribs = api.reporting.getCustomAttributes(req, +req.params['id']);      //  specific to user
 
-            var attrib: any = {};
+            let attrib: any = {};
 
-            var type = req.body.type || 'session';
+            let type = req.body.type || 'session';
 
             if (!attribs[type])
                 attribs[type] = {};
@@ -112,7 +107,7 @@ export function setup(app: express.Application, application: IApplication, callb
 
             project.data.attributes[type][req.body.name] = attrib;
 
-            var params = {
+            let params = {
                 accessToken: req['session'].accessToken,
                 projectId: project.id,
                 attributes: project.data.attributes
@@ -128,15 +123,15 @@ export function setup(app: express.Application, application: IApplication, callb
     app.delete('/setup/attributes/:id', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
         utils.noCache(res);
 
-        var project = api.getProject(req, +req.params['id']);
-        var attribs = api.reporting.getCustomAttributes(req, +req.params['id']);      //  specific to user
+        let project = api.getProject(req, +req.params['id']);
+        let attribs = api.reporting.getCustomAttributes(req, +req.params['id']);      //  specific to user
 
         if (!project.data.attributes[req.query['type']])
             project.data.attributes[req.query['type']] = {};
 
         delete project.data.attributes[req.query['type']][req.query['name']];
 
-        var params = {
+        let params = {
             accessToken: req['session'].accessToken,
             projectId: project.id,
             attributes: project.data.attributes

@@ -1,9 +1,3 @@
-/// <reference path="../typings/node/node.d.ts" />
-/// <reference path="../typings/gator-utils/gator-utils.d.ts" />
-/// <reference path="../typings/gator-api/gator-api.d.ts" />
-/// <reference path="../typings/express/express.d.ts" />
-/// <reference path="../typings/connect-flash/connect-flash.d.ts" />
-/// <reference path="../typings/restify/restify.d.ts" />
 import utils = require("gator-utils");
 import express = require('express');
 import restify = require('restify');
@@ -19,12 +13,12 @@ export function setup(app: express.Application, application: IApplication, callb
     app.get('/accesstokens', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
         utils.noCache(res);
 
-        var projectFilter = req.query.projectId ? '&projectId=' + req.query.projectId : '';
+        let projectFilter = req.query.projectId ? '&projectId=' + req.query.projectId : '';
 
         api.REST.client.get('/v1/accesstokens?accessToken=' + req['session'].accessToken + 
             '&type=api' + projectFilter, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
 
-            var tokens = [];
+            let tokens = [];
 
             if (err) {
                 req.flash('error', err.message);
@@ -55,7 +49,7 @@ export function setup(app: express.Application, application: IApplication, callb
             req.body.expires = new Date(Date.parse('3000-01-01'));
         }
 
-        var permissions = [];
+        let permissions = [];
 
         if (req.body.pushAccess == 'true')
             permissions.push('push');
@@ -63,7 +57,7 @@ export function setup(app: express.Application, application: IApplication, callb
         if (req.body.queryAccess == 'true')
             permissions.push('query');
 
-        var params: any = {
+        let params: any = {
             accessToken: req['session']['accessToken'],
             accountId: req['session'].account.id,
             permissions: permissions,

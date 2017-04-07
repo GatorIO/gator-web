@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils = require("gator-utils");
-var api = require("gator-api");
-var lib = require("../lib/index");
+const utils = require("gator-utils");
+const api = require("gator-api");
+const lib = require("../lib/index");
 function getDashboard(application, req, res) {
     utils.noCache(res);
-    var dashboards, name = req.query.name, template = req.query.template, dashboard = {}, editable = true;
+    let dashboards, name = req.query.name, template = req.query.template, dashboard = {}, editable = true;
     if (template) {
         editable = false;
         dashboard = application['getDashboardTemplate'](template, req.query);
@@ -19,13 +19,13 @@ function getDashboard(application, req, res) {
     }
     if (dashboard) {
         dashboard.pods = dashboard.pods || [];
-        for (var i = 0; i < dashboard.pods.length; i++) {
-            var pod = JSON.parse(dashboard.pods[i]);
+        for (let i = 0; i < dashboard.pods.length; i++) {
+            let pod = JSON.parse(dashboard.pods[i]);
             if (pod.state && pod.state.id) {
-                var report = application.reports.definitions[application.reports.Types[pod.state.id]];
+                let report = application.reports.definitions[application.reports.Types[pod.state.id]];
                 pod.settings = report ? report.settings : {};
                 if (report.initialState) {
-                    for (var key in report.initialState) {
+                    for (let key in report.initialState) {
                         if (report.initialState.hasOwnProperty(key) && !pod.state.hasOwnProperty(key))
                             pod.state[key] = report.initialState[key];
                     }
@@ -56,7 +56,7 @@ function getDashboard(application, req, res) {
     else {
         req.flash('error', 'No such dashboard');
     }
-    var view = 'dashboard';
+    let view = 'dashboard';
     res.render(view, {
         application: application,
         settings: utils.config.settings(),
@@ -69,7 +69,7 @@ function getDashboard(application, req, res) {
 }
 exports.getDashboard = getDashboard;
 function setup(app, application, callback) {
-    var statusCheck = typeof application.statusCheck == 'function' ? application.statusCheck : lib.statusCheckPlaceholder;
+    let statusCheck = typeof application.statusCheck == 'function' ? application.statusCheck : lib.statusCheckPlaceholder;
     app.get('/setup/dashboards', application.enforceSecure, api.authenticate, function (req, res) {
         utils.noCache(res);
         api.REST.client.get('/v1/projects?accessToken=' + req['session']['accessToken'], function (err, apiRequest, apiResponse, result) {
@@ -86,7 +86,7 @@ function setup(app, application, callback) {
         });
     });
     app.put('/setup/dashboards', application.enforceSecure, api.authenticate, function (req, res) {
-        var params = {
+        let params = {
             accessToken: req['session'].accessToken,
             projectId: req['session'].currentProjectId,
             dashboards: req.body.dashboards
@@ -96,15 +96,15 @@ function setup(app, application, callback) {
         });
     });
     app.post('/setup/dashboards/pods', application.enforceSecure, api.authenticate, function (req, res) {
-        var dashboards = api.reporting.currentDashboards(req);
-        var pod = {
+        let dashboards = api.reporting.currentDashboards(req);
+        let pod = {
             display: req.body.display,
             title: req.body.title,
             state: req.body.state
         };
         dashboards[req.body.name].pods = dashboards[req.body.name].pods || [];
         dashboards[req.body.name].pods.push(JSON.stringify(pod));
-        var params = {
+        let params = {
             accessToken: req['session'].accessToken,
             projectId: req['session'].currentProjectId,
             dashboards: dashboards
@@ -114,14 +114,14 @@ function setup(app, application, callback) {
         });
     });
     app.post('/setup/dashboards/order', application.enforceSecure, api.authenticate, function (req, res) {
-        var dashboards = api.reporting.currentDashboards(req);
-        var newOrder = [];
-        for (var i = 0; i < req.body.order.length; i++) {
+        let dashboards = api.reporting.currentDashboards(req);
+        let newOrder = [];
+        for (let i = 0; i < req.body.order.length; i++) {
             if (dashboards[req.body.name].pods[req.body.order[i]])
                 newOrder.push(utils.clone(dashboards[req.body.name].pods[req.body.order[i]]));
         }
         dashboards[req.body.name].pods = newOrder;
-        var params = {
+        let params = {
             accessToken: req['session'].accessToken,
             projectId: req['session'].currentProjectId,
             dashboards: dashboards
@@ -131,10 +131,10 @@ function setup(app, application, callback) {
         });
     });
     app.delete('/setup/dashboards/pods', application.enforceSecure, api.authenticate, function (req, res) {
-        var dashboards = api.reporting.currentDashboards(req);
-        var dashboard = dashboards[req.body.name];
+        let dashboards = api.reporting.currentDashboards(req);
+        let dashboard = dashboards[req.body.name];
         dashboard.pods.splice(+req.body.pod, 1);
-        var params = {
+        let params = {
             accessToken: req['session'].accessToken,
             projectId: req['session'].currentProjectId,
             dashboards: dashboards

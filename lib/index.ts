@@ -2,13 +2,13 @@ import _routes = require('../routes/setup');
 import _shopify = require('../lib/shopify');
 import _dictionaries = require('./dictionaries');
 
-export var routes = _routes;
-export var shopify = _shopify;
-export var dictionaries = _dictionaries;
+export let routes = _routes;
+export let shopify = _shopify;
+export let dictionaries = _dictionaries;
 
-var _flash = require('./flash');
+let _flash = require('./flash');
 
-export var flash = _flash;
+export let flash = _flash;
 
 export function renderError(req, res, message) {
     res.render('errorPage', { req: req, message: message ? message : 'Unknown error'});

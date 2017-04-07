@@ -1,9 +1,3 @@
-/// <reference path="../typings/node/node.d.ts" />
-/// <reference path="../typings/gator-utils/gator-utils.d.ts" />
-/// <reference path="../typings/gator-api/gator-api.d.ts" />
-/// <reference path="../typings/express/express.d.ts" />
-/// <reference path="../typings/connect-flash/connect-flash.d.ts" />
-/// <reference path="../typings/gator-web/gator-web.d.ts" />
 import utils = require("gator-utils");
 import web = require("gator-web");
 import express = require('express');
@@ -26,21 +20,21 @@ import _contactRoutes = require('./contacts');
 import _monitorRoutes = require('./monitors');
 import _stationRoutes = require('./stations');
 
-export var apiRoutes = require('./api');
-export var projectRoutes = require('./projects');
-export var reportingRoutes = require('./reporting');
-export var segmentRoutes = require('./segments');
-export var campaignRoutes = require('./campaigns');
-export var dashboardRoutes = require('./dashboards');
-export var bookmarkRoutes = require('./bookmarks');
-export var developerRoutes = require('./developer');
-export var attributeRoutes = require('./attributes');
-export var paymentRoutes = require('./payments');
-export var emailRoutes = require('./email');
-export var accessTokenRoutes = require('./accessTokens');
-export var contactRoutes = require('./contacts');
-export var monitorRoutes = require('./monitors');
-export var stationRoutes = require('./stations');
+export let apiRoutes = require('./api');
+export let projectRoutes = require('./projects');
+export let reportingRoutes = require('./reporting');
+export let segmentRoutes = require('./segments');
+export let campaignRoutes = require('./campaigns');
+export let dashboardRoutes = require('./dashboards');
+export let bookmarkRoutes = require('./bookmarks');
+export let developerRoutes = require('./developer');
+export let attributeRoutes = require('./attributes');
+export let paymentRoutes = require('./payments');
+export let emailRoutes = require('./email');
+export let accessTokenRoutes = require('./accessTokens');
+export let contactRoutes = require('./contacts');
+export let monitorRoutes = require('./monitors');
+export let stationRoutes = require('./stations');
 
 export function setup(app: express.Application, application: IApplication, callback) {
 

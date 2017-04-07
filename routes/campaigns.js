@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils = require("gator-utils");
-var api = require("gator-api");
+const utils = require("gator-utils");
+const api = require("gator-api");
 function setup(app, application, callback) {
     app.get('/setup/campaignreferrers/:projectId', application.enforceSecure, api.authenticate, function (req, res) {
         utils.noCache(res);

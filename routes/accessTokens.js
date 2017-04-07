@@ -1,14 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils = require("gator-utils");
-var api = require("gator-api");
+const utils = require("gator-utils");
+const api = require("gator-api");
 function setup(app, application, callback) {
     app.get('/accesstokens', application.enforceSecure, api.authenticate, function (req, res) {
         utils.noCache(res);
-        var projectFilter = req.query.projectId ? '&projectId=' + req.query.projectId : '';
+        let projectFilter = req.query.projectId ? '&projectId=' + req.query.projectId : '';
         api.REST.client.get('/v1/accesstokens?accessToken=' + req['session'].accessToken +
             '&type=api' + projectFilter, function (err, apiRequest, apiResponse, result) {
-            var tokens = [];
+            let tokens = [];
             if (err) {
                 req.flash('error', err.message);
             }
@@ -33,12 +33,12 @@ function setup(app, application, callback) {
         if (!req.body.expires) {
             req.body.expires = new Date(Date.parse('3000-01-01'));
         }
-        var permissions = [];
+        let permissions = [];
         if (req.body.pushAccess == 'true')
             permissions.push('push');
         if (req.body.queryAccess == 'true')
             permissions.push('query');
-        var params = {
+        let params = {
             accessToken: req['session']['accessToken'],
             accountId: req['session'].account.id,
             permissions: permissions,

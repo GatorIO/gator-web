@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils = require("gator-utils");
-var api = require("gator-api");
+const utils = require("gator-utils");
+const api = require("gator-api");
 function setup(app, application, callback) {
     app.get('/billing/paymentmethods', api.authenticate, application.enforceSecure, function (req, res) {
-        var cards = [];
+        let cards = [];
         api.REST.client.get('/v1/payments/methods?accessToken=' + req['session'].accessToken, function (err, apiRequest, apiResponse, result) {
             if (result && result.data)
                 cards = result.data.cards;
@@ -31,7 +31,7 @@ function setup(app, application, callback) {
         });
     });
     app.post('/billing/paymentmethods/form', api.authenticate, application.enforceSecure, function (req, res) {
-        var params = {
+        let params = {
             accessToken: req['session'].accessToken,
             stripeToken: req.body.stripeToken
         };
@@ -59,7 +59,7 @@ function setup(app, application, callback) {
         });
     });
     app.put('/billing/paymentmethods/primary', api.authenticate, application.enforceSecure, function (req, res) {
-        var params = {
+        let params = {
             accessToken: req['session'].accessToken,
             id: req.body['id']
         };
@@ -68,7 +68,7 @@ function setup(app, application, callback) {
         });
     });
     app.get('/billing/payments', api.authenticate, application.enforceSecure, function (req, res) {
-        var payments = [], discount = 0, balance = 0;
+        let payments = [], discount = 0, balance = 0;
         api.REST.client.get('/v1/payments?accessToken=' + req['session'].accessToken, function (err, apiRequest, apiResponse, result) {
             if (err)
                 req.flash('error', err.message);
@@ -88,7 +88,7 @@ function setup(app, application, callback) {
         });
     });
     app.get('/billing/prepay', api.authenticate, application.enforceSecure, function (req, res) {
-        var cards = [];
+        let cards = [];
         api.REST.client.get('/v1/payments/methods?accessToken=' + req['session'].accessToken, function (err, apiRequest, apiResponse, result) {
             if (result && result.data)
                 cards = result.data.cards;
@@ -101,7 +101,7 @@ function setup(app, application, callback) {
         });
     });
     app.post('/billing/prepay', api.authenticate, application.enforceSecure, function (req, res) {
-        var params = {
+        let params = {
             accessToken: req['session'].accessToken,
             amount: req.body.amount,
             description: 'Prepayment'

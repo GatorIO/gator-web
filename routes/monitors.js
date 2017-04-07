@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils = require("gator-utils");
-var api = require("gator-api");
-var dictionaries = require("../lib/dictionaries");
-var monitorTypes = dictionaries.MonitorTypes;
+const utils = require("gator-utils");
+const api = require("gator-api");
+const dictionaries = require("../lib/dictionaries");
+let monitorTypes = dictionaries.MonitorTypes;
 function getMonitorParams(req) {
-    var params = req.body;
+    let params = req.body;
     if (params.id)
         params.id = +params.id;
     params.projectId = req['session'].currentProjectId;
@@ -65,9 +65,9 @@ function getMonitors(req, res, application) {
             });
         }
         else {
-            var contacts_1 = result.data;
+            let contacts = result.data;
             api.REST.client.get('/v1/monitoring/stations?projectId=' + req['session'].currentProjectId, function (err, apiRequest, apiResponse, result) {
-                var stations = result.data;
+                let stations = result.data;
                 if (err)
                     req.flash('error', err.message);
                 if (result && result.data)
@@ -83,7 +83,7 @@ function getMonitors(req, res, application) {
                         monitors: result ? result.data : [],
                         monitorTypes: dictionaries.MonitorTypes,
                         monitorDescriptions: dictionaries.monitorTypes.codes,
-                        contacts: contacts_1,
+                        contacts: contacts,
                         stations: stations
                     });
                 });
@@ -97,7 +97,7 @@ function setup(app, application, callback) {
         app.get('/certificates', application.enforceSecure, api.authenticate, function (req, res) {
             utils.noCache(res);
             api.REST.client.get('/v1/monitoring/stations?projectId=' + req['session'].currentProjectId, function (err, apiRequest, apiResponse, result) {
-                var stations = result.data;
+                let stations = result.data;
                 api.REST.client.get('/v1/monitoring/monitors?projectId=' + req['session'].currentProjectId + '&accessToken=' + req['session']['accessToken'], function (err, apiRequest, apiResponse, result) {
                     if (err)
                         req.flash('error', err.message);
@@ -137,14 +137,14 @@ function setup(app, application, callback) {
         });
         app.post('/monitors', application.enforceSecure, api.authenticate, function (req, res) {
             utils.noCache(res);
-            var params = getMonitorParams(req);
+            let params = getMonitorParams(req);
             api.REST.client.post('/v1/monitoring/monitors', params, function (err, apiRequest, apiResponse, result) {
                 api.REST.sendConditional(res, err, result);
             });
         });
         app.put('/monitors', application.enforceSecure, api.authenticate, function (req, res) {
             utils.noCache(res);
-            var params = getMonitorParams(req);
+            let params = getMonitorParams(req);
             api.REST.client.put('/v1/monitoring/monitors', params, function (err, apiRequest, apiResponse, result) {
                 api.REST.sendConditional(res, err);
             });

@@ -1,16 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils = require("gator-utils");
-var api = require("gator-api");
-var lib = require("../lib/index");
-var http = require('http');
-var fs = require('fs');
-var os = require('os');
+const utils = require("gator-utils");
+const api = require("gator-api");
+const lib = require("../lib/index");
+let http = require('http');
+let fs = require('fs');
+let os = require('os');
 function getEndpoint() {
     return api.applications.items[utils.config.settings().appId].reporting.apiEndpoint;
 }
 function getReport(application, req, res) {
-    var definition, qsOptions, metricOptions, elementOptions, filterOptions, attribOptions, id;
+    let definition, qsOptions, metricOptions, elementOptions, filterOptions, attribOptions, id;
     qsOptions = req.query.options ? JSON.parse(req.query.options) : {};
     id = qsOptions.id || req.query.id;
     if (id) {
@@ -67,20 +67,20 @@ function getReport(application, req, res) {
     if (typeof definition.initialState.filter == 'function')
         definition.initialState.filter = definition.initialState.filter(application, req);
     if (req.query.options) {
-        for (var key in qsOptions) {
+        for (let key in qsOptions) {
             if (qsOptions.hasOwnProperty(key))
                 definition.initialState[key] = qsOptions[key];
         }
     }
-    var project = api.currentProject(req);
+    let project = api.currentProject(req);
     if (!project)
         project = {};
     if (!project.data)
         project.data = {};
     if (!project.data.attributes)
         project.data.attributes = {};
-    var customAttribs = project.data.attributes;
-    var isLog = definition.settings.renderView == 'log';
+    let customAttribs = project.data.attributes;
+    let isLog = definition.settings.renderView == 'log';
     metricOptions = api.reporting.getAttributeOptions(definition.settings.entity, api.reporting.AttributeTypes.metrics, customAttribs, isLog);
     elementOptions = api.reporting.getAttributeOptions(definition.settings.entity, api.reporting.AttributeTypes.elements, customAttribs, isLog);
     filterOptions = api.reporting.getFilterOptions(definition.settings.entity, customAttribs, isLog);
@@ -89,7 +89,7 @@ function getReport(application, req, res) {
     api.reporting.getSegments(req, false, definition.appId, function (err) {
         if (err)
             req.flash('error', err.message);
-        var renderView = definition.settings.renderView;
+        let renderView = definition.settings.renderView;
         res.render(renderView || 'report', {
             settings: utils.config.settings(),
             application: application,
@@ -106,13 +106,13 @@ function getReport(application, req, res) {
 }
 exports.getReport = getReport;
 function setup(app, application, callback) {
-    var statusCheck = typeof application.statusCheck == 'function' ? application.statusCheck : lib.statusCheckPlaceholder;
+    let statusCheck = typeof application.statusCheck == 'function' ? application.statusCheck : lib.statusCheckPlaceholder;
     app.post('/query', application.enforceSecure, api.authenticateNoRedirect, function (req, res) {
         if (!req['session']) {
             api.REST.sendError(res, new api.errors.AuthenticationTimeoutError('Your session has timed out.'));
             return;
         }
-        var endpoint, params = {
+        let endpoint, params = {
             accessToken: req['session'].accessToken,
             query: req.body
         };
@@ -137,15 +137,15 @@ function setup(app, application, callback) {
         getReport(application, req, res);
     });
     function exportCSV(req, res) {
-        var params = {
+        let params = {
             accessToken: req['session'].accessToken,
             query: JSON.parse(req.query.query)
         };
         params.query.format = req.query.format;
         params.query.limit = 1000;
         res.attachment('data.' + req.query.format);
-        var cycles = 0, running = false;
-        var interval = setInterval(function () {
+        let cycles = 0, running = false;
+        let interval = setInterval(function () {
             if (cycles++ >= 100000) {
                 res.write('ERROR: Too many rows to download.  The limit is ' + (cycles * params.query.limit));
                 res.end();
@@ -191,16 +191,16 @@ function setup(app, application, callback) {
         }, 50);
     }
     function exportPDF(req, res) {
-        var phantomBin = 'phantomjs', dest = 'data.' + req.query.format, file = utils.guid() + '.pdf';
-        var exec = require('child_process').exec;
+        let phantomBin = 'phantomjs', dest = 'data.' + req.query.format, file = utils.guid() + '.pdf';
+        const exec = require('child_process').exec;
         if (os.platform().substr(0, 3) == 'win') {
             phantomBin = '"../node_modules/gator-web/bin/phantomjs-win"';
         }
-        var reportUrl = application.current.consoleHost;
+        let reportUrl = application.current.consoleHost;
         if (utils.config.dev())
             reportUrl = application.settings.nodeUrl;
         reportUrl += '/report?format=pdf&accessToken=' + req['session'].accessToken + '&options=' + encodeURIComponent(req.query.options);
-        var child = exec('cd phantomjs && ' + phantomBin + ' --ignore-ssl-errors=yes ../node_modules/gator-web/lib/renderpdf.js "' + reportUrl + '" ' + file, function (err, stdout, stderr) {
+        const child = exec('cd phantomjs && ' + phantomBin + ' --ignore-ssl-errors=yes ../node_modules/gator-web/lib/renderpdf.js "' + reportUrl + '" ' + file, (err, stdout, stderr) => {
             if (err !== null) {
                 api.log(err, "PDF download");
                 res.end("Internal error");
@@ -213,7 +213,7 @@ function setup(app, application, callback) {
                             res.end("Internal error");
                         }
                         else {
-                            var stat = fs.statSync('phantomjs/' + file);
+                            let stat = fs.statSync('phantomjs/' + file);
                             if (stat.isFile())
                                 fs.unlink('phantomjs/' + file);
                         }
@@ -257,7 +257,7 @@ function setup(app, application, callback) {
     });
     app.get('/person/profile', application.enforceSecure, api.authenticate, statusCheck, function (req, res) {
         utils.noCache(res);
-        var params = {
+        let params = {
             accessToken: req['session'].accessToken,
             projectId: req['session'].currentProjectId
         };

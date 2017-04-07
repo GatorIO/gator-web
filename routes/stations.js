@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils = require("gator-utils");
-var api = require("gator-api");
+const utils = require("gator-utils");
+const api = require("gator-api");
 function getStations(req, res, application) {
     api.REST.client.get('/v1/monitoring/stations', function (err, apiRequest, apiResponse, result) {
         if (err)
@@ -25,13 +25,13 @@ function setup(app, application, callback) {
             utils.noCache(res);
             api.REST.client.get('/v1/monitoring/stations', function (err, apiRequest, apiResponse, result) {
                 if (result.data) {
-                    var stations = [], project = api.getProject(req, req['session'].currentProjectId), disabled = [];
+                    let stations = [], project = api.getProject(req, req['session'].currentProjectId), disabled = [];
                     if (project && project.data && project.data.disabledStations) {
                         disabled = project.data.disabledStations;
                     }
-                    for (var key in result.data) {
+                    for (let key in result.data) {
                         if (result.data.hasOwnProperty(key)) {
-                            var item = result.data[key];
+                            let item = result.data[key];
                             item.id = +key;
                             if (disabled.indexOf(+key) > -1)
                                 item.disabled = true;
@@ -46,12 +46,12 @@ function setup(app, application, callback) {
         app.get('/stations/enable/:id/', application.enforceSecure, api.authenticate, function (req, res) {
             api.REST.client.get('/v1/monitoring/stations/enable/' + req.params['id'] + '?projectId=' + req['session'].currentProjectId + '&accessToken=' + req['session'].accessToken, function (err, apiRequest, apiResponse) {
                 if (!err) {
-                    var project = api.getProject(req, req['session'].currentProjectId);
+                    let project = api.getProject(req, req['session'].currentProjectId);
                     if (!project.data)
                         project.data = {};
                     if (!project.data.disabledStations)
                         project.data.disabledStations = [];
-                    var index = project.data.disabledStations.indexOf(+req.params['id']);
+                    let index = project.data.disabledStations.indexOf(+req.params['id']);
                     if (index > -1)
                         project.data.disabledStations.splice(index, 1);
                 }
@@ -61,7 +61,7 @@ function setup(app, application, callback) {
         app.get('/stations/disable/:id/', application.enforceSecure, api.authenticate, function (req, res) {
             api.REST.client.get('/v1/monitoring/stations/disable/' + req.params['id'] + '?projectId=' + req['session'].currentProjectId + '&accessToken=' + req['session'].accessToken, function (err, apiRequest, apiResponse) {
                 if (!err) {
-                    var project = api.getProject(req, req['session'].currentProjectId);
+                    let project = api.getProject(req, req['session'].currentProjectId);
                     if (!project.data)
                         project.data = {};
                     if (!project.data.disabledStations)

@@ -1,5 +1,3 @@
-/// <reference path="../typings/gator-utils/gator-utils.d.ts" />
-/// <reference path="../typings/gator-api/gator-api.d.ts" />
 import utils = require("gator-utils");
 import api = require("gator-api");
 const urlLib = require('url');
@@ -15,7 +13,7 @@ export function hostname(url: string): string {
     if (url.indexOf('://') == -1)
         url = 'http://' + url;
 
-    var urlObject = urlLib.parse(url);
+    let urlObject = urlLib.parse(url);
 
     if (!urlObject)
         throw new Error('Unable to parse URL');
@@ -30,12 +28,12 @@ export function path(url: string): string {
     if (url.indexOf('://') == -1)
         url = 'http://' + url;
 
-    var urlObject = urlLib.parse(url);
+    let urlObject = urlLib.parse(url);
 
     if (!urlObject)
         throw new Error('Unable to parse URL');
 
-    var ret = urlObject.path;
+    let ret = urlObject.path;
 
     //  strip off trailing /
     if (ret.substr(ret.length - 1) == '/')
