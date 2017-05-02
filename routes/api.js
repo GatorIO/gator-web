@@ -26,7 +26,7 @@ function setup(app, application, callback) {
     app.post('/login', application.enforceSecure, function (req, res) {
         api.login(req.body['username'], req.body['password'], application.settings.appId, function (err, authObject) {
             if (!err)
-                api.setSessionCookie(res, authObject.accessToken);
+                req.session.auth = authObject;
             api.REST.sendConditional(res, err, null, 'success');
         });
     });
