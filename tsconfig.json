@@ -5,7 +5,6 @@
         "sourceMap": true,
         "removeComments": true
     },
-    "types": "./gator-web.d.ts",
     "exclude": [
         "node_modules"
     ]

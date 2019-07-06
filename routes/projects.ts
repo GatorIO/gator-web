@@ -2,7 +2,7 @@ import utils = require("gator-utils");
 import express = require('express');
 import restify = require('restify');
 import api = require('gator-api');
-import {IApplication} from "gator-web";
+import {IApplication} from "../lib";
 
 /*
  Set up routes - this script handles functions required for managing projects
@@ -94,7 +94,8 @@ export function setup(app: express.Application, application: IApplication, callb
         let params = {
             accessToken: req['session'].accessToken,
             name: req.body.name,
-            type: +req.body.type
+            type: +req.body.type,
+            crossDomain: req.body.crossDomain == "true" ? true : false
         };
 
         api.REST.client.post('/v1/projects', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
@@ -126,7 +127,8 @@ export function setup(app: express.Application, application: IApplication, callb
             accessToken: req['session'].accessToken,
             name: req.body.name,
             type: +req.body.type,
-            enabled: req.body.enabled
+            enabled: req.body.enabled,
+            crossDomain: req.body.crossDomain == "true" ? true : false
         };
 
         api.REST.client.put('/v1/projects', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {

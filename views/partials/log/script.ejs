@@ -38,7 +38,7 @@
         if (!Filter.validate('filter-builder'))
             return;
 
-        if (!$('#projects').val()) {
+        if (!report.settings.global && !$('#projects').val()) {
             Page.showMessage('Please select a project.&nbsp; <a href="/setup/projects/form">Click here</a> to create a new project.');
             return;
         }
@@ -49,7 +49,7 @@
 
             //  set options for both chart and table
             report.pageOptions = {
-                projectId: $('#projects').val(),
+                projectId: report.settings.global ? null : $('#projects').val(),
                 tableContainer: 'results-table',
                 onStateChange: pushState
             }
@@ -69,6 +69,11 @@
                 //  if being exported, notify service that rendering is done
                 if (typeof window.callPhantom === 'function')
                     window.callPhantom({ status: 'complete' });
+
+                //  custom report views can attach a function for processing after a report is rendered
+                if (typeof window.afterRenderHook === 'function')
+                    window.afterRenderHook(report, err);
+
             });
         }
     }
@@ -121,7 +126,7 @@
         if ($("#filter-builder").queryBuilder('validate'))
             report.state.filter = $("#filter-builder").queryBuilder('getMongo');
         else
-            delete report.state.filter;
+            report.state.filter = {};
     }
 
     function restoreState(state) {
@@ -135,8 +140,8 @@
         else
             Filter.reset('filter-builder');
 
-        if (report.settings.title)
-            $('#page-title').html(report.settings.title);
+        if (report.state.title || report.settings.title)
+            $('#page-title').html(report.state.title || report.settings.title);
 
         if (state.map)
             $('#world-map').removeClass('hidden');

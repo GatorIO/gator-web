@@ -19,6 +19,7 @@ build/Release
 
 obj/
 *.suo
+*.js
 *.js.map
 
 *.user

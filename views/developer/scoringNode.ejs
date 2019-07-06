@@ -37,16 +37,17 @@ npm install gator-score</pre>
                     <br>You can view the package on the NPM site: <a href="https://www.npmjs.com/package/gator-score">gator-score</a>.
                     <br><br>Once the package is installed, you can make API calls like so:
                     <br><br><textarea id="code">
-var gator = require('gator-score');
+var gatorScore = require('gator-score');
 
 var options = {
+    accessToken: 'your access token',        //  generate an access token for the project for non-delayed access
     ip: '72.211.250.156',
     ua: 'Mozilla/5.0 (iPad; U; CPU OS 3_2_1 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko)',
     referrer: 'http://bing.com/search?q=bicycle',
     url: 'http://mysite.com'
 };
 
-gator.score(options, function(err, result) {
+gatorScore.score(options, function(err, result) {
     if (result && result.score < 100)
         console.log('Invalid user');
 });</textarea>

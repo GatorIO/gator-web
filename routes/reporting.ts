@@ -2,19 +2,29 @@ import restify = require('restify');
 import utils = require("gator-utils");
 import express = require('express');
 import api = require('gator-api');
-import projectRoutes = require('./projects');
 import lib = require('../lib/index');
-let http = require('http');
+import {IApplication} from "../lib";
 let fs = require('fs');
 let os = require('os');
-import {IApplication} from "gator-web";
 
 /*
  Set up routes - this script handles functions required reporting
  */
 
-function getEndpoint(): string {
-    return api.applications.items[utils.config.settings().appId].reporting.apiEndpoint;
+function getEndpoint(query?): string {
+    let endpoint = '';
+
+    if (query && query.appId) {
+        endpoint = api.applications.items[+query.appId].reporting.apiEndpoint;
+    } else {
+        endpoint = api.applications.items[utils.config.settings().appId].reporting.apiEndpoint;
+    }
+
+    //  standardize endpoints with / at end
+    if (endpoint.substr(endpoint.length - 1, 1) != '/') {
+        endpoint += '/';
+    }
+    return endpoint;
 }
 
 export function getReport(application, req, res) {
@@ -34,7 +44,12 @@ export function getReport(application, req, res) {
 
     let definition, qsOptions, metricOptions, elementOptions, filterOptions, attribOptions, id;
 
-    qsOptions = req.query.options ? JSON.parse(req.query.options) : {};
+    try {
+        qsOptions = req.query.options ? JSON.parse(req.query.options) : {};
+    } catch(err) {
+        qsOptions = {};
+    }
+
     id = qsOptions.id || req.query.id;        //  there should not be two ids, but if there is, use the one in options
 
     //  get report definition
@@ -106,6 +121,9 @@ export function getReport(application, req, res) {
     if (typeof definition.initialState.filter == 'function')
         definition.initialState.filter = definition.initialState.filter(application, req);
 
+    if (typeof definition.initialState.match == 'function')
+        definition.initialState.match = definition.initialState.match(application, req);
+
     //  override options from definition with query string params
     if (req.query.options) {
 
@@ -175,7 +193,9 @@ export function setup(app: express.Application, application: IApplication, callb
 
         let endpoint, params = {
             accessToken: req['session'].accessToken,
-            query: req.body
+            query: req.body,
+            clientIP: utils.ip.remoteAddress(req),
+            clientUA: req.header('user-agent')
         };
 
         //  support change from 'view' to 'entity'
@@ -184,9 +204,19 @@ export function setup(app: express.Application, application: IApplication, callb
             delete params.query.view;
         }
 
-        api.REST.client.post(getEndpoint() + 'query', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
-            api.REST.sendConditional(res, err, result ? result.data : null);
-        });
+        let options = {
+            path: getEndpoint(params.query) + 'query',
+            agent: false
+        };
+
+        try {
+            api.REST.client.post(options, params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
+                api.REST.sendConditional(res, err, result ? result.data : null);
+            });
+        } catch(err) {
+            api.logger.error('Restify client error', err, options, params.query);
+            api.REST.sendError(res, err);
+        }
     });
 
     //  typeahead support
@@ -207,7 +237,7 @@ export function setup(app: express.Application, application: IApplication, callb
         getReport(application, req, res);
     });
 
-    function exportCSV(req: express.Request, res: express.Response) {
+    function exportData(req: express.Request, res: express.Response) {
 
         let params = {
             accessToken: req['session'].accessToken,
@@ -215,7 +245,7 @@ export function setup(app: express.Application, application: IApplication, callb
         };
 
         params.query.format = req.query.format;
-        params.query.limit = 1000;
+        params.query.limit = 200;       //  keep this at 200 - higher leads to server slowness
 
         res.attachment('data.' + req.query.format);
 
@@ -223,62 +253,81 @@ export function setup(app: express.Application, application: IApplication, callb
 
         let interval = setInterval(function() {
 
-            //  if this somehow gets into a loop that is too big, close it
-            if (cycles++ >= 100000) {
-                res.write('ERROR: Too many rows to download.  The limit is ' + (cycles * params.query.limit));
-                res.end();
-                clearInterval(interval);
-                return;
-            }
-
             if (running)
                 return;
 
-            running = true;
+            try {
 
-            api.REST.client.post(getEndpoint() + 'query', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
+                running = true;
 
-                if (err) {
-                    clearInterval(interval);
-                    res.write('ERROR: ' + err.message);
+                //  if this somehow gets into a loop that is too big, close it
+                if (cycles++ >= 1000000) {
+                    res.write('ERROR: Too many rows to download.  The limit is ' + (cycles * params.query.limit));
                     res.end();
+                    clearInterval(interval);
                     return;
                 }
 
-                //  no headers after first chunk
-                params.query.dataOnly = true;
+                api.REST.client.post(getEndpoint(params.query) + 'query', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
 
-                if (result && result.code == 200) {
-
-                    if (req.query.format == 'csv') {
-
-                        if (result.data.csv)
-                            res.write(result.data.csv);
-                        else
-                            res.write('');
-
-                    } else {
-                        res.json(result.data);
+                    if (err) {
+                        clearInterval(interval);
+                        res.write('ERROR: ' + err.message);
+                        res.end();
+                        return;
                     }
 
-                    //  add filter to continue after where the last chunk ended
-                    if (result.data.nextClause) {
-                        params.query.nextClause = result.data.nextClause;
-                    } else {
+                    //  no headers after first chunk
+                    params.query.dataOnly = true;
 
-                        //  all data has been sent
+                    if (result && result.code == 200) {
+
+                        if (req.query.format == 'csv') {
+
+                            if (result.data.csv)
+                                res.write(result.data.csv);
+                            else
+                                res.write('');
+
+                        } else {
+                            let chunk = JSON.stringify(result.data.rows);
+
+                            //  on first chunk, write the array start
+                            if (cycles == 1)
+                                res.write('[');
+
+                            res.write(chunk.substr(1, chunk.length - 2));
+
+                            //  write end array if last chunk, or comma if more
+                            if (result.data.nextClause)
+                                res.write(',');
+                            else
+                                res.write(']');
+
+                        }
+
+                        //  add filter to continue after where the last chunk ended
+                        if (result.data.nextClause) {
+                            params.query.nextClause = result.data.nextClause;
+                        } else {
+
+                            //  all data has been sent
+                            res.end();
+                            clearInterval(interval);
+                        }
+
+                        running = false;
+
+                    } else {
+                        res.write('ERROR: ' + JSON.stringify(result));
                         res.end();
                         clearInterval(interval);
                     }
-
-                    running = false;
-
-                } else {
-                    res.write('ERROR: ' + JSON.stringify(result));
-                    res.end();
-                    clearInterval(interval);
-                }
-            });
+                });
+            } catch(err) {
+                clearInterval(interval);
+                api.logger.error('In download', err, req);
+            }
         }, 50);
     }
 
@@ -303,7 +352,7 @@ export function setup(app: express.Application, application: IApplication, callb
             (err, stdout, stderr) => {
 
                 if (err !== null) {
-                    api.log(err, "PDF download");
+                    api.logger.error(err, "PDF download", req);
                     res.end("Internal error");
                 } else {
                     res.download('phantomjs/' + file, 'report.pdf', function(err) {
@@ -311,7 +360,7 @@ export function setup(app: express.Application, application: IApplication, callb
                         try {
 
                             if (err){
-                                api.log(err, "PDF download");
+                                api.logger.error(err, "PDF download", req);
                                 res.end("Internal error");
                             } else {
                                 let stat = fs.statSync('phantomjs/' + file);
@@ -332,7 +381,8 @@ export function setup(app: express.Application, application: IApplication, callb
 
             switch (req.query.format) {
                 case 'csv':
-                    exportCSV(req, res);
+                case 'json':
+                    exportData(req, res);
                     break;
 
                 case 'pdf':
@@ -344,7 +394,7 @@ export function setup(app: express.Application, application: IApplication, callb
                     res.end();
             }
         } catch(err) {
-            api.log(err, "/download");
+            api.logger.error(err, "/download", req);
             res.end("Internal error");
         }
     });

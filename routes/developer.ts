@@ -1,13 +1,12 @@
 import utils = require("gator-utils");
 import express = require('express');
-import restify = require('restify');
 import api = require('gator-api');
-import {IApplication} from "gator-web";
+import {IApplication} from "../lib";
 
 let gator = require('gator-score');
 
 /*
- Set up routes - this script handles functions required for managing segments
+ Set up routes - this script handles functions required for managing developer routes
  */
 
 export function setup(app: express.Application, application: IApplication, callback) {

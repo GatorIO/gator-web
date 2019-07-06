@@ -14,8 +14,6 @@
 
     var segmentsSelectize, customCount = 0, customSegments, suppressUpdates = false, title;
 
-    $('#page-title').html(report.settings.title);
-
     var metricSelectize = $('#metrics').selectize({
         options: <%- JSON.stringify(metricOptions) %>,
         items: Utils.replaceAll(report.state.attributes, ' ', '').split(','),
@@ -109,7 +107,7 @@
         if (!Filter.validate('filter-builder'))
             return;
 
-        if (!$('#projects').val()) {
+        if (!report.settings.global && !$('#projects').val()) {
             Page.showMessage('Please select a project.&nbsp; <a href="/setup/projects/form">Click here</a> to create a new project.');
             return;
         }
@@ -120,7 +118,7 @@
 
             //  set page options for both chart and table
             report.pageOptions = {
-                projectId: $('#projects').val(),
+                projectId: report.settings.global ? null : $('#projects').val(),
                 chartContainer: 'results-chart',
                 tableContainer: 'results-table',
                 legendContainer: 'results-legend',
@@ -194,7 +192,7 @@
         if ($("#filter-builder").queryBuilder('validate'))
             report.state.filter = $("#filter-builder").queryBuilder('getMongo');
         else
-            delete report.state.filter;
+            report.state.filter = {};
 
         if (customCount >0) {
             report.state.customSegments = customSegments;
@@ -231,8 +229,8 @@
         else
             Filter.reset('filter-builder');
 
-        if (report.settings.title)
-            $('#page-title').html(report.settings.title);
+        if (report.state.title || report.settings.title)
+            $('#page-title').html(report.state.title || report.settings.title);
 
         Toolbar.setValues(state.dateLabel, state.dateStart, state.dateEnd, state.dateInterval);
         Toolbar.draw();

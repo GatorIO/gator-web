@@ -93,6 +93,7 @@ function Report() {
         sort: null,
         segments: null,
         filter: null,
+        match: null,
         customSegments: null,
         customCount: null,
         tableOrder: null,
@@ -209,14 +210,16 @@ function Report() {
                             runningQueries--;
                             Page.doneLoading();
 
-                            if (result && result.status == 404) {
+                            if (result && result.status == 0) {
+                                // 0 usually means request not sent, so do nothing
+                            } else if (result && result.status == 404) {
                                 Page.alert('Not Found', 'No data has been tracked yet for this project.', 'info');
                             } else if (result && (result.status == 419 || result.status == 401)) {
                                 window.location = '/login';
                             } else if (result && result.responseJSON && result.responseJSON.message) {
                                 Page.alert('Error', result.responseJSON.message, 'error');
                             } else {
-                                Page.alert('Error', 'Internal server error', 'error');
+                                console.dir(result);
                             }
 
                             if (callback)
@@ -244,14 +247,16 @@ function Report() {
                 runningQueries--;
                 Page.doneLoading();
 
-                if (result && result.status == 404) {
+                if (result && result.status == 0) {
+                    // 0 usually means request not sent, so do nothing
+                } else if (result && result.status == 404) {
                     Page.alert('Not Found', 'No data has been tracked yet for this project.', 'info');
                 } else if (result && (result.status == 419 || result.status == 401)) {
                     window.location = '/login';
                 } else if (result && result.responseJSON && result.responseJSON.message) {
                     Page.alert('Error', result.responseJSON.message, 'error');
                 } else {
-                    Page.alert('Error', 'Internal server error', 'error');
+                    console.dir(result);
                 }
 
                 if (callback)
@@ -354,6 +359,9 @@ Report.prototype.getBaseQuery = function() {
     if (state.filter)
         query['filter'] = state.filter;
 
+    if (state.match)
+        query['match'] = state.match;
+
     if (state.having)
         query['having'] = state.having;
 
@@ -384,22 +392,22 @@ Report.prototype.getBaseQuery = function() {
 
 Report.prototype.download = function(format) {
 
-    if (format == 'csv')
-        window.location = '/download?format=' + format + '&query=' + encodeURIComponent(JSON.stringify(this.getTableQuery()));
+    if (format == 'csv' || format == 'json')
+        window.location = '/download?format=' + format + '&query=' + encodeURIComponent(JSON.stringify(this.getTableQuery(true)));
     else
         window.location = '/download?' + window.location.search.substr(1) + '&format=' + format;
 };
 
-Report.prototype.getTableQuery = function() {
+Report.prototype.getTableQuery = function(isDownload) {
     var state = this.state;
 
     var query = this.getBaseQuery();
 
     if (state.isLog) {
-        query.limit = 100;
+        query.limit = state.limit || 100;
 
         //  make sure coordinates are returned for map on log reports
-        if (this.pageOptions.mapContainer || this.state.map) {
+        if (!isDownload && (this.pageOptions.mapContainer || this.state.map)) {
 
             if (query.attributes.indexOf('longitude') == -1)
                 query.attributes += ',longitude';
@@ -1636,7 +1644,7 @@ Report.prototype.setPlotKeys = function() {
 };
 
 //  Turn a JSON query object into a string that is more readable
-Report.explainQuery = function(json) {
+Report.explainQuery = function(json, attributes) {
     var text;
 
     if (typeof json == 'string')
@@ -1650,6 +1658,20 @@ Report.explainQuery = function(json) {
 
     text = JSON.stringify(json);
 
+    if (attributes) {
+
+        for (var i = 0; i < attributes.length; i++) {
+            var attrib = attributes[i];
+            text = Utils.replaceAll(text, '"' + attrib.name + '":"', attrib.title + ' = "');
+            text = Utils.replaceAll(text, '"' + attrib.name + '":', attrib.title + ' ');
+        }
+    }
+
+    //  for variables
+    text = Utils.replaceAll(text, '{{ ', '<%% ');
+    text = Utils.replaceAll(text, ' }}', ' %%>');
+
+    text = Utils.replaceAll(text, '"\\$nin":', 'not in ');
     text = Utils.replaceAll(text, '"\\$in":', 'in ');
     text = Utils.replaceAll(text, '"\\$eq":', '= ');
     text = Utils.replaceAll(text, '"\\$ne":', 'not equal to ');
@@ -1657,7 +1679,7 @@ Report.explainQuery = function(json) {
     text = Utils.replaceAll(text, '"\\$gte":', '>= ');
     text = Utils.replaceAll(text, '"\\$lt":', '< ');
     text = Utils.replaceAll(text, '"\\$lte":', '<= ');
-    text = Utils.replaceAll(text, '"\\$regex":', 'contains ');
+    text = Utils.replaceAll(text, '"\\$regex":', 'matches ');
 
     text = Utils.replaceAll(text, '\\$', '');
     text = Utils.replaceAll(text, '{', '');
@@ -1665,6 +1687,10 @@ Report.explainQuery = function(json) {
     text = Utils.replaceAll(text, ':', ': ');
     text = Utils.replaceAll(text, ',', ', ');
     text = Utils.replaceAll(text, '"', '');
+
+    text = Utils.replaceAll(text, '<%% ', '{{ ');
+    text = Utils.replaceAll(text, ' %%>', ' }}');
+
     return '<pre>' + text + '</pre>';
 };
 
@@ -2046,7 +2072,10 @@ var Toolbar = {
             minDate: '1999-01-01',
             maxDate: '2100-01-01',  // do not remove - dateRangePicker needs it
             ranges: {
-                'Last 24 Hours': Toolbar.range('Last 24 Hours')
+                'Last 24 Hours': Toolbar.range('Last 24 Hours'),
+                'Today': Toolbar.range('Today'),
+                'Yesterday': Toolbar.range('Yesterday'),
+                'Last 7 Days': Toolbar.range('Last 7 Days')
             },
             opens: 'left',
             drops: 'down',
@@ -2380,6 +2409,9 @@ var Toolbar = {
             case 'Monthly':
             case 'month':
                 return 'YYYY-MM';
+            case 'Weekly':
+            case 'week':
+                return 'YYYY-MM-DD';
             case 'Yearly':
             case 'year':
                 return 'YYYY';

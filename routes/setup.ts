@@ -1,24 +1,5 @@
-import utils = require("gator-utils");
-import web = require("gator-web");
 import express = require('express');
-import api = require('gator-api');
-import {IApplication} from "gator-web";
-
-import _apiRoutes = require('./api');
-import _projectRoutes = require('./projects');
-import _reportingRoutes = require('./reporting');
-import _segmentRoutes = require('./segments');
-import _campaignRoutes = require('./campaigns');
-import _dashboardRoutes = require('./dashboards');
-import _bookmarkRoutes = require('./bookmarks');
-import _developerRoutes = require('./developer');
-import _attributeRoutes = require('./attributes');
-import _paymentRoutes = require('./payments');
-import _emailRoutes = require('./email');
-import _accessTokenRoutes = require('./accessTokens');
-import _contactRoutes = require('./contacts');
-import _monitorRoutes = require('./monitors');
-import _stationRoutes = require('./stations');
+import {IApplication} from "../lib";
 
 export let apiRoutes = require('./api');
 export let projectRoutes = require('./projects');
@@ -35,6 +16,8 @@ export let accessTokenRoutes = require('./accessTokens');
 export let contactRoutes = require('./contacts');
 export let monitorRoutes = require('./monitors');
 export let stationRoutes = require('./stations');
+export let shopifyRoutes = require('./shopify');
+export let systemRoutes = require('./system');
 
 export function setup(app: express.Application, application: IApplication, callback) {
 
@@ -66,7 +49,7 @@ export function setup(app: express.Application, application: IApplication, callb
 
                                                 paymentRoutes.setup(app, application, function() {
 
-                                                    emailRoutes.setup(app, application, function() {                                                        
+                                                    emailRoutes.setup(app, application, function() {
                                                         callback();
                                                     });
                                                 });

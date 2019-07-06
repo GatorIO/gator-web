@@ -1,9 +1,8 @@
 import utils = require("gator-utils");
-import web = require("gator-web");
 import express = require('express');
 import restify = require('restify');
 import api = require('gator-api');
-import {IApplication} from "gator-web";
+import {IApplication} from "../lib";
 
 export function getContactParams(req) {
     let items, params: any = req.body;
