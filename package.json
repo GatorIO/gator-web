@@ -35,7 +35,7 @@
     "express-session": "^1.16.1",
     "json-bigint": "^0.3.0",
     "gator-api": "GatorIO/gator-api#2.x",
-    "gator-score": "gator-score",
+    "gator-score": "^1.0.1",
     "gator-utils": "GatorIO/gator-utils#2.x",
     "restify": "^4.3.4",
     "serve-favicon": "*",
