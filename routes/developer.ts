@@ -164,6 +164,7 @@ export function setup(app: express.Application, application: IApplication, callb
         }
 
         if (!req.params.query) {
+
             req.params.query = {
                 entity: 'sessions',
                 projectId: req['session'].currentProjectId,
@@ -172,7 +173,7 @@ export function setup(app: express.Application, application: IApplication, callb
                 group: 'browser',
                 sort: { 'sessions': -1 },
                 attributes: "sessions"
-            }
+            } as any
         }
 
         res.render('queryTester', {
