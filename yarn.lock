@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@types/async@^2.4.1", "@types/async@^2.4.2":
+"@types/async@^2.4.2":
   version "2.4.2"
   resolved "https://registry.yarnpkg.com/@types/async/-/async-2.4.2.tgz#9b33d5c9fcebff17139521753eaf992ed5ace8e4"
   integrity sha512-bWBbC7VG2jdjbgZMX0qpds8U/3h3anfIqE81L8jmVrgFZw/urEDnBA78ymGGKTTK6ciBXmmJ/xlok+Re41S8ww==
@@ -27,10 +27,10 @@
   resolved "https://registry.yarnpkg.com/@types/clone/-/clone-0.1.30.tgz#e7365648c1b42136a59c7d5040637b3b5c83b614"
   integrity sha1-5zZWSMG0ITalnH1QQGN7O1yDthQ=
 
-"@types/connect-flash@^0.0.34":
-  version "0.0.34"
-  resolved "https://registry.yarnpkg.com/@types/connect-flash/-/connect-flash-0.0.34.tgz#ec7323d1636bc8d9b7c02c3a0a5d337602b671f9"
-  integrity sha512-QC93TwnTZ0sk//bfT81o7U4GOedbOZAcgvqi0v1vJqCESC8tqIVnhzB1CHiAUBUWFjoxG5JQF0TYaNa6DMb6Ig==
+"@types/connect-flash@^0.0.35":
+  version "0.0.35"
+  resolved "https://registry.yarnpkg.com/@types/connect-flash/-/connect-flash-0.0.35.tgz#c1bc38750422dac44b6a656b9dac72da17560fb7"
+  integrity sha512-pwEiJI1gYhH+s6x4+st/TBgf1CPuATADPJi1+2It4Gnckw1pVVdKycRNDyoHwkZGCb/J38vEdOrxnZ4FsOlvWg==
   dependencies:
     "@types/express" "*"
 
@@ -84,14 +84,14 @@
     moment ">=2.14.0"
 
 "@types/node@*":
-  version "12.7.4"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.7.4.tgz#64db61e0359eb5a8d99b55e05c729f130a678b04"
-  integrity sha512-W0+n1Y+gK/8G2P/piTkBBN38Qc5Q1ZSO6B5H3QmPCUewaiXOo2GCAWZ4ElZCcNhjJuBSUSLGFUJnmlCn5+nxOQ==
+  version "12.7.8"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.7.8.tgz#cb1bf6800238898bc2ff6ffa5702c3cadd350708"
+  integrity sha512-FMdVn84tJJdV+xe+53sYiZS4R5yn1mAIxfj+DVoNiQjTYz1+OYmjwEZr1ev9nU0axXwda0QDbYl06QHanRVH3A==
 
-"@types/node@^10.14.12", "@types/node@^10.14.17":
-  version "10.14.17"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.14.17.tgz#b96d4dd3e427382482848948041d3754d40fd5ce"
-  integrity sha512-p/sGgiPaathCfOtqu2fx5Mu1bcjuP8ALFg4xpGgNkcin7LwRyzUKniEHBKdcE1RPsenq5JVPIpMTJSygLboygQ==
+"@types/node@^10.14.17":
+  version "10.14.19"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.14.19.tgz#f52742c7834a815dedf66edfc8a51547e2a67342"
+  integrity sha512-j6Sqt38ssdMKutXBUuAcmWF8QtHW1Fwz/mz4Y+Wd9mzpBiVFirjpNQf363hG5itkG+yGaD+oiLyb50HxJ36l9Q==
 
 "@types/range-parser@*":
   version "1.2.3"
@@ -142,7 +142,7 @@ assert-plus@^1.0.0:
   resolved "https://registry.yarnpkg.com/assert-plus/-/assert-plus-1.0.0.tgz#f12e0f3c5d77b0b1cdd9146942e4e96c1e4dd525"
   integrity sha1-8S4PPF13sLHN2RRpQuTpbB5N1SU=
 
-async@^2.6.2:
+async@^2.6.2, async@^2.6.3:
   version "2.6.3"
   resolved "https://registry.yarnpkg.com/async/-/async-2.6.3.tgz#d72625e2344a3656e3a3ad4fa749fa83299d82ff"
   integrity sha512-zflvls11DCy+dQWzTW2dzuilv8Z5X/pjfmZOWba6TNIVDm+2UDaJmXSOXlasHKfNBs8oo3M0aT50fDEWfKZjXg==
@@ -442,35 +442,35 @@ fresh@0.5.2:
   resolved "https://registry.yarnpkg.com/fresh/-/fresh-0.5.2.tgz#3d8cadd90d976569fa835ab1f8e4b23a105605a7"
   integrity sha1-PYyt2Q2XZWn6g1qx+OSyOhBWBac=
 
-gator-api@GatorIO/gator-api#2.x:
+gator-api@GatorIO/gator-api:
   version "2.0.0"
-  resolved "https://codeload.github.com/GatorIO/gator-api/tar.gz/03a094486f3c5a2fa28319dd55feb0bd71907618"
+  resolved "https://codeload.github.com/GatorIO/gator-api/tar.gz/df3f93832d61167e95801310908e3bdca6c4deb6"
   dependencies:
     "@types/async" "^2.4.2"
-    "@types/node" "^10.14.12"
+    "@types/node" "^10.14.17"
     "@types/restify" "^4.3.2"
     async "^2.6.2"
-    gator-utils GatorIO/gator-utils#2.x
+    gator-utils GatorIO/gator-utils
     restify "^4.3.4"
-    typescript "^3.5.2"
+    typescript "^3.6.3"
 
 gator-score@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/gator-score/-/gator-score-1.0.1.tgz#315385b106782f759cae7f9c25fe31daf4ce8745"
   integrity sha1-MVOFsQZ4L3Wcrn+cJf4x2vTOh0U=
 
-gator-utils@GatorIO/gator-utils#2.x:
+gator-utils@GatorIO/gator-utils:
   version "2.0.0"
-  resolved "https://codeload.github.com/GatorIO/gator-utils/tar.gz/6750189c786a09fac01f7faccb22af278440317c"
+  resolved "https://codeload.github.com/GatorIO/gator-utils/tar.gz/7436697d1f7ce08ab919ecd38d767d376a6e5d05"
   dependencies:
     "@types/clone" "^0.1.30"
     "@types/moment-timezone" "^0.5.12"
-    "@types/node" "^10.14.12"
+    "@types/node" "^10.14.17"
     clone "^2.1.2"
     iconv-lite "^0.5.0"
     moment "^2.24.0"
-    moment-timezone "^0.5.25"
-    typescript "^3.5.2"
+    moment-timezone "^0.5.26"
+    typescript "^3.6.3"
 
 glob@^6.0.1:
   version "6.0.4"
@@ -657,7 +657,7 @@ mkdirp@~0.5.1:
   dependencies:
     minimist "0.0.8"
 
-moment-timezone@^0.5.25:
+moment-timezone@^0.5.26:
   version "0.5.26"
   resolved "https://registry.yarnpkg.com/moment-timezone/-/moment-timezone-0.5.26.tgz#c0267ca09ae84631aa3dc33f65bedbe6e8e0d772"
   integrity sha512-sFP4cgEKTCymBBKgoxZjYzlSovC20Y6J7y3nanDc5RoBIXKlZhoYwBoZGe3flwU6A372AcRwScH8KiwV6zjy1g==
@@ -771,9 +771,9 @@ qs@6.7.0:
   integrity sha512-VCdBRNFTX1fyE7Nb6FYoURo/SPe62QCaAyzJvUjwRaIsc+NePBEniHlvxFmmX56+HZphIGtV0XeCirBtpDrTyQ==
 
 qs@^6.2.1:
-  version "6.8.0"
-  resolved "https://registry.yarnpkg.com/qs/-/qs-6.8.0.tgz#87b763f0d37ca54200334cd57bb2ef8f68a1d081"
-  integrity sha512-tPSkj8y92PfZVbinY1n84i1Qdx75lZjMQYx9WZhnkofyxzw2r7Ho39G3/aEvSUdebxpnnM4LZJCtvE/Aq3+s9w==
+  version "6.9.0"
+  resolved "https://registry.yarnpkg.com/qs/-/qs-6.9.0.tgz#d1297e2a049c53119cb49cca366adbbacc80b409"
+  integrity sha512-27RP4UotQORTpmNQDX8BHPukOnBP3p1uUJY5UnDhaJB+rMt9iMsok724XL+UHU23bEFOHRMQ2ZhI99qOWUMGFA==
 
 random-bytes@~1.0.0:
   version "1.0.0"
@@ -984,10 +984,10 @@ type-is@~1.6.17, type-is@~1.6.18:
     media-typer "0.3.0"
     mime-types "~2.1.24"
 
-typescript@^3.5.2, typescript@^3.6.2:
-  version "3.6.2"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.6.2.tgz#105b0f1934119dde543ac8eb71af3a91009efe54"
-  integrity sha512-lmQ4L+J6mnu3xweP8+rOrUwzmN+MRAj7TgtJtDaXE5PMyX2kCrklhg3rvOsOIfNeAWMQWO2F1GPc1kMD2vLAfw==
+typescript@^3.6.3:
+  version "3.6.3"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.6.3.tgz#fea942fabb20f7e1ca7164ff626f1a9f3f70b4da"
+  integrity sha512-N7bceJL1CtRQ2RiG0AQME13ksR7DiuQh/QehubYcghzv20tnh+MQnQIuJddTmsbqYj+dztchykemz0zFzlvdQw==
 
 uid-safe@~2.1.5:
   version "2.1.5"
