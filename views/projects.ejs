@@ -77,7 +77,7 @@
 
     function getScript(projectId) {
 
-        $.get(apiHost() + 'script/text/' + projectId + '?name=<%- application.branding.scriptName %>', function(data) {
+        $.get('https://data.gatorapi.com/v1/analytics/script/text/' + projectId + '?name=<%- application.branding.scriptName %>', function(data) {
             if (data)
                 //  this must be text/javascript to support older browsers
                 $('#scriptText').html('&lt;script type="text/javascript"&gt;<br>' + data + '<br>&lt;/script&gt;');
