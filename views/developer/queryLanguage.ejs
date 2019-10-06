@@ -66,10 +66,10 @@
         "<br><pre>{ \"entity\": \"events\", \"projectId\": \"<i>Your project id</i>\", \"timeframe\": \"today\", \"attributes\": \"eventName, eventDateTime\" }</pre>"
         },
         { name: "timeframe", required: true, type: "string or array", description: "The timeframe of the report.  This can have the following formats:<br /><br />" +
-        "<ul><li>A simple date string in yyyy-mm-dd format: <code>\"2016-01-01\"</code><br>This will return the data from this value for the full day specified." +
-        "<li>A range of days in a array: <code>[ \"2016-01-01\", \"2016-01-07\" ]</code>" +
-        "<li>A simple month string in yyyy-mm format: <code>\"2016-01\"</code><br>This will return the data from this value for the full month specified." +
-        "<li>A range of months in a array: <code>[ \"2016-01\", \"2016-02\" ]</code>" +
+        "<ul><li>A simple date string in yyyy-mm-dd format: <code>\"2019-01-01\"</code><br>This will return the data from this value for the full day specified." +
+        "<li>A range of days in a array: <code>[ \"2019-01-01\", \"2019-01-07\" ]</code>" +
+        "<li>A simple month string in yyyy-mm format: <code>\"2019-01\"</code><br>This will return the data from this value for the full month specified." +
+        "<li>A range of months in a array: <code>[ \"2019-01\", \"2019-02\" ]</code>" +
         "<li>A preset timeframe:<br />" +
         "<code>today</code> - Report on all data for the current day.<br />" +
         "<code>yesterday</code> - Report on all data for the prior day.<br />" +
@@ -153,7 +153,7 @@
         "</table>" +
         "<br /><h4>Example:</h4>" +
         "<br /><pre>" + JSON.stringify({
-            "timeframe": "2016-01",
+            "timeframe": "2019-01",
             "group": "browser, platform",
             "sort": {
                 "share": -1
