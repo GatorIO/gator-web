@@ -645,6 +645,11 @@
     function validateForm(successCallback) {
 
         <% if (!req.session.account.billingMethod) { %>
+            if (monitors.length >= 5) {
+                upgrade('To create more than 5 monitors, an upgrade is required.  We strive to keep LetsMonitor free for as many users as possible, ' +
+                    'however there are significant costs associated with operations.  So, we ask users to pay a small fee once they hit a certain number of monitors.');
+                return;
+            }
 
             if ($('#type').val() != "7") {
                 upgrade('To create advanced monitors, an upgrade is required.  Upgrading enables access to all monitor types.');

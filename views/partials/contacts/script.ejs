@@ -157,6 +157,21 @@
         $('#name').focus();
     }
 
+    function upgrade() {
+        swal({
+                title: 'Upgrade required',
+                text: 'SMS contacts require an upgrade since there is a fee per SMS charged by our provider.',
+                type: "info",
+                showCancelButton: true,
+                confirmButtonClass: "btn-danger",
+                confirmButtonText: 'More info...'
+            },
+            function() {
+                document.location.href = '/upgrade';
+            }
+        );
+    }
+
     function validateForm() {
 
         if (!$('#main-form-modal')[0].checkValidity()) {
@@ -165,6 +180,13 @@
             $('#contact-create-ok').click();
             return false;
         }
+
+        <% if (!req.session.account.billingMethod && req.session.account.appId === 6) { %>
+            if ($('#SMSList').val()) {
+                upgrade();
+                return false;
+            }
+        <% } %>
 
         var name = $('#name').val();
 
