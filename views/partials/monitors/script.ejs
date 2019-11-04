@@ -400,7 +400,7 @@
                 break;
             case monitorTypes.website:
 
-                <% if (typeof application.isLetsMonitor == 'function' && application.isLetsMonitor() && !req.session.account.billingMethod) { %>
+                <% if (!req.session.account.billingMethod) { %>
                     $('#url').val('https://');
                 <% } %>
                 $('#type-description').html('Monitors a website for downtime and load times' +
@@ -500,12 +500,7 @@
         $('#main-form-modal')[0].reset();
         $('#monitor-modal-title').html('Create Monitor');
         $('#modal-create').modal();
-
-        <% if (typeof application.isLetsMonitor == 'function' && application.isLetsMonitor()) { %>
-            $('#type').val('<%- monitorTypes.certificate %>');
-        <% } else { %>
-            $('#type').val('<%- monitorTypes.website %>');
-        <% } %>
+        $('#type').val('<%- monitorTypes.certificate %>');
 
         $('#scriptOptionsDiv').hide();
 
@@ -649,7 +644,7 @@
 
     function validateForm(successCallback) {
 
-        <% if (typeof application.isLetsMonitor == 'function' && application.isLetsMonitor() && !req.session.account.billingMethod) { %>
+        <% if (!req.session.account.billingMethod) { %>
 
             if ($('#type').val() != "7") {
                 upgrade('To create advanced monitors, an upgrade is required.  Upgrading enables access to all monitor types.');

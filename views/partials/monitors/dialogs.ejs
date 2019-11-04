@@ -96,7 +96,7 @@
 
                             <select class="form-control" name="type" id="type" onchange="typeSelected()">
                                 <optgroup label="Performance and Availability">
-                                    <% if (typeof application.isLetsMonitor == 'function' && application.isLetsMonitor() && !req.session.account.billingMethod) { %>
+                                    <% if (!req.session.account.billingMethod) { %>
                                         <option value="<%- monitorTypes.certificate %>">Certificate Validity (free)</option>
                                         <option value="<%- monitorTypes.website %>">Website</option>
                                     <% } else { %>
