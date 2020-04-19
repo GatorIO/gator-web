@@ -228,7 +228,7 @@ export function setup(app: express.Application, application: IApplication, callb
             return;
         }
 
-        api.REST.client.get(getEndpoint() + 'attributes/search?accessToken=' + req['session'].accessToken + '&attribute=' + encodeURIComponent(req.query.attribute) + '&projectId=' + req.query.projectId + '&value=' + encodeURIComponent(req.query.value), function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
+        api.REST.client.get(getEndpoint() + 'attributes/search?accessToken=' + req['session'].accessToken + '&attribute=' + encodeURIComponent(req.query.attribute as string) + '&projectId=' + req.query.projectId + '&value=' + encodeURIComponent(req.query.value as string), function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
             res.json(result || []);
         });
     });
@@ -241,7 +241,7 @@ export function setup(app: express.Application, application: IApplication, callb
 
         let params = {
             accessToken: req['session'].accessToken,
-            query: JSON.parse(req.query.query)
+            query: JSON.parse(req.query.query as string)
         };
 
         params.query.format = req.query.format;
@@ -346,7 +346,7 @@ export function setup(app: express.Application, application: IApplication, callb
         if (utils.config.dev())
             reportUrl = application.settings.nodeUrl;
 
-        reportUrl += '/report?format=pdf&accessToken=' + req['session'].accessToken + '&options=' + encodeURIComponent(req.query.options);
+        reportUrl += '/report?format=pdf&accessToken=' + req['session'].accessToken + '&options=' + encodeURIComponent(req.query.options as string);
 
         const child = exec('cd phantomjs && ' + phantomBin + ' --ignore-ssl-errors=yes ../node_modules/gator-web/lib/renderpdf.js "' + reportUrl + '" ' + file,
             (err, stdout, stderr) => {
@@ -403,7 +403,7 @@ export function setup(app: express.Application, application: IApplication, callb
         utils.noCache(res);
 
         //  any route that requires segments should call this first
-        api.reporting.getSegments(req, false, req.query.appId, function(err) {
+        api.reporting.getSegments(req, false, req.query.appId as any, function(err) {
 
             if (err)
                 req.flash('error', err.message);

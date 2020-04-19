@@ -55,10 +55,10 @@ export function setup(app: express.Application, application: IApplication, callb
 
             if (req.query.name) {
 
-                if (!project.data.attributes[req.query.type][req.query.name])
-                    project.data.attributes[req.query.type][req.query.name] = {};
+                if (!project.data.attributes[req.query.type as string][req.query.name as string])
+                    project.data.attributes[req.query.type as string][req.query.name as string] = {};
 
-                dataObj = project.data.attributes[req.query.type][req.query.name];
+                dataObj = project.data.attributes[req.query.type as string][req.query.name as string];
                 dataObj.name = req.query.name;
             }
 
@@ -126,10 +126,10 @@ export function setup(app: express.Application, application: IApplication, callb
         let project = api.getProject(req, +req.params['id']);
         let attribs = api.reporting.getCustomAttributes(req, +req.params['id']);      //  specific to user
 
-        if (!project.data.attributes[req.query['type']])
-            project.data.attributes[req.query['type']] = {};
+        if (!project.data.attributes[req.query['type'] as string])
+            project.data.attributes[req.query['type'] as string] = {};
 
-        delete project.data.attributes[req.query['type']][req.query['name']];
+        delete project.data.attributes[req.query['type'] as string][req.query['name'] as string];
 
         let params = {
             accessToken: req['session'].accessToken,

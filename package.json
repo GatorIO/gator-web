@@ -1,7 +1,7 @@
 {
   "name": "gator-web",
   "description": "Gator.IO base web views and components",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "author": {
     "name": "Gator.IO"
   },
@@ -39,7 +39,7 @@
     "gator-utils": "GatorIO/gator-utils",
     "restify": "^4.3.4",
     "serve-favicon": "*",
-    "typescript": "^3.6.3"
+    "typescript": "^3.8.3"
   },
   "license" : "MIT",
   "scripts": {

@@ -80,7 +80,7 @@ export function setup(app: express.Application, application: IApplication, callb
 
             var bookmarks = api.reporting.currentBookmarks(req);
 
-            delete bookmarks[req.query['name']];
+            delete bookmarks[req.query['name'] as string];
 
             var params = {
                 accessToken: req['session'].accessToken,
