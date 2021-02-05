@@ -167,8 +167,8 @@ export function setup(app: express.Application, application: IApplication, callb
 
             req.params.query = {
                 entity: 'sessions',
-                projectId: req['session'].currentProjectId,
-                timezone: req['session'].user.timezoneId,
+                projectId: req['session']['currentProjectId'],
+                timezone: req['session']['user'].timezoneId,
                 timeframe: 'today',
                 group: 'browser',
                 sort: { 'sessions': -1 },

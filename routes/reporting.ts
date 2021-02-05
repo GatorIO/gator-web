@@ -192,7 +192,7 @@ export function setup(app: express.Application, application: IApplication, callb
         }
 
         let endpoint, params = {
-            accessToken: req['session'].accessToken,
+            accessToken: req['session']['accessToken'],
             query: req.body,
             clientIP: utils.ip.remoteAddress(req),
             clientUA: req.header('user-agent')
@@ -228,7 +228,7 @@ export function setup(app: express.Application, application: IApplication, callb
             return;
         }
 
-        api.REST.client.get(getEndpoint() + 'attributes/search?accessToken=' + req['session'].accessToken + '&attribute=' + encodeURIComponent(req.query.attribute as string) + '&projectId=' + req.query.projectId + '&value=' + encodeURIComponent(req.query.value as string), function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
+        api.REST.client.get(getEndpoint() + 'attributes/search?accessToken=' + req['session']['accessToken'] + '&attribute=' + encodeURIComponent(req.query.attribute as string) + '&projectId=' + req.query.projectId + '&value=' + encodeURIComponent(req.query.value as string), function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
             res.json(result || []);
         });
     });
@@ -240,7 +240,7 @@ export function setup(app: express.Application, application: IApplication, callb
     function exportData(req: express.Request, res: express.Response) {
 
         let params = {
-            accessToken: req['session'].accessToken,
+            accessToken: req['session']['accessToken'],
             query: JSON.parse(req.query.query as string)
         };
 
@@ -346,7 +346,7 @@ export function setup(app: express.Application, application: IApplication, callb
         if (utils.config.dev())
             reportUrl = application.settings.nodeUrl;
 
-        reportUrl += '/report?format=pdf&accessToken=' + req['session'].accessToken + '&options=' + encodeURIComponent(req.query.options as string);
+        reportUrl += '/report?format=pdf&accessToken=' + req['session']['accessToken'] + '&options=' + encodeURIComponent(req.query.options as string);
 
         const child = exec('cd phantomjs && ' + phantomBin + ' --ignore-ssl-errors=yes ../node_modules/gator-web/lib/renderpdf.js "' + reportUrl + '" ' + file,
             (err, stdout, stderr) => {
@@ -421,8 +421,8 @@ export function setup(app: express.Application, application: IApplication, callb
         utils.noCache(res);
 
         let params = {
-            accessToken: req['session'].accessToken,
-            projectId: req['session'].currentProjectId
+            accessToken: req['session']['accessToken'],
+            projectId: req['session']['currentProjectId']
         };
 
         if (req.query.person) {

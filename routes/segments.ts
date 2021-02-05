@@ -15,7 +15,7 @@ export function setup(app: express.Application, application: IApplication, callb
         utils.noCache(res);
 
         //  any route that requires segments should call this first
-        api.reporting.getSegments(req, false, req['session'].account.appId, function(err) {
+        api.reporting.getSegments(req, false, req['session']['account'].appId, function(err) {
 
             if (err)
                 req.flash('error', err.message);
@@ -70,7 +70,7 @@ export function setup(app: express.Application, application: IApplication, callb
     app.post('/setup/segments', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
 
         var params: any = {
-            accessToken: req['session'].accessToken,
+            accessToken: req['session']['accessToken'],
             name: req.body.name,
             query: req.body.query || {}
         };
@@ -89,7 +89,7 @@ export function setup(app: express.Application, application: IApplication, callb
 
         var params: any = {
             id: +req.body.id,
-            accessToken: req['session'].accessToken,
+            accessToken: req['session']['accessToken'],
             name: req.body.name,
             query: req.body.query || {}
         };
@@ -105,7 +105,7 @@ export function setup(app: express.Application, application: IApplication, callb
 
     app.delete('/setup/segments/:id/', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
 
-        api.REST.client.del('/v1/analytics/segments/' + req.params['id'] + '?accessToken=' + req['session'].accessToken, function(err: Error, apiRequest: restify.Request, apiResponse: restify.Response) {
+        api.REST.client.del('/v1/analytics/segments/' + req.params['id'] + '?accessToken=' + req['session']['accessToken'], function(err: Error, apiRequest: restify.Request, apiResponse: restify.Response) {
             api.REST.sendConditional(res, err);
         });
     });

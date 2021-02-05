@@ -20,7 +20,7 @@ export function setup(app: express.Application, application: IApplication, callb
             if (err)
                 req.flash('error', err.message);
             else
-                req['session'].projects = result.data.projects;
+                req['session']['projects'] = result.data.projects;
 
             res.render('bookmarks',{
                 settings: utils.config.settings(),
@@ -42,7 +42,7 @@ export function setup(app: express.Application, application: IApplication, callb
             api.REST.client.get('/v1/projects?accessToken=' + req['session']['accessToken'], function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
 
                 if (!err)
-                    req['session'].projects = result.data.projects;
+                    req['session']['projects'] = result.data.projects;
                 else {
                     api.REST.sendError(res, new api.errors.InternalError());
                     return;
@@ -52,8 +52,8 @@ export function setup(app: express.Application, application: IApplication, callb
                 bookmarks[req.body.name] = req.body.query;
 
                 var params = {
-                    accessToken: req['session'].accessToken,
-                    projectId: req['session'].currentProjectId,
+                    accessToken: req['session']['accessToken'],
+                    projectId: req['session']['currentProjectId'],
                     bookmarks: bookmarks
                 };
 
@@ -72,7 +72,7 @@ export function setup(app: express.Application, application: IApplication, callb
         api.REST.client.get('/v1/projects?accessToken=' + req['session']['accessToken'], function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
 
             if (!err)
-                req['session'].projects = result.data.projects;
+                req['session']['projects'] = result.data.projects;
             else {
                 api.REST.sendError(res, new api.errors.InternalError());
                 return;
@@ -83,8 +83,8 @@ export function setup(app: express.Application, application: IApplication, callb
             delete bookmarks[req.query['name'] as string];
 
             var params = {
-                accessToken: req['session'].accessToken,
-                projectId: req['session'].currentProjectId,
+                accessToken: req['session']['accessToken'],
+                projectId: req['session']['currentProjectId'],
                 bookmarks: bookmarks
             };
 

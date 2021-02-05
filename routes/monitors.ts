@@ -211,21 +211,21 @@ export function setup(app: express.Application, application: IApplication, callb
 
         app.delete('/monitors/:id/', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
 
-            api.REST.client.del('/v1/monitoring/monitors/' + req.params['id'] + '?accessToken=' + req['session'].accessToken, function(err: Error, apiRequest: restify.Request, apiResponse: restify.Response) {
+            api.REST.client.del('/v1/monitoring/monitors/' + req.params['id'] + '?accessToken=' + req['session']['accessToken'], function(err: Error, apiRequest: restify.Request, apiResponse: restify.Response) {
                 api.REST.sendConditional(res, err);
             });
         });
 
         app.get('/monitors/enable/:id/', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
 
-            api.REST.client.get('/v1/monitoring/monitors/enable/' + req.params['id'] + '?accessToken=' + req['session'].accessToken, function(err: Error, apiRequest: restify.Request, apiResponse: restify.Response) {
+            api.REST.client.get('/v1/monitoring/monitors/enable/' + req.params['id'] + '?accessToken=' + req['session']['accessToken'], function(err: Error, apiRequest: restify.Request, apiResponse: restify.Response) {
                 api.REST.sendConditional(res, err);
             });
         });
 
         app.get('/monitors/disable/:id/', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
 
-            api.REST.client.get('/v1/monitoring/monitors/disable/' + req.params['id'] + '?accessToken=' + req['session'].accessToken, function(err: Error, apiRequest: restify.Request, apiResponse: restify.Response) {
+            api.REST.client.get('/v1/monitoring/monitors/disable/' + req.params['id'] + '?accessToken=' + req['session']['accessToken'], function(err: Error, apiRequest: restify.Request, apiResponse: restify.Response) {
                 api.REST.sendConditional(res, err);
             });
         });
@@ -233,7 +233,7 @@ export function setup(app: express.Application, application: IApplication, callb
         app.get('/monitors/test', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
             utils.noCache(res);
 
-            api.REST.client.get('/v1/monitoring/monitors/test/' + req.query['monitorId'] + '?accessToken=' + req['session'].accessToken + '&stationId=' + req.query['stationId'], function(err: Error, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
+            api.REST.client.get('/v1/monitoring/monitors/test/' + req.query['monitorId'] + '?accessToken=' + req['session']['accessToken'] + '&stationId=' + req.query['stationId'], function(err: Error, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
                 api.REST.sendConditional(res, err, result);
             });
         });

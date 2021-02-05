@@ -21,7 +21,7 @@ export function setup(app: express.Application, application: IApplication, callb
         let projectId = req.params.projectId;
 
         if (projectId == 'current')
-            projectId = req.session.currentProjectId;
+            projectId = req.session['currentProjectId'];
 
         //  always refresh the project list here, since all edits redir back here
         api.REST.client.get('/v1/projects?accessToken=' + req['session']['accessToken'], function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
@@ -29,7 +29,7 @@ export function setup(app: express.Application, application: IApplication, callb
             if (err)
                 req.flash('error', err.message);
             else
-                req['session'].projects = result.data.projects;
+                req['session']['projects'] = result.data.projects;
 
             let project = api.getProject(req, +projectId);
 
@@ -48,12 +48,12 @@ export function setup(app: express.Application, application: IApplication, callb
         let projectId = req.params.projectId;
 
         if (projectId == 'current')
-            projectId = req.session.currentProjectId;
+            projectId = req.session['currentProjectId'];
 
         let project = api.getProject(req, +projectId);
 
         let params = {
-            accessToken: req['session'].accessToken,
+            accessToken: req['session']['accessToken'],
             projectId: project.id,
             campaignReferrers: req.body.campaignReferrers
         };
@@ -75,7 +75,7 @@ export function setup(app: express.Application, application: IApplication, callb
         let projectId = req.params.projectId;
 
         if (projectId == 'current')
-            projectId = req.session.currentProjectId;
+            projectId = req.session['currentProjectId'];
 
         //  always refresh the project list here, since all edits redir back here
         api.REST.client.get('/v1/projects?accessToken=' + req['session']['accessToken'], function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
@@ -83,7 +83,7 @@ export function setup(app: express.Application, application: IApplication, callb
             if (err)
                 req.flash('error', err.message);
             else
-                req['session'].projects = result.data.projects;
+                req['session']['projects'] = result.data.projects;
 
             let project = api.getProject(req, +projectId);
 
@@ -102,12 +102,12 @@ export function setup(app: express.Application, application: IApplication, callb
         let projectId = req.params.projectId;
 
         if (projectId == 'current')
-            projectId = req.session.currentProjectId;
+            projectId = req.session['currentProjectId'];
 
         let project = api.getProject(req, +projectId);
 
         let params = {
-            accessToken: req['session'].accessToken,
+            accessToken: req['session']['accessToken'],
             projectId: project.id,
             campaignIds: req.body.campaignIds.split(',')
         };

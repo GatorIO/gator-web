@@ -35,15 +35,15 @@ export function setup(app: express.Application, application: IApplication, callb
             if (err)
                 req.flash('error', err.message);
             else
-                req['session'].projects = result.data.projects;
+                req['session']['projects'] = result.data.projects;
 
             //  make sure the default project exists in the project list
             let found = false;
 
-            if (req['session'].currentProjectId && req['session'].projects) {
+            if (req['session']['currentProjectId'] && req['session']['projects']) {
 
-                for (let p = 0; p < req['session'].projects.length; p++) {
-                    if (req['session'].projects[p].id == req['session'].currentProjectId) {
+                for (let p = 0; p < req['session']['projects'].length; p++) {
+                    if (req['session']['projects'][p].id == req['session']['currentProjectId']) {
                         found = true;
                         break;
                     }
@@ -52,8 +52,8 @@ export function setup(app: express.Application, application: IApplication, callb
 
             if (!found) {
 
-                if (req['session'].projects.length > 0)
-                    req['session'].currentProjectId = req['session'].projects[0].id;
+                if (req['session']['projects'].length > 0)
+                    req['session']['currentProjectId'] = req['session']['projects'][0].id;
             }
 
             res.render('projects',{
@@ -74,8 +74,8 @@ export function setup(app: express.Application, application: IApplication, callb
 
         project = api.getProject(req, req.query.id);
 
-        if (!req['session'].projects)
-            req['session'].projects = [];
+        if (!req['session']['projects'])
+            req['session']['projects'] = [];
 
         res.render('projectsForm', {
             settings: utils.config.settings(),
@@ -92,7 +92,7 @@ export function setup(app: express.Application, application: IApplication, callb
         utils.noCache(res);
 
         let params = {
-            accessToken: req['session'].accessToken,
+            accessToken: req['session']['accessToken'],
             name: req.body.name,
             type: +req.body.type,
             crossDomain: req.body.crossDomain == "true" ? true : false
@@ -101,11 +101,11 @@ export function setup(app: express.Application, application: IApplication, callb
         api.REST.client.post('/v1/projects', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
 
             if (!err) {
-                req['session'].currentProjectId = result.data.project.id;
+                req['session']['currentProjectId'] = result.data.project.id;
 
                 //  successful project creation, so add default dashboard
                 let params = {
-                    accessToken: req['session'].accessToken,
+                    accessToken: req['session']['accessToken'],
                     projectId: result.data.project.id,
                     dashboards: application.defaultDashboard(+req.body.type)
                 };
@@ -124,7 +124,7 @@ export function setup(app: express.Application, application: IApplication, callb
 
         let params = {
             id: +req.body.id,
-            accessToken: req['session'].accessToken,
+            accessToken: req['session']['accessToken'],
             name: req.body.name,
             type: +req.body.type,
             enabled: req.body.enabled,
@@ -138,7 +138,7 @@ export function setup(app: express.Application, application: IApplication, callb
 
     app.delete('/setup/projects/:id/', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
 
-        api.REST.client.del('/v1/projects/' + req.params['id'] + '?accessToken=' + req['session'].accessToken, function(err: Error, apiRequest: restify.Request, apiResponse: restify.Response) {
+        api.REST.client.del('/v1/projects/' + req.params['id'] + '?accessToken=' + req['session']['accessToken'], function(err: Error, apiRequest: restify.Request, apiResponse: restify.Response) {
             api.REST.sendConditional(res, err);
         });
     });
@@ -210,7 +210,7 @@ export function setup(app: express.Application, application: IApplication, callb
         utils.noCache(res);
 
         let params = {
-            accessToken: req['session'].accessToken,
+            accessToken: req['session']['accessToken'],
             projectId: req.body.projectId,
             userName: req.body.userName,
             permissions: req.body.permissions
@@ -223,7 +223,7 @@ export function setup(app: express.Application, application: IApplication, callb
 
     app.delete('/setup/projectshares', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
 
-        api.REST.client.del('/v1/projectshares?userName=' + encodeURIComponent(req.query['userName'] as string) + '&projectId=' + req.query['projectId'] + '&accessToken=' + req['session'].accessToken, function(err: Error, apiRequest: restify.Request, apiResponse: restify.Response) {
+        api.REST.client.del('/v1/projectshares?userName=' + encodeURIComponent(req.query['userName'] as string) + '&projectId=' + req.query['projectId'] + '&accessToken=' + req['session']['accessToken'], function(err: Error, apiRequest: restify.Request, apiResponse: restify.Response) {
             api.REST.sendConditional(res, err);
         });
     });

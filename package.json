@@ -39,7 +39,7 @@
     "gator-utils": "GatorIO/gator-utils",
     "restify": "^4.3.4",
     "serve-favicon": "*",
-    "typescript": "^3.8.3"
+    "typescript": "3.6.3"
   },
   "license" : "MIT",
   "scripts": {

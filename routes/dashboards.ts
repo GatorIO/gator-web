@@ -110,7 +110,7 @@ export function setup(app: express.Application, application: IApplication, callb
             if (err)
                 req.flash('error', err.message);
             else
-                req['session'].projects = result.data.projects;
+                req['session']['projects'] = result.data.projects;
 
             res.render('dashboards',{
                 application: application,
@@ -125,8 +125,8 @@ export function setup(app: express.Application, application: IApplication, callb
     app.put('/setup/dashboards', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
 
         let params = {
-            accessToken: req['session'].accessToken,
-            projectId: req['session'].currentProjectId,
+            accessToken: req['session']['accessToken'],
+            projectId: req['session']['currentProjectId'],
             dashboards: req.body.dashboards
         };
 
@@ -150,8 +150,8 @@ export function setup(app: express.Application, application: IApplication, callb
         dashboards[req.body.name].pods.push(JSON.stringify(pod));   //  need to stringify it or mongo won't store it (the $'s are a problem)
 
         let params = {
-            accessToken: req['session'].accessToken,
-            projectId: req['session'].currentProjectId,
+            accessToken: req['session']['accessToken'],
+            projectId: req['session']['currentProjectId'],
             dashboards: dashboards
         };
 
@@ -176,8 +176,8 @@ export function setup(app: express.Application, application: IApplication, callb
         dashboards[req.body.name].pods = newOrder;
 
         let params = {
-            accessToken: req['session'].accessToken,
-            projectId: req['session'].currentProjectId,
+            accessToken: req['session']['accessToken'],
+            projectId: req['session']['currentProjectId'],
             dashboards: dashboards
         };
 
@@ -195,8 +195,8 @@ export function setup(app: express.Application, application: IApplication, callb
         dashboard.pods.splice(+req.body.pod, 1);
 
         let params = {
-            accessToken: req['session'].accessToken,
-            projectId: req['session'].currentProjectId,
+            accessToken: req['session']['accessToken'],
+            projectId: req['session']['currentProjectId'],
             dashboards: dashboards
         };
 

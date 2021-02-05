@@ -22,7 +22,7 @@ export function setup(app: express.Application, application: IApplication, callb
             if (err)
                 req.flash('error', err.message);
             else
-                req['session'].projects = result.data.projects;
+                req['session']['projects'] = result.data.projects;
 
             let project = api.getProject(req, +req.params['id']);
             let attribs = api.reporting.getCustomAttributes(req, +req.params['id']);      //  specific to user
@@ -48,7 +48,7 @@ export function setup(app: express.Application, application: IApplication, callb
             if (err)
                 req.flash('error', err.message);
             else
-                req['session'].projects = result.data.projects;
+                req['session']['projects'] = result.data.projects;
 
             project = api.getProject(req, +req.params['id']);
             let attribs = api.reporting.getCustomAttributes(req, +req.params['id']);      //  specific to user
@@ -108,7 +108,7 @@ export function setup(app: express.Application, application: IApplication, callb
             project.data.attributes[type][req.body.name] = attrib;
 
             let params = {
-                accessToken: req['session'].accessToken,
+                accessToken: req['session']['accessToken'],
                 projectId: project.id,
                 attributes: project.data.attributes
             };
@@ -132,7 +132,7 @@ export function setup(app: express.Application, application: IApplication, callb
         delete project.data.attributes[req.query['type'] as string][req.query['name'] as string];
 
         let params = {
-            accessToken: req['session'].accessToken,
+            accessToken: req['session']['accessToken'],
             projectId: project.id,
             attributes: project.data.attributes
         };

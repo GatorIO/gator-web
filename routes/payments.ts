@@ -14,7 +14,7 @@ export function setup(app: express.Application, application: IApplication, callb
 
         let cards = [];
 
-        api.REST.client.get('/v1/payments/methods?accessToken=' + req['session'].accessToken, function(err, apiRequest, apiResponse, result) {
+        api.REST.client.get('/v1/payments/methods?accessToken=' + req['session']['accessToken'], function(err, apiRequest, apiResponse, result) {
 
             if (result && result.data)
                 cards = result.data.cards;
@@ -48,7 +48,7 @@ export function setup(app: express.Application, application: IApplication, callb
     app.post('/billing/paymentmethods/form', api.authenticate, application.enforceSecure, function (req: express.Request, res: express.Response) {
 
         let params = {
-            accessToken: req['session'].accessToken,
+            accessToken: req['session']['accessToken'],
             stripeToken: req.body.stripeToken
         };
 
@@ -56,8 +56,8 @@ export function setup(app: express.Application, application: IApplication, callb
 
             if (!err) {
                 //  update account status to active with new payment method
-                req['session'].account.status = 0;
-                req['session'].account.billingMethod = 'automatic';
+                req['session']['account'].status = 0;
+                req['session']['account'].billingMethod = 'automatic';
                 res.redirect('/billing/paymentmethods');
             } else {
 
@@ -84,7 +84,7 @@ export function setup(app: express.Application, application: IApplication, callb
     app.put('/billing/paymentmethods/primary', api.authenticate, application.enforceSecure, function (req: express.Request, res: express.Response) {
 
         let params = {
-            accessToken: req['session'].accessToken,
+            accessToken: req['session']['accessToken'],
             id: req.body['id']
         };
 
@@ -97,7 +97,7 @@ export function setup(app: express.Application, application: IApplication, callb
 
         let payments = [], discount = 0, balance = 0;
 
-        api.REST.client.get('/v1/payments?accessToken=' + req['session'].accessToken, function(err, apiRequest, apiResponse, result) {
+        api.REST.client.get('/v1/payments?accessToken=' + req['session']['accessToken'], function(err, apiRequest, apiResponse, result) {
 
             if (err)
                 req.flash('error', err.message);
@@ -123,7 +123,7 @@ export function setup(app: express.Application, application: IApplication, callb
 
         let cards = [];
 
-        api.REST.client.get('/v1/payments/methods?accessToken=' + req['session'].accessToken, function(err, apiRequest, apiResponse, result) {
+        api.REST.client.get('/v1/payments/methods?accessToken=' + req['session']['accessToken'], function(err, apiRequest, apiResponse, result) {
 
             if (result && result.data)
                 cards = result.data.cards;
@@ -140,7 +140,7 @@ export function setup(app: express.Application, application: IApplication, callb
     app.post('/billing/prepay', api.authenticate, application.enforceSecure, function (req: express.Request, res: express.Response) {
 
         let params = {
-            accessToken: req['session'].accessToken,
+            accessToken: req['session']['accessToken'],
             amount: req.body.amount,
             description: 'Prepayment'
         };

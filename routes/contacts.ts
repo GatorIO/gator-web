@@ -80,7 +80,7 @@ export function setup(app: express.Application, application: IApplication, callb
 
         app.delete('/contacts/:id/', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
 
-            api.REST.client.del('/v1/monitoring/contacts/' + req.params['id'] + '?accessToken=' + req['session'].accessToken, function(err: Error, apiRequest: restify.Request, apiResponse: restify.Response) {
+            api.REST.client.del('/v1/monitoring/contacts/' + req.params['id'] + '?accessToken=' + req['session']['accessToken'], function(err: Error, apiRequest: restify.Request, apiResponse: restify.Response) {
                 api.REST.sendConditional(res, err);
             });
         });
@@ -108,7 +108,7 @@ export function setup(app: express.Application, application: IApplication, callb
 
         app.get('/contacts/test/:id/', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
 
-            api.REST.client.get('/v1/monitoring/contacts/test/' + req.params['id'] + '?accessToken=' + req['session'].accessToken, function(err: Error, apiRequest: restify.Request, apiResponse: restify.Response) {
+            api.REST.client.get('/v1/monitoring/contacts/test/' + req.params['id'] + '?accessToken=' + req['session']['accessToken'], function(err: Error, apiRequest: restify.Request, apiResponse: restify.Response) {
                 api.REST.sendConditional(res, err);
             });
         });

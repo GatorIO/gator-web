@@ -68,11 +68,11 @@ export function setup(app: express.Application, application: IApplication, callb
 
         app.get('/stations/enable/:id/', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
 
-            api.REST.client.get('/v1/monitoring/stations/enable/' + req.params['id'] + '?projectId=' + req['session'].currentProjectId + '&accessToken=' + req['session'].accessToken, function(err: Error, apiRequest: restify.Request, apiResponse: restify.Response) {
+            api.REST.client.get('/v1/monitoring/stations/enable/' + req.params['id'] + '?projectId=' + req['session']['currentProjectId'] + '&accessToken=' + req['session']['accessToken'], function(err: Error, apiRequest: restify.Request, apiResponse: restify.Response) {
 
                 if (!err) {
 
-                    let project = api.getProject(req, req['session'].currentProjectId);
+                    let project = api.getProject(req, req['session']['currentProjectId']);
 
                     if (!project.data)
                         project.data = {};
@@ -92,11 +92,11 @@ export function setup(app: express.Application, application: IApplication, callb
 
         app.get('/stations/disable/:id/', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
 
-            api.REST.client.get('/v1/monitoring/stations/disable/' + req.params['id'] + '?projectId=' + req['session'].currentProjectId + '&accessToken=' + req['session'].accessToken, function(err: Error, apiRequest: restify.Request, apiResponse: restify.Response) {
+            api.REST.client.get('/v1/monitoring/stations/disable/' + req.params['id'] + '?projectId=' + req['session']['currentProjectId'] + '&accessToken=' + req['session']['accessToken'], function(err: Error, apiRequest: restify.Request, apiResponse: restify.Response) {
 
                 if (!err) {
 
-                    let project = api.getProject(req, req['session'].currentProjectId);
+                    let project = api.getProject(req, req['session']['currentProjectId']);
 
                     if (!project.data)
                         project.data = {};
