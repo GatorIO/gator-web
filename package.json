@@ -33,7 +33,7 @@
     "connect-flash": "^0.1.1",
     "cookie-parser": "*",
     "ejs": "^2.7.1",
-    "express": "4.17.3",
+    "express": "4.19.2",
     "express-session": "1.16.2",
     "json-bigint": "^0.3.0",
     "gator-api": "GatorIO/gator-api",
