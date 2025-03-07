@@ -117,6 +117,8 @@ export function setup(app: express.Application, application: IApplication, callb
 
     //  reset password
     app.get('/reset', application.enforceSecure, function(req, res) {
+        api.logger.info('GET /reset', req, { ip: utils.ip.remoteAddress(req) })
+
         res.render('./api/reset', {
             req: req,
             application: application,
@@ -125,7 +127,8 @@ export function setup(app: express.Application, application: IApplication, callb
     });
 
     app.post('/reset', application.enforceSecure, function(req, res) {
-        
+        api.logger.info('POST /reset', req, { ip: utils.ip.remoteAddress(req) })
+
         api.REST.client.get('/v1/reset/' + application.settings.appId + '/' + req.body.username, function(err, apiRequest: restify.Request, apiResponse: restify.Response) {
             api.REST.sendConditional(res, err, null, 'success');         
         });
@@ -155,6 +158,7 @@ export function setup(app: express.Application, application: IApplication, callb
     });
 
     app.post('/register', application.enforceSecure, function(req, res) {
+        api.logger.info('POST /register', req, { ip: utils.ip.remoteAddress(req) })
 
         api.signup(req.body, function(err, authObject) {
 
