@@ -104,9 +104,10 @@ export function setup(app: express.Application, application: IApplication, callb
     });
 
     app.post('/login', application.enforceSecure, function (req: express.Request, res: express.Response) {
+        const remoteAddress = utils.ip.remoteAddress(req)
 
         //  specifying the appId will pull the user's account object into the authObject
-        api.login(req.body['username'], req.body['password'], application.settings.appId, function(err, authObject) {
+        api.login(req.body['username'], req.body['password'], application.settings.appId, remoteAddress, function(err, authObject) {
 
             if (!err)
                 api.setSessionAuth(req, authObject);
