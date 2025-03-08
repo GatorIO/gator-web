@@ -159,6 +159,9 @@ export function setup(app: express.Application, application: IApplication, callb
     });
 
     app.post('/register', application.enforceSecure, function(req, res) {
+        const remoteAddress = utils.ip.remoteAddress(req)
+        console.log(remoteAddress)
+        debugger
         api.logger.info('POST /register', req, { ip: utils.ip.remoteAddress(req) })
 
         api.signup(req.body, function(err, authObject) {
