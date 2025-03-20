@@ -127,8 +127,25 @@ export function setup(app: express.Application, application: IApplication, callb
         });
     });
 
-    app.post('/reset', application.enforceSecure, function(req, res) {
+    app.post('/reset', application.enforceSecure, async (req, res) => {
         const remoteAddress = utils.ip.remoteAddress(req)
+
+        const url = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
+        const token = req.body?.['cf-turnstile-response']
+        const idempotencyKey = crypto.randomUUID();
+
+        const firstResult = await fetch(url, {
+            body: JSON.stringify({
+                secret: '0x4AAAAAABBrZ5lR9_6xhnWa4L14d6lCy70',
+                response: token,
+                remoteip: remoteAddress,
+                idempotency_key: idempotencyKey
+            }),
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
         api.logger.info('POST /reset', req, { ip: remoteAddress })
 
         api.REST.client.get('/v1/reset/' + application.settings.appId + '/' + req.body.username + '?i=' + remoteAddress, function(err, apiRequest: restify.Request, apiResponse: restify.Response) {
