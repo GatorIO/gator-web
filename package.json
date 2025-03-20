@@ -29,6 +29,7 @@
     "@types/node": "^10.14.17",
     "@types/restify": "^4.3.6",
     "async": "^2.6.3",
+    "axios": "1.8.4",
     "body-parser": "*",
     "connect-flash": "^0.1.1",
     "cookie-parser": "*",
