@@ -170,7 +170,7 @@ export function setup(app: express.Application, application: IApplication, callb
     app.post('/register', application.enforceSecure, function (req, res)  {
         verifyCaptcha(req).then(result => {
             if (!result) {
-                api.REST.send(res);
+                api.REST.sendError(res, 'Cannot verify source');
             } else {
                 api.logger.info('POST /register', req, { ip: utils.ip.remoteAddress(req) })
                 req.body.remoteAddress = utils.ip.remoteAddress(req)
