@@ -69,7 +69,10 @@ export async function verifyCaptcha(req) {
             }
         });
         const outcome = await result.json()
-        api.logger.error(outcome, "verifyCaptcha outcome", req);
+
+        if (!outcome.success) {
+            api.logger.error(outcome, "verifyCaptcha outcome", req);
+        }
         return outcome.success
     } catch(err) {
         api.logger.error(err, "verifyCaptcha", req);
