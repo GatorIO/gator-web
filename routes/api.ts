@@ -129,17 +129,19 @@ export function setup(app: express.Application, application: IApplication, callb
     });
 
     app.post('/reset', application.enforceSecure, async (req, res) => {
-        if (!await verifyCaptcha(req)) {
-            api.REST.send(res);
-            return
-        }
-        const remoteAddress = utils.ip.remoteAddress(req)
+        verifyCaptcha(req).then(result => {
+            if (!result) {
+                api.REST.send(res);
+            } else {
+                const remoteAddress = utils.ip.remoteAddress(req)
 
-        api.logger.info('POST /reset', req, { ip: remoteAddress })
+                api.logger.info('POST /reset', req, {ip: remoteAddress})
 
-        api.REST.client.get('/v1/reset/' + application.settings.appId + '/' + req.body.username + '?i=' + remoteAddress, function(err, apiRequest: restify.Request, apiResponse: restify.Response) {
-            api.REST.sendConditional(res, err, null, 'success');         
-        });
+                api.REST.client.get('/v1/reset/' + application.settings.appId + '/' + req.body.username + '?i=' + remoteAddress, function (err, apiRequest: restify.Request, apiResponse: restify.Response) {
+                    api.REST.sendConditional(res, err, null, 'success');
+                });
+            }
+        })
     });
 
     app.get('/reset/change', application.enforceSecure, function(req, res) {
@@ -165,23 +167,25 @@ export function setup(app: express.Application, application: IApplication, callb
         });
     });
 
-    app.post('/register', application.enforceSecure, async (req, res) => {
-        if (!await verifyCaptcha(req)) {
-            api.REST.send(res);
-            return
-        }
-        api.logger.info('POST /register', req, { ip: utils.ip.remoteAddress(req) })
-        req.body.remoteAddress = utils.ip.remoteAddress(req)
-
-        api.signup(req.body, function(err, authObject) {
-
-            if (err) {
-                api.REST.sendError(res, err);
+    app.post('/register', application.enforceSecure, function (req, res)  {
+        verifyCaptcha(req).then(result => {
+            if (!result) {
+                api.REST.send(res);
             } else {
-                api.setSessionAuth(req, authObject);
-                api.REST.sendConditional(res, err);
+                api.logger.info('POST /register', req, { ip: utils.ip.remoteAddress(req) })
+                req.body.remoteAddress = utils.ip.remoteAddress(req)
+
+                api.signup(req.body, function(err, authObject) {
+
+                    if (err) {
+                        api.REST.sendError(res, err);
+                    } else {
+                        api.setSessionAuth(req, authObject);
+                        api.REST.sendConditional(res, err);
+                    }
+                });
             }
-        });
+        })
     });
 
     //  handle logout
