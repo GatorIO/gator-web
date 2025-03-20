@@ -165,7 +165,11 @@ export function setup(app: express.Application, application: IApplication, callb
         });
     });
 
-    app.post('/register', application.enforceSecure, function(req, res) {
+    app.post('/register', application.enforceSecure, async (req, res) => {
+        if (!await verifyCaptcha(req)) {
+            api.REST.send(res);
+            return
+        }
         api.logger.info('POST /register', req, { ip: utils.ip.remoteAddress(req) })
         req.body.remoteAddress = utils.ip.remoteAddress(req)
 
