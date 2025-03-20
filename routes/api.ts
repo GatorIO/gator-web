@@ -3,6 +3,7 @@ import express = require('express');
 import restify = require('restify');
 import api = require('gator-api');
 import {IApplication} from "../lib";
+import {verifyCaptcha} from "../lib/utils";
 
 /*
  Set up routes - this script handles functions required for managing the API
@@ -128,25 +129,11 @@ export function setup(app: express.Application, application: IApplication, callb
     });
 
     app.post('/reset', application.enforceSecure, async (req, res) => {
+        if (!await verifyCaptcha(req)) {
+            api.REST.send(res);
+            return
+        }
         const remoteAddress = utils.ip.remoteAddress(req)
-
-        const url = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
-        const token = req.body?.['cf-turnstile-response']
-        const idempotencyKey = crypto.randomUUID();
-
-        const firstResult = await fetch(url, {
-            body: JSON.stringify({
-                secret: '0x4AAAAAABBrZ5lR9_6xhnWa4L14d6lCy70',
-                response: token,
-                remoteip: remoteAddress,
-                idempotency_key: idempotencyKey
-            }),
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        const outcome = await firstResult.json()
 
         api.logger.info('POST /reset', req, { ip: remoteAddress })
 

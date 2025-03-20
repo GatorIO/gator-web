@@ -42,3 +42,29 @@ export function path(url: string): string {
     return urlObject.path;
 }
 
+export async function verifyCaptcha(req) {
+    try {
+        const remoteAddress = utils.ip.remoteAddress(req)
+        const url = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
+        const token = req.body?.['cf-turnstile-response']
+        const idempotencyKey = crypto.randomUUID();
+
+        const result = await fetch(url, {
+            body: JSON.stringify({
+                secret: '0x4AAAAAABBrZ5lR9_6xhnWa4L14d6lCy70',
+                response: token,
+                remoteip: remoteAddress,
+                idempotency_key: idempotencyKey
+            }),
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        const outcome = await result.json()
+
+        return outcome.success
+    } catch(err) {
+        return false
+    }
+}
