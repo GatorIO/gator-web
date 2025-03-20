@@ -1,6 +1,6 @@
 import utils = require("gator-utils");
 import api = require("gator-api");
-import {Axios} from "axios";
+import Axios from "axios";
 const urlLib = require('url');
 
 /*
@@ -55,32 +55,20 @@ export async function verifyCaptcha(req) {
         }
         const remoteAddress = utils.ip.remoteAddress(req)
         const url = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
-        const axios = new Axios()
 
-        const result = await axios.post(url, {
-            secret: '0x4AAAAAABBrZ5lR9_6xhnWa4L14d6lCy70',
-            response: token,
-            remoteip: remoteAddress
-        }, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-
-        /*
-        const result = await fetch(url, {
-            body: JSON.stringify({
+        const params = {
+            url,
+            method: 'post',
+            data: {
                 secret: '0x4AAAAAABBrZ5lR9_6xhnWa4L14d6lCy70',
                 response: token,
                 remoteip: remoteAddress
-            }),
-            method: 'POST',
+            },
             headers: {
                 'Content-Type': 'application/json'
             }
-        });
-
-         */
+        }
+        const result = await Axios(params);
 
         if (!result.data?.success) {
             api.logger.error(result, "verifyCaptcha outcome", req);
