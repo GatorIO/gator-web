@@ -42,11 +42,18 @@ export function path(url: string): string {
     return urlObject.path;
 }
 
+/**
+ * Verify captcha using Cloudflare
+ */
 export async function verifyCaptcha(req) {
     try {
+        const token = req.body?.['cf-turnstile-response']
+
+        if (!token) {
+            return true
+        }
         const remoteAddress = utils.ip.remoteAddress(req)
         const url = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
-        const token = req.body?.['cf-turnstile-response']
         const idempotencyKey = crypto.randomUUID();
 
         const result = await fetch(url, {
@@ -62,9 +69,10 @@ export async function verifyCaptcha(req) {
             }
         });
         const outcome = await result.json()
-
+        api.logger.error(outcome, "verifyCaptcha outcome", req);
         return outcome.success
     } catch(err) {
+        api.logger.error(err, "verifyCaptcha", req);
         return false
     }
 }
