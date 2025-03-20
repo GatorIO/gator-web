@@ -54,14 +54,12 @@ export async function verifyCaptcha(req) {
         }
         const remoteAddress = utils.ip.remoteAddress(req)
         const url = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
-        const idempotencyKey = crypto.randomUUID();
 
         const result = await fetch(url, {
             body: JSON.stringify({
                 secret: '0x4AAAAAABBrZ5lR9_6xhnWa4L14d6lCy70',
                 response: token,
-                remoteip: remoteAddress,
-                idempotency_key: idempotencyKey
+                remoteip: remoteAddress
             }),
             method: 'POST',
             headers: {
