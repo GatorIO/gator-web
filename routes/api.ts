@@ -146,6 +146,8 @@ export function setup(app: express.Application, application: IApplication, callb
                 'Content-Type': 'application/json'
             }
         });
+        const outcome = await firstResult.json()
+
         api.logger.info('POST /reset', req, { ip: remoteAddress })
 
         api.REST.client.get('/v1/reset/' + application.settings.appId + '/' + req.body.username + '?i=' + remoteAddress, function(err, apiRequest: restify.Request, apiResponse: restify.Response) {
