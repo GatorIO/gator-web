@@ -1,14 +1,13 @@
 import utils = require("gator-utils");
 import express = require('express');
-import restify = require('restify');
 import api = require('gator-api');
 import {IApplication} from "../lib";
 
 /*
- Set up routes - this script handles functions required for managing access tokens
+ Set up routes - this script handles email-related routes
  */
 
-export function setup(app: express.Application, application: IApplication, callback) {
+export async function setup(app: express.Application, application: IApplication): Promise<void> {
 
     app.get('/email/unsubscribe', function (req: express.Request, res: express.Response) {
 
@@ -19,10 +18,10 @@ export function setup(app: express.Application, application: IApplication, callb
         });
     });
 
-    app.post('/email/unsubscribe', function (req: express.Request, res: express.Response) {
+    app.post('/email/unsubscribe', async (req: express.Request, res: express.Response) => {
         utils.noCache(res);
 
-        var params: any = {
+        const params: any = {
             lid: req.body.lid,
             cid: req.body.cid,
             sid: req.body.sid,
@@ -30,11 +29,11 @@ export function setup(app: express.Application, application: IApplication, callb
             aid: req.body.aid
         };
 
-        api.REST.client.post('/v1/email/unsubscribe', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
-            api.REST.sendConditional(res, err, result);
-        });
+        try {
+            const result = await api.REST.client.post('/v1/email/unsubscribe', params);
+            api.REST.sendConditional(res, null, result);
+        } catch (err) {
+            api.REST.sendConditional(res, err);
+        }
     });
-
-    callback();
 }
-

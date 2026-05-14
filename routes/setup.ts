@@ -19,52 +19,22 @@ export let stationRoutes = require('./stations');
 export let shopifyRoutes = require('./shopify');
 export let systemRoutes = require('./system');
 
-export function setup(app: express.Application, application: IApplication, callback) {
+export async function setup(app: express.Application, application: IApplication): Promise<void> {
 
     /*
      Set up routes - this script handles module admin functions
      */
 
-    try {
-
-        accessTokenRoutes.setup(app, application, function() {
-
-            apiRoutes.setup(app, application, function(){
-
-                attributeRoutes.setup(app, application, function(){
-
-                    bookmarkRoutes.setup(app, application, function() {
-
-                        dashboardRoutes.setup(app, application, function() {
-
-                            campaignRoutes.setup(app, application, function() {
-
-                                projectRoutes.setup(app, application, function() {
-
-                                    reportingRoutes.setup(app, application, function() {
-
-                                        developerRoutes.setup(app, application, function() {
-
-                                            segmentRoutes.setup(app, application, function() {
-
-                                                paymentRoutes.setup(app, application, function() {
-
-                                                    emailRoutes.setup(app, application, function() {
-                                                        callback();
-                                                    });
-                                                });
-                                            });
-                                        });
-                                    });
-                                });
-                            });
-                        });
-                     });
-                });
-            });
-        });
-    } catch (err) {
-        console.dir(err);
-        callback(err);
-    }
+    await accessTokenRoutes.setup(app, application);
+    await apiRoutes.setup(app, application);
+    await attributeRoutes.setup(app, application);
+    await bookmarkRoutes.setup(app, application);
+    await dashboardRoutes.setup(app, application);
+    await campaignRoutes.setup(app, application);
+    await projectRoutes.setup(app, application);
+    await reportingRoutes.setup(app, application);
+    await developerRoutes.setup(app, application);
+    await segmentRoutes.setup(app, application);
+    await paymentRoutes.setup(app, application);
+    await emailRoutes.setup(app, application);
 }

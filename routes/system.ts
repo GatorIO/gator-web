@@ -6,13 +6,12 @@ import {IApplication} from "../lib";
  Set up system routes
  */
 
-export function setup(app: express.Application, application: IApplication, callback) {
+export async function setup(app: express.Application, application: IApplication): Promise<void> {
 
     app.get('/configcheck', (req: express.Request, res: express.Response) => {
 
-        let packageInfoPath = process.cwd() + '/package.json';
-
-        let packageInfo = require(packageInfoPath);
+        const packageInfoPath = process.cwd() + '/package.json';
+        const packageInfo = require(packageInfoPath);
 
         res.render('configCheck', {
             settings: utils.config.settings(),
@@ -23,7 +22,4 @@ export function setup(app: express.Application, application: IApplication, callb
             proc: process
         });
     });
-
-    callback();
 }
-

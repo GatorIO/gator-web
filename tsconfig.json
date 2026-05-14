@@ -1,9 +1,15 @@
 {
     "compilerOptions": {
         "module": "commonjs",
-        "target": "ES6",
+        "target": "ES2022",
+        "lib": ["ES2022"],
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "declaration": true,
         "sourceMap": true,
-        "removeComments": true
+        "removeComments": true,
+        "useDefineForClassFields": false
     },
     "exclude": [
         "node_modules"

@@ -1,6 +1,5 @@
 import utils = require("gator-utils");
 import express = require('express');
-import restify = require('restify');
 import api = require('gator-api');
 import {IApplication} from "../lib";
 import {verifyCaptcha} from "../lib/utils";
@@ -9,83 +8,75 @@ import {verifyCaptcha} from "../lib/utils";
  Set up routes - this script handles functions required for managing the API
  */
 
-export function setup(app: express.Application, application: IApplication, callback) {
+export async function setup(app: express.Application, application: IApplication): Promise<void> {
 
     //  proxy client api calls to api-host
-    app.post('/apiproxy', application.enforceSecure, api.authenticateNoRedirect, function (req: express.Request, res: express.Response) {
+    app.post('/apiproxy', application.enforceSecure, api.authenticateNoRedirect, async (req: express.Request, res: express.Response) => {
 
         if (!req.body || !req.body.verb || !req.body.path) {
             api.REST.sendError(res, new api.errors.MissingParameterError());
-        } else {
+            return;
+        }
 
-            let client = api.sessionClient(req);
+        const client = api.sessionClient(req);
 
+        try {
             switch (req.body.verb.toUpperCase()) {
 
-                case 'DEL':
-                    client.del(req.body.path, function(err, apiRequest: restify.Request, apiResponse: restify.Response) {
-                        api.REST.sendConditional(res, err);
-                    });
+                case 'DEL': {
+                    await client.del(req.body.path);
+                    api.REST.sendConditional(res, null);
                     break;
+                }
 
-                case 'GET':
-                    client.get(req.body.path, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
-                        api.REST.sendConditional(res, err, result);
-                    });
+                case 'GET': {
+                    const result = await client.get(req.body.path);
+                    api.REST.sendConditional(res, null, result);
                     break;
+                }
 
-                case 'POST':
-                    client.post(req.body.path, req.body.data, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
-                        api.REST.sendConditional(res, err, result);
-                    });
+                case 'POST': {
+                    const result = await client.post(req.body.path, req.body.data);
+                    api.REST.sendConditional(res, null, result);
                     break;
+                }
 
-                case 'PATCH':
-                    client.patch(req.body.path, req.body.data, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
-                        api.REST.sendConditional(res, err, result);
-                    });
+                case 'PUT': {
+                    const result = await client.put(req.body.path, req.body.data);
+                    api.REST.sendConditional(res, null, result);
                     break;
-
-                case 'PUT':
-                    client.put(req.body.path, req.body.data, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
-                        api.REST.sendConditional(res, err, result);
-                    });
-                    break;
+                }
 
                 default:
                     api.REST.sendError(res, new api.errors.BadRequestError('No such verb'));
             }
+        } catch (err) {
+            api.REST.sendConditional(res, err);
         }
     });
 
-    app.get('/developer/rest/:id', application.enforceSecure, function (req: express.Request, res: express.Response) {
+    app.get('/developer/rest/:id', application.enforceSecure, async (req: express.Request, res: express.Response) => {
 
-        let specUrl = utils.config.settings().apiUrl + '/' + utils.config.settings().apiVersion + '/' + req.params['id'] + '.json';
+        const specUrl = utils.config.settings().apiUrl + '/' + utils.config.settings().apiVersion + '/' + req.params['id'] + '.json';
+        let spec: any = {};
 
-        utils.getUrlText(specUrl, (err, spec) => {
+        try {
+            const text = await utils.getUrlText(specUrl);
+            spec = JSON.parse(text);
+        } catch {
+            spec = {};
+        }
 
-            if (err)
-                spec = {};
-            else {
+        if (req.query.env == 'local') {
+            spec.host = '127.0.0.5:8080';
+            spec.schemes = ['http'];
+        }
 
-                try {
-                    spec = JSON.parse(spec);
-                } catch(err) {
-                    spec = {};
-                }
-            }
-
-            if (req.query.env == 'local') {
-                spec.host = '127.0.0.5:8080';
-                spec.schemes = [ 'http' ];
-            }
-
-            res.render('./developer/swagger', {
-                req: req,
-                application: application,
-                dev: utils.config.dev(),
-                spec: spec
-            });
+        res.render('./developer/swagger', {
+            req: req,
+            application: application,
+            dev: utils.config.dev(),
+            spec: spec
         });
     });
 
@@ -104,22 +95,22 @@ export function setup(app: express.Application, application: IApplication, callb
         });
     });
 
-    app.post('/login', application.enforceSecure, function (req: express.Request, res: express.Response) {
-        const remoteAddress = utils.ip.remoteAddress(req)
+    app.post('/login', application.enforceSecure, async (req: express.Request, res: express.Response) => {
+        const remoteAddress = utils.ip.remoteAddress(req);
 
-        //  specifying the appId will pull the user's account object into the authObject
-        api.login(req.body['username'], req.body['password'], application.settings.appId, remoteAddress, function(err, authObject) {
-
-            if (!err)
-                api.setSessionAuth(req, authObject);
-
+        try {
+            //  specifying the appId will pull the user's account object into the authObject
+            const authObject = await api.login(req.body['username'], req.body['password'], application.settings.appId, remoteAddress);
+            api.setSessionAuth(req, authObject);
+            api.REST.sendConditional(res, null, null, 'success');
+        } catch (err) {
             api.REST.sendConditional(res, err, null, 'success');
-        });
+        }
     });
 
     //  reset password
-    app.get('/reset', application.enforceSecure, function(req, res) {
-        api.logger.info('GET /reset', req, { ip: utils.ip.remoteAddress(req) })
+    app.get('/reset', application.enforceSecure, function (req, res) {
+        api.logger.info('GET /reset', req, { ip: utils.ip.remoteAddress(req) });
 
         res.render('./api/reset', {
             req: req,
@@ -129,22 +120,26 @@ export function setup(app: express.Application, application: IApplication, callb
     });
 
     app.post('/reset', application.enforceSecure, async (req, res) => {
-        verifyCaptcha(req).then(result => {
-            if (!result) {
-                api.REST.send(res);
-            } else {
-                const remoteAddress = utils.ip.remoteAddress(req)
 
-                api.logger.info('POST /reset', req, {ip: remoteAddress})
+        const verified = await verifyCaptcha(req);
 
-                api.REST.client.get('/v1/reset/' + application.settings.appId + '/' + req.body.username + '?i=' + remoteAddress, function (err, apiRequest: restify.Request, apiResponse: restify.Response) {
-                    api.REST.sendConditional(res, err, null, 'success');
-                });
-            }
-        })
+        if (!verified) {
+            api.REST.send(res);
+            return;
+        }
+
+        const remoteAddress = utils.ip.remoteAddress(req);
+        api.logger.info('POST /reset', req, { ip: remoteAddress });
+
+        try {
+            await api.REST.client.get('/v1/reset/' + application.settings.appId + '/' + req.body.username + '?i=' + remoteAddress);
+            api.REST.sendConditional(res, null, null, 'success');
+        } catch (err) {
+            api.REST.sendConditional(res, err, null, 'success');
+        }
     });
 
-    app.get('/reset/change', application.enforceSecure, function(req, res) {
+    app.get('/reset/change', application.enforceSecure, function (req, res) {
         res.render('./api/resetChange', {
             req: req,
             application: application,
@@ -152,14 +147,17 @@ export function setup(app: express.Application, application: IApplication, callb
         });
     });
 
-    app.post('/reset/change', application.enforceSecure, function(req, res) {
+    app.post('/reset/change', application.enforceSecure, async (req, res) => {
 
-        api.REST.client.post('/v1/reset', req.body, function(err, apiRequest: restify.Request, apiResponse: restify.Response) {
+        try {
+            await api.REST.client.post('/v1/reset', req.body);
+            api.REST.sendConditional(res, null, null, 'success');
+        } catch (err) {
             api.REST.sendConditional(res, err, null, 'success');
-        });
+        }
     });
 
-    app.get('/register', application.enforceSecure, function(req, res) {
+    app.get('/register', application.enforceSecure, function (req, res) {
         res.render('./api/register', {
             req: req,
             application: application,
@@ -167,32 +165,29 @@ export function setup(app: express.Application, application: IApplication, callb
         });
     });
 
-    app.post('/register', application.enforceSecure, function (req, res)  {
-        verifyCaptcha(req).then(result => {
-            if (!result) {
-                api.REST.sendError(res, 'Cannot verify source');
-            } else {
-                api.logger.info('POST /register', req, { ip: utils.ip.remoteAddress(req) })
-                req.body.remoteAddress = utils.ip.remoteAddress(req)
+    app.post('/register', application.enforceSecure, async (req, res) => {
 
-                api.signup(req.body, function(err, authObject) {
+        const verified = await verifyCaptcha(req);
 
-                    if (err) {
-                        api.REST.sendError(res, err);
-                    } else {
-                        api.setSessionAuth(req, authObject);
-                        api.REST.sendConditional(res, err);
-                    }
-                });
-            }
-        })
+        if (!verified) {
+            api.REST.sendError(res, 'Cannot verify source');
+            return;
+        }
+
+        api.logger.info('POST /register', req, { ip: utils.ip.remoteAddress(req) });
+        req.body.remoteAddress = utils.ip.remoteAddress(req);
+
+        try {
+            const authObject = await api.signup(req.body);
+            api.setSessionAuth(req, authObject);
+            api.REST.sendConditional(res, null);
+        } catch (err) {
+            api.REST.sendError(res, err);
+        }
     });
 
     //  handle logout
-    app.get('/logout', application.enforceSecure, function(req: any, res) {
+    app.get('/logout', application.enforceSecure, function (req: any, res) {
         api.logout(req, res);
     });
-
-    callback();
 }
-

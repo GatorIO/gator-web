@@ -1,6 +1,5 @@
 import utils = require("gator-utils");
 import express = require('express');
-import restify = require('restify');
 import api = require('gator-api');
 import {IApplication} from "../lib";
 
@@ -8,48 +7,45 @@ import {IApplication} from "../lib";
  Set up routes - this script handles functions required for managing access tokens
  */
 
-export function setup(app: express.Application, application: IApplication, callback) {
+export async function setup(app: express.Application, application: IApplication): Promise<void> {
 
-    app.get('/accesstokens', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
+    app.get('/accesstokens', application.enforceSecure, api.authenticate, async (req: express.Request, res: express.Response) => {
         utils.noCache(res);
 
-        let projectFilter = req.query.projectId ? '&projectId=' + req.query.projectId : '';
+        const projectFilter = req.query.projectId ? '&projectId=' + req.query.projectId : '';
+        let tokens: any[] = [];
 
-        api.REST.client.get('/v1/accesstokens?accessToken=' + req['session']['accessToken'] +
-            '&type=api' + projectFilter, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
+        try {
+            const result = await api.REST.client.get('/v1/accesstokens?accessToken=' + req['session']['accessToken'] +
+                '&type=api' + projectFilter);
+            tokens = result.data.accessTokens;
+        } catch (err: any) {
+            req.flash('error', err.message);
+        }
 
-            let tokens = [];
+        tokens.forEach(function (token) {
 
-            if (err) {
-                req.flash('error', err.message);
-            } else {
-                tokens = result.data.accessTokens;
-            }
+            if (new Date(Date.parse(token.expiration)).getFullYear() > 2900)
+                token.expiration = 'N/A';
+        });
 
-            tokens.forEach(function(token) {
-
-                if (new Date(Date.parse(token.expiration)).getFullYear() > 2900)
-                    token.expiration = 'N/A';
-            });
-
-            res.render('accessTokens', {
-                req: req,
-                application: application,
-                accessTokens: tokens,
-                projectId: req.query.projectId || 0,
-                projectName: req.query.projectName || ''
-            });
+        res.render('accessTokens', {
+            req: req,
+            application: application,
+            accessTokens: tokens,
+            projectId: req.query.projectId || 0,
+            projectName: req.query.projectName || ''
         });
     });
 
-    app.post('/accesstokens', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
+    app.post('/accesstokens', application.enforceSecure, api.authenticate, async (req: express.Request, res: express.Response) => {
         utils.noCache(res);
 
         if (!req.body.expires) {
             req.body.expires = new Date(Date.parse('3000-01-01'));
         }
 
-        let permissions = [];
+        const permissions = [];
 
         if (req.body.pushAccess == 'true')
             permissions.push('push');
@@ -57,7 +53,7 @@ export function setup(app: express.Application, application: IApplication, callb
         if (req.body.queryAccess == 'true')
             permissions.push('query');
 
-        let params: any = {
+        const params: any = {
             accessToken: req['session']['accessToken'],
             accountId: req['session']['account'].id,
             permissions: permissions,
@@ -68,19 +64,22 @@ export function setup(app: express.Application, application: IApplication, callb
         if (req.body.projectId)
             params.projectId = req.body.projectId;
 
-        api.REST.client.post('/v1/accesstokens', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
-            api.REST.sendConditional(res, err, result);
-        });
+        try {
+            const result = await api.REST.client.post('/v1/accesstokens', params);
+            api.REST.sendConditional(res, null, result);
+        } catch (err) {
+            api.REST.sendConditional(res, err);
+        }
     });
 
-    app.delete('/accesstokens', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
+    app.delete('/accesstokens', application.enforceSecure, api.authenticate, async (req: express.Request, res: express.Response) => {
         utils.noCache(res);
 
-        api.REST.client.del('/v1/accesstokens/' + req.body['accessToken'] + '?accessToken=' + req['session']['accessToken'], function(err, apiRequest: restify.Request, apiResponse: restify.Response) {
+        try {
+            await api.REST.client.del('/v1/accesstokens/' + req.body['accessToken'] + '?accessToken=' + req['session']['accessToken']);
+            api.REST.sendConditional(res, null);
+        } catch (err) {
             api.REST.sendConditional(res, err);
-        });
+        }
     });
-
-    callback();
 }
-

@@ -1,11 +1,11 @@
-import restify = require('restify');
 import utils = require("gator-utils");
 import express = require('express');
 import api = require('gator-api');
 import lib = require('../lib/index');
 import {IApplication} from "../lib";
-let fs = require('fs');
-let os = require('os');
+
+const fs = require('fs');
+const os = require('os');
 
 /*
  Set up routes - this script handles functions required reporting
@@ -27,7 +27,7 @@ function getEndpoint(query?): string {
     return endpoint;
 }
 
-export function getReport(application, req, res) {
+export async function getReport(application, req, res): Promise<void> {
 
     /*
      The id query string param is the report id in application.reports:  /report?id=log
@@ -42,15 +42,16 @@ export function getReport(application, req, res) {
 
      */
 
-    let definition, qsOptions, metricOptions, elementOptions, filterOptions, attribOptions, id;
+    let definition;
+    let qsOptions;
 
     try {
         qsOptions = req.query.options ? JSON.parse(req.query.options) : {};
-    } catch(err) {
+    } catch {
         qsOptions = {};
     }
 
-    id = qsOptions.id || req.query.id;        //  there should not be two ids, but if there is, use the one in options
+    const id = qsOptions.id || req.query.id;        //  there should not be two ids, but if there is, use the one in options
 
     //  get report definition
     if (id) {
@@ -127,7 +128,7 @@ export function getReport(application, req, res) {
     //  override options from definition with query string params
     if (req.query.options) {
 
-        for (let key in qsOptions) {
+        for (const key in qsOptions) {
 
             if (qsOptions.hasOwnProperty(key))
                 definition.initialState[key] = qsOptions[key];
@@ -145,45 +146,45 @@ export function getReport(application, req, res) {
     if (!project.data.attributes)
         project.data.attributes = {};
 
-    let customAttribs = project.data.attributes;
+    const customAttribs = project.data.attributes;
 
-    let isLog = definition.settings.renderView == 'log';
+    const isLog = definition.settings.renderView == 'log';
 
-    metricOptions = api.reporting.getAttributeOptions(definition.settings.entity, api.reporting.AttributeTypes.metrics, customAttribs, isLog);
-    elementOptions = api.reporting.getAttributeOptions(definition.settings.entity, api.reporting.AttributeTypes.elements, customAttribs, isLog);
-    filterOptions = api.reporting.getFilterOptions(definition.settings.entity, customAttribs, isLog);
-    attribOptions = api.reporting.getAttributeOptions(definition.settings.entity, api.reporting.AttributeTypes.all, customAttribs, isLog);
+    const metricOptions = api.reporting.getAttributeOptions(definition.settings.entity, api.reporting.AttributeTypes.metrics, customAttribs, isLog);
+    const elementOptions = api.reporting.getAttributeOptions(definition.settings.entity, api.reporting.AttributeTypes.elements, customAttribs, isLog);
+    const filterOptions = api.reporting.getFilterOptions(definition.settings.entity, customAttribs, isLog);
+    const attribOptions = api.reporting.getAttributeOptions(definition.settings.entity, api.reporting.AttributeTypes.all, customAttribs, isLog);
 
     utils.noCache(res);
 
     //  any route that requires segments should call this first
-    api.reporting.getSegments(req, false, definition.appId, function(err) {
+    try {
+        await api.reporting.getSegments(req, false, definition.appId);
+    } catch (err: any) {
+        req.flash('error', err.message);
+    }
 
-        if (err)
-            req.flash('error', err.message);
+    const renderView = definition.settings.renderView;
 
-        let renderView = definition.settings.renderView;
-
-        res.render(renderView || 'report', {
-            settings: utils.config.settings(),
-            application: application,
-            dev: utils.config.dev(),
-            req: req,
-            definition: definition,
-            segmentOptions: api.reporting.getSegmentOptions(req),
-            metricOptions: metricOptions,
-            elementOptions: elementOptions,
-            filterOptions: filterOptions,
-            attribOptions: attribOptions
-        });
+    res.render(renderView || 'report', {
+        settings: utils.config.settings(),
+        application: application,
+        dev: utils.config.dev(),
+        req: req,
+        definition: definition,
+        segmentOptions: api.reporting.getSegmentOptions(req),
+        metricOptions: metricOptions,
+        elementOptions: elementOptions,
+        filterOptions: filterOptions,
+        attribOptions: attribOptions
     });
 }
 
-export function setup(app: express.Application, application: IApplication, callback) {
+export async function setup(app: express.Application, application: IApplication): Promise<void> {
 
-    let statusCheck: any = typeof application.statusCheck == 'function' ? application.statusCheck : lib.statusCheckPlaceholder;
+    const statusCheck: any = typeof application.statusCheck == 'function' ? application.statusCheck : lib.statusCheckPlaceholder;
 
-    app.post('/query', application.enforceSecure, api.authenticateNoRedirect, function (req: express.Request, res: express.Response) {
+    app.post('/query', application.enforceSecure, api.authenticateNoRedirect, async (req: express.Request, res: express.Response) => {
 
         //  This function manually checks auth status in order to send the proper status to the client ajax call.
         if (!req['session']) {
@@ -191,7 +192,7 @@ export function setup(app: express.Application, application: IApplication, callb
             return;
         }
 
-        let endpoint, params = {
+        const params: any = {
             accessToken: req['session']['accessToken'],
             query: req.body,
             clientIP: utils.ip.remoteAddress(req),
@@ -204,23 +205,19 @@ export function setup(app: express.Application, application: IApplication, callb
             delete params.query.view;
         }
 
-        let options = {
-            path: getEndpoint(params.query) + 'query',
-            agent: false
-        };
+        const path = getEndpoint(params.query) + 'query';
 
         try {
-            api.REST.client.post(options, params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
-                api.REST.sendConditional(res, err, result ? result.data : null);
-            });
-        } catch(err) {
-            api.logger.error('Restify client error', err, options, params.query);
+            const result = await api.REST.client.post(path, params);
+            api.REST.sendConditional(res, null, result ? result.data : null);
+        } catch (err) {
+            api.logger.error('Reporting query client error', err, path, params.query);
             api.REST.sendError(res, err);
         }
     });
 
     //  typeahead support
-    app.get('/search', application.enforceSecure, api.authenticateNoRedirect, function (req: express.Request, res: express.Response) {
+    app.get('/search', application.enforceSecure, api.authenticateNoRedirect, async (req: express.Request, res: express.Response) => {
 
         //  This function manually checks auth status in order to send the proper status to the client ajax call.
         if (!req['session']) {
@@ -228,18 +225,21 @@ export function setup(app: express.Application, application: IApplication, callb
             return;
         }
 
-        api.REST.client.get(getEndpoint() + 'attributes/search?accessToken=' + req['session']['accessToken'] + '&attribute=' + encodeURIComponent(req.query.attribute as string) + '&projectId=' + req.query.projectId + '&value=' + encodeURIComponent(req.query.value as string), function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
+        try {
+            const result = await api.REST.client.get(getEndpoint() + 'attributes/search?accessToken=' + req['session']['accessToken'] + '&attribute=' + encodeURIComponent(req.query.attribute as string) + '&projectId=' + req.query.projectId + '&value=' + encodeURIComponent(req.query.value as string));
             res.json(result || []);
-        });
+        } catch {
+            res.json([]);
+        }
     });
 
     app.get('/report', application.enforceSecure, api.authenticate, statusCheck, function (req: express.Request, res: express.Response) {
         getReport(application, req, res);
     });
 
-    function exportData(req: express.Request, res: express.Response) {
+    async function exportData(req: express.Request, res: express.Response): Promise<void> {
 
-        let params = {
+        const params: any = {
             accessToken: req['session']['accessToken'],
             query: JSON.parse(req.query.query as string)
         };
@@ -249,96 +249,86 @@ export function setup(app: express.Application, application: IApplication, callb
 
         res.attachment('data.' + req.query.format);
 
-        let cycles = 0, running: boolean = false;
+        let cycles = 0;
+        const path = getEndpoint(params.query) + 'query';
 
-        let interval = setInterval(function() {
+        try {
 
-            if (running)
-                return;
+            while (true) {
 
-            try {
-
-                running = true;
-
-                //  if this somehow gets into a loop that is too big, close it
                 if (cycles++ >= 1000000) {
                     res.write('ERROR: Too many rows to download.  The limit is ' + (cycles * params.query.limit));
                     res.end();
-                    clearInterval(interval);
                     return;
                 }
 
-                api.REST.client.post(getEndpoint(params.query) + 'query', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
+                let result: any;
 
-                    if (err) {
-                        clearInterval(interval);
-                        res.write('ERROR: ' + err.message);
+                try {
+                    result = await api.REST.client.post(path, params);
+                } catch (err: any) {
+                    res.write('ERROR: ' + err.message);
+                    res.end();
+                    return;
+                }
+
+                //  no headers after first chunk
+                params.query.dataOnly = true;
+
+                if (result && result.code == 200) {
+
+                    if (req.query.format == 'csv') {
+
+                        if (result.data.csv)
+                            res.write(result.data.csv);
+                        else
+                            res.write('');
+
+                    } else {
+                        const chunk = JSON.stringify(result.data.rows);
+
+                        //  on first chunk, write the array start
+                        if (cycles == 1)
+                            res.write('[');
+
+                        res.write(chunk.substr(1, chunk.length - 2));
+
+                        //  write end array if last chunk, or comma if more
+                        if (result.data.nextClause)
+                            res.write(',');
+                        else
+                            res.write(']');
+                    }
+
+                    //  add filter to continue after where the last chunk ended
+                    if (result.data.nextClause) {
+                        params.query.nextClause = result.data.nextClause;
+                    } else {
+
+                        //  all data has been sent
                         res.end();
                         return;
                     }
-
-                    //  no headers after first chunk
-                    params.query.dataOnly = true;
-
-                    if (result && result.code == 200) {
-
-                        if (req.query.format == 'csv') {
-
-                            if (result.data.csv)
-                                res.write(result.data.csv);
-                            else
-                                res.write('');
-
-                        } else {
-                            let chunk = JSON.stringify(result.data.rows);
-
-                            //  on first chunk, write the array start
-                            if (cycles == 1)
-                                res.write('[');
-
-                            res.write(chunk.substr(1, chunk.length - 2));
-
-                            //  write end array if last chunk, or comma if more
-                            if (result.data.nextClause)
-                                res.write(',');
-                            else
-                                res.write(']');
-
-                        }
-
-                        //  add filter to continue after where the last chunk ended
-                        if (result.data.nextClause) {
-                            params.query.nextClause = result.data.nextClause;
-                        } else {
-
-                            //  all data has been sent
-                            res.end();
-                            clearInterval(interval);
-                        }
-
-                        running = false;
-
-                    } else {
-                        res.write('ERROR: ' + JSON.stringify(result));
-                        res.end();
-                        clearInterval(interval);
-                    }
-                });
-            } catch(err) {
-                clearInterval(interval);
-                api.logger.error('In download', err, req);
+                } else {
+                    res.write('ERROR: ' + JSON.stringify(result));
+                    res.end();
+                    return;
+                }
             }
-        }, 50);
+        } catch (err) {
+            api.logger.error('In download', err, req);
+        }
     }
 
-    function exportPDF(req: express.Request, res: express.Response) {
+    function exportPDF(req: express.Request, res: express.Response): void {
 
-        let phantomBin = 'phantomjs', dest = 'data.' + req.query.format, file = utils.guid() + '.pdf';
+        let phantomBin = 'phantomjs';
+        const file = utils.guid() + '.pdf';
 
         const exec = require('child_process').exec;
 
         if (os.platform().substr(0, 3) == 'win') {
-            phantomBin = '"../node_modules/gator-web/bin/phantomjs-win"'
+            phantomBin = '"../node_modules/gator-web/bin/phantomjs-win"';
         }
 
         let reportUrl = application.current.consoleHost;
@@ -348,41 +338,41 @@ export function setup(app: express.Application, application: IApplication, callb
 
         reportUrl += '/report?format=pdf&accessToken=' + req['session']['accessToken'] + '&options=' + encodeURIComponent(req.query.options as string);
 
-        const child = exec('cd phantomjs && ' + phantomBin + ' --ignore-ssl-errors=yes ../node_modules/gator-web/lib/renderpdf.js "' + reportUrl + '" ' + file,
-            (err, stdout, stderr) => {
+        exec('cd phantomjs && ' + phantomBin + ' --ignore-ssl-errors=yes ../node_modules/gator-web/lib/renderpdf.js "' + reportUrl + '" ' + file,
+            (err) => {
 
                 if (err !== null) {
                     api.logger.error(err, "PDF download", req);
                     res.end("Internal error");
                 } else {
-                    res.download('phantomjs/' + file, 'report.pdf', function(err) {
+                    res.download('phantomjs/' + file, 'report.pdf', function (err) {
 
                         try {
 
-                            if (err){
+                            if (err) {
                                 api.logger.error(err, "PDF download", req);
                                 res.end("Internal error");
                             } else {
-                                let stat = fs.statSync('phantomjs/' + file);
+                                const stat = fs.statSync('phantomjs/' + file);
 
                                 if (stat.isFile())
                                     fs.unlink('phantomjs/' + file);
                             }
-                        } catch(err) {}
+                        } catch { }
                     });
                 }
             }
         );
     }
 
-    app.get('/download', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
+    app.get('/download', application.enforceSecure, api.authenticate, async (req: express.Request, res: express.Response) => {
 
         try {
 
             switch (req.query.format) {
                 case 'csv':
                 case 'json':
-                    exportData(req, res);
+                    await exportData(req, res);
                     break;
 
                 case 'pdf':
@@ -393,61 +383,38 @@ export function setup(app: express.Application, application: IApplication, callb
                     res.write('ERROR: No format');
                     res.end();
             }
-        } catch(err) {
+        } catch (err) {
             api.logger.error(err, "/download", req);
             res.end("Internal error");
         }
     });
 
-    app.get('/visualizations/badtraffic', application.enforceSecure, api.authenticate, statusCheck, function (req: express.Request, res: express.Response) {
+    app.get('/visualizations/badtraffic', application.enforceSecure, api.authenticate, statusCheck, async (req: express.Request, res: express.Response) => {
         utils.noCache(res);
 
-        //  any route that requires segments should call this first
-        api.reporting.getSegments(req, false, req.query.appId as any, function(err) {
+        try {
+            await api.reporting.getSegments(req, false, req.query.appId as any);
+        } catch (err: any) {
+            req.flash('error', err.message);
+        }
 
-            if (err)
-                req.flash('error', err.message);
-
-            res.render('badTraffic', {
-                settings: utils.config.settings(),
-                application: application,
-                dev: utils.config.dev(),
-                req: req
-            });
+        res.render('badTraffic', {
+            settings: utils.config.settings(),
+            application: application,
+            dev: utils.config.dev(),
+            req: req
         });
     });
 
-    app.get('/person/profile', application.enforceSecure, api.authenticate, statusCheck, function (req: express.Request, res: express.Response) {
+    app.get('/person/profile', application.enforceSecure, api.authenticate, statusCheck, async (req: express.Request, res: express.Response) => {
         utils.noCache(res);
 
-        let params = {
+        const params: any = {
             accessToken: req['session']['accessToken'],
             projectId: req['session']['currentProjectId']
         };
 
-        if (req.query.person) {
-            params['personId'] = req.query.person;
-            params['days'] = req.query.days || 30;
-
-            api.REST.client.post('/v1/analytics/person/profile', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
-
-                if (!result)
-                    req.flash('error', 'Internal error');
-                else if (result.code != 200 || !result.data)
-                    req.flash('error', result.message || 'Internal error');
-
-                res.render('profile', {
-                    params: params,
-                    application: application,
-                    personData: result.data && result.data.personData ? result.data.personData : null,
-                    summary: result.data && result.data.summary && result.data.summary.rows ? result.data.summary.rows[0] || [] : [],
-                    sessions: result.data && result.data.sessions && result.data.sessions.rows ? result.data.sessions.rows : [],
-                    events: result.data && result.data.events && result.data.events.rows ? result.data.events.rows : [],
-                    latestSession: result.data && result.data.latestSession && result.data.latestSession.rows ? result.data.latestSession.rows[0] || [] : [],
-                    req: req
-                });
-            });
-        } else {
+        if (!req.query.person) {
 
             res.render('profile', {
                 params: params,
@@ -459,7 +426,35 @@ export function setup(app: express.Application, application: IApplication, callb
                 application: application,
                 req: req
             });
+            return;
         }
+
+        params.personId = req.query.person;
+        params.days = req.query.days || 30;
+
+        let result: any = null;
+
+        try {
+            result = await api.REST.client.post('/v1/analytics/person/profile', params);
+        } catch (err: any) {
+            req.flash('error', err.message);
+        }
+
+        if (!result)
+            req.flash('error', 'Internal error');
+        else if (result.code != 200 || !result.data)
+            req.flash('error', result.message || 'Internal error');
+
+        res.render('profile', {
+            params: params,
+            application: application,
+            personData: result && result.data && result.data.personData ? result.data.personData : null,
+            summary: result && result.data && result.data.summary && result.data.summary.rows ? result.data.summary.rows[0] || [] : [],
+            sessions: result && result.data && result.data.sessions && result.data.sessions.rows ? result.data.sessions.rows : [],
+            events: result && result.data && result.data.events && result.data.events.rows ? result.data.events.rows : [],
+            latestSession: result && result.data && result.data.latestSession && result.data.latestSession.rows ? result.data.latestSession.rows[0] || [] : [],
+            req: req
+        });
     });
 
     app.get('/formatoptions', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
@@ -471,7 +466,4 @@ export function setup(app: express.Application, application: IApplication, callb
             req: req
         });
     });
-
-    callback();
 }
-

@@ -4,19 +4,18 @@ import api = require('gator-api');
 import {IApplication} from "../lib";
 
 /*
- Set up routes - this script handles functions required for managing segments
+ Set up routes - this script handles functions required for Shopify integration
  */
 
-export function setup(app: express.Application, application: IApplication, callback) {
+export async function setup(app: express.Application, application: IApplication): Promise<void> {
 
-    //  get all segments for the current account
     app.get('/shopify/realmchanged', application.enforceSecure, api.authenticate, (req: express.Request, res: express.Response) => {
 
         let url = 'https://' + req.query.shop + '/admin/apps';
-        let app: any = api.applications.items[utils.config.settings().appId];
+        const shopifyApp: any = api.applications.items[utils.config.settings().appId];
 
-        if (app && app.data && app.data.shopifyAppId)
-            url += '/' + app.data.shopifyAppId;
+        if (shopifyApp && shopifyApp.data && shopifyApp.data.shopifyAppId)
+            url += '/' + shopifyApp.data.shopifyAppId;
 
         res.render('realmChanged', {
             settings: utils.config.settings(),
@@ -34,7 +33,4 @@ export function setup(app: express.Application, application: IApplication, callb
     app.post('/shopify/shop/delete', (req: express.Request, res: express.Response) => {
         res.sendStatus(200);
     });
-
-    callback();
 }
-

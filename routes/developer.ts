@@ -3,13 +3,13 @@ import express = require('express');
 import api = require('gator-api');
 import {IApplication} from "../lib";
 
-let gator = require('gator-score');
+const gator = require('gator-score');
 
 /*
  Set up routes - this script handles functions required for managing developer routes
  */
 
-export function setup(app: express.Application, application: IApplication, callback) {
+export async function setup(app: express.Application, application: IApplication): Promise<void> {
 
     app.get('/developer/overview', application.enforceSecure, function (req: express.Request, res: express.Response) {
         utils.noCache(res);
@@ -19,7 +19,7 @@ export function setup(app: express.Application, application: IApplication, callb
 
         api.authenticate(req, req, function () {
 
-            res.render('overview',{
+            res.render('overview', {
                 settings: utils.config.settings(),
                 application: application,
                 req: req,
@@ -30,12 +30,11 @@ export function setup(app: express.Application, application: IApplication, callb
     app.get('/developer/web/gettingstarted', application.enforceSecure, function (req: express.Request, res: express.Response) {
         utils.noCache(res);
 
-        //  non authenticated access is allowed
         req['noRedirect'] = true;
 
         api.authenticate(req, req, function () {
 
-            res.render('gettingStarted',{
+            res.render('gettingStarted', {
                 settings: utils.config.settings(),
                 application: application,
                 req: req
@@ -46,12 +45,11 @@ export function setup(app: express.Application, application: IApplication, callb
     app.get('/developer/web/events', application.enforceSecure, function (req: express.Request, res: express.Response) {
         utils.noCache(res);
 
-        //  non authenticated access is allowed
         req['noRedirect'] = true;
 
         api.authenticate(req, req, function () {
 
-            res.render('events',{
+            res.render('events', {
                 settings: utils.config.settings(),
                 application: application,
                 req: req
@@ -62,12 +60,11 @@ export function setup(app: express.Application, application: IApplication, callb
     app.get('/developer/web/ecommerce', application.enforceSecure, function (req: express.Request, res: express.Response) {
         utils.noCache(res);
 
-        //  non authenticated access is allowed
         req['noRedirect'] = true;
 
         api.authenticate(req, req, function () {
 
-            res.render('ecommerceEvents',{
+            res.render('ecommerceEvents', {
                 settings: utils.config.settings(),
                 application: application,
                 req: req
@@ -78,12 +75,11 @@ export function setup(app: express.Application, application: IApplication, callb
     app.get('/developer/web/outboundlinks', application.enforceSecure, function (req: express.Request, res: express.Response) {
         utils.noCache(res);
 
-        //  non authenticated access is allowed
         req['noRedirect'] = true;
 
         api.authenticate(req, req, function () {
 
-            res.render('links',{
+            res.render('links', {
                 settings: utils.config.settings(),
                 application: application,
                 req: req
@@ -94,12 +90,11 @@ export function setup(app: express.Application, application: IApplication, callb
     app.get('/developer/web/formposts', application.enforceSecure, function (req: express.Request, res: express.Response) {
         utils.noCache(res);
 
-        //  non authenticated access is allowed
         req['noRedirect'] = true;
 
         api.authenticate(req, req, function () {
 
-            res.render('formPosts',{
+            res.render('formPosts', {
                 settings: utils.config.settings(),
                 application: application,
                 req: req
@@ -110,12 +105,11 @@ export function setup(app: express.Application, application: IApplication, callb
     app.get('/developer/web/multipleprojects', application.enforceSecure, function (req: express.Request, res: express.Response) {
         utils.noCache(res);
 
-        //  non authenticated access is allowed
         req['noRedirect'] = true;
 
         api.authenticate(req, req, function () {
 
-            res.render('multipleProjects',{
+            res.render('multipleProjects', {
                 settings: utils.config.settings(),
                 application: application,
                 req: req
@@ -126,12 +120,11 @@ export function setup(app: express.Application, application: IApplication, callb
     app.get('/developer/web/javascriptapi', application.enforceSecure, function (req: express.Request, res: express.Response) {
         utils.noCache(res);
 
-        //  non authenticated access is allowed
         req['noRedirect'] = true;
 
         api.authenticate(req, req, function () {
 
-            res.render('javascriptApi',{
+            res.render('javascriptApi', {
                 settings: utils.config.settings(),
                 application: application,
                 req: req
@@ -142,12 +135,11 @@ export function setup(app: express.Application, application: IApplication, callb
     app.get('/developer/entities', application.enforceSecure, function (req: express.Request, res: express.Response) {
         utils.noCache(res);
 
-        //  non authenticated access is allowed
         req['noRedirect'] = true;
 
         api.authenticate(req, req, function () {
 
-            res.render('entities',{
+            res.render('entities', {
                 settings: utils.config.settings(),
                 application: application,
                 req: req,
@@ -173,7 +165,7 @@ export function setup(app: express.Application, application: IApplication, callb
                 group: 'browser',
                 sort: { 'sessions': -1 },
                 attributes: "sessions"
-            } as any
+            } as any;
         }
 
         res.render('queryTester', {
@@ -185,12 +177,11 @@ export function setup(app: express.Application, application: IApplication, callb
     app.get('/developer/rest', application.enforceSecure, function (req: express.Request, res: express.Response) {
         utils.noCache(res);
 
-        //  non authenticated access is allowed
         req['noRedirect'] = true;
 
         api.authenticate(req, req, function () {
 
-            res.render('restOverview',{
+            res.render('restOverview', {
                 settings: utils.config.settings(),
                 application: application,
                 req: req,
@@ -202,12 +193,11 @@ export function setup(app: express.Application, application: IApplication, callb
     app.get('/developer/querylanguage', application.enforceSecure, function (req: express.Request, res: express.Response) {
         utils.noCache(res);
 
-        //  non authenticated access is allowed
         req['noRedirect'] = true;
 
         api.authenticate(req, req, function () {
 
-            res.render('queryLanguage',{
+            res.render('queryLanguage', {
                 settings: utils.config.settings(),
                 application: application,
                 req: req,
@@ -219,12 +209,11 @@ export function setup(app: express.Application, application: IApplication, callb
     app.get('/developer/accesstokens', application.enforceSecure, function (req: express.Request, res: express.Response) {
         utils.noCache(res);
 
-        //  non authenticated access is allowed
         req['noRedirect'] = true;
 
         api.authenticate(req, req, function () {
 
-            res.render('accessTokensHelp',{
+            res.render('accessTokensHelp', {
                 settings: utils.config.settings(),
                 application: application,
                 req: req
@@ -235,12 +224,11 @@ export function setup(app: express.Application, application: IApplication, callb
     app.get('/developer/scoring', application.enforceSecure, function (req: express.Request, res: express.Response) {
         utils.noCache(res);
 
-        //  non authenticated access is allowed
         req['noRedirect'] = true;
 
         api.authenticate(req, req, function () {
 
-            res.render('scoringHelp',{
+            res.render('scoringHelp', {
                 settings: utils.config.settings(),
                 application: application,
                 req: req
@@ -251,12 +239,11 @@ export function setup(app: express.Application, application: IApplication, callb
     app.get('/developer/scoring/node', application.enforceSecure, function (req: express.Request, res: express.Response) {
         utils.noCache(res);
 
-        //  non authenticated access is allowed
         req['noRedirect'] = true;
 
         api.authenticate(req, req, function () {
 
-            res.render('scoringNode',{
+            res.render('scoringNode', {
                 settings: utils.config.settings(),
                 application: application,
                 req: req
@@ -267,12 +254,11 @@ export function setup(app: express.Application, application: IApplication, callb
     app.get('/developer/scoring/dotnet', application.enforceSecure, function (req: express.Request, res: express.Response) {
         utils.noCache(res);
 
-        //  non authenticated access is allowed
         req['noRedirect'] = true;
 
         api.authenticate(req, req, function () {
 
-            res.render('scoringDotnet',{
+            res.render('scoringDotnet', {
                 settings: utils.config.settings(),
                 application: application,
                 req: req
@@ -283,12 +269,11 @@ export function setup(app: express.Application, application: IApplication, callb
     app.get('/developer/scoring/https', application.enforceSecure, function (req: express.Request, res: express.Response) {
         utils.noCache(res);
 
-        //  non authenticated access is allowed
         req['noRedirect'] = true;
 
         api.authenticate(req, req, function () {
 
-            res.render('scoringHttps',{
+            res.render('scoringHttps', {
                 settings: utils.config.settings(),
                 application: application,
                 req: req
@@ -299,12 +284,11 @@ export function setup(app: express.Application, application: IApplication, callb
     app.get('/developer/scoring/curl', application.enforceSecure, function (req: express.Request, res: express.Response) {
         utils.noCache(res);
 
-        //  non authenticated access is allowed
         req['noRedirect'] = true;
 
         api.authenticate(req, req, function () {
 
-            res.render('scoringCurl',{
+            res.render('scoringCurl', {
                 settings: utils.config.settings(),
                 application: application,
                 req: req
@@ -315,12 +299,11 @@ export function setup(app: express.Application, application: IApplication, callb
     app.get('/developer/scoring/test', application.enforceSecure, function (req: express.Request, res: express.Response) {
         utils.noCache(res);
 
-        //  non authenticated access is allowed
         req['noRedirect'] = true;
 
         api.authenticate(req, req, function () {
 
-            let options: any = {
+            const options: any = {
                 accessToken: 'cB9nC1h5OHB19ABdePAyLiJgT0BN1JMm',
                 ip: utils.ip.remoteAddress(req),
                 ua: req.headers['user-agent'],
@@ -331,11 +314,11 @@ export function setup(app: express.Application, application: IApplication, callb
 
             if (process.env['NODE_ENV'] == 'local') {
                 options.apiHost = '127.0.0.5';
-                options.apiPort =8080;
-                options.apiProtocol= 'http';
+                options.apiPort = 8080;
+                options.apiProtocol = 'http';
                 options.ip = '72.23.32.45';
             }
-            gator.score(options, function(err, result) {
+            gator.score(options, function (err, result) {
 
                 if (err)
                     result = err;
@@ -344,7 +327,7 @@ export function setup(app: express.Application, application: IApplication, callb
 
                 delete options.accessToken;
 
-                res.render('scoringTest',{
+                res.render('scoringTest', {
                     settings: utils.config.settings(),
                     application: application,
                     req: req,
@@ -354,7 +337,4 @@ export function setup(app: express.Application, application: IApplication, callb
             });
         });
     });
-
-    callback();
 }
-

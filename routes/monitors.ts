@@ -1,17 +1,16 @@
 import utils = require("gator-utils");
 import lib = require('../lib/index');
 import express = require('express');
-import restify = require('restify');
 import api = require('gator-api');
 import dictionaries = require('../lib/dictionaries');
 import {IApplication} from "../lib";
 
 export let stationList;
 
-let monitorTypes = dictionaries.MonitorTypes;
+const monitorTypes = dictionaries.MonitorTypes;
 
 export function getMonitorParams(req) {
-    let params: any = req.body;
+    const params: any = req.body;
 
     if (params.id)
         params.id = +params.id;
@@ -68,189 +67,214 @@ export function getMonitorParams(req) {
     return params;
 }
 
-export function getMonitors(req, res, application: IApplication) {
+export async function getMonitors(req, res, application: IApplication): Promise<void> {
     utils.noCache(res);
 
-    //  get contacts for form
-    api.REST.client.get('/v1/monitoring/contacts?projectId=' + req['session'].currentProjectId + '&accessToken=' + req['session']['accessToken'], function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
+    let contacts: any = null;
+    let stations: any = null;
+    let monitors: any[] = [];
 
-        if (err) {
-            res.render('message', {
-                settings: utils.config.settings(),
-                application: application,
-                req: req,
-                message: 'An unknown error has occurred.',
-                title: 'Error'
-            });
-        } else {
-            let contacts = result.data;
+    try {
+        const contactsResult = await api.REST.client.get('/v1/monitoring/contacts?projectId=' + req['session'].currentProjectId + '&accessToken=' + req['session']['accessToken']);
+        contacts = contactsResult.data;
+    } catch {
+        res.render('message', {
+            settings: utils.config.settings(),
+            application: application,
+            req: req,
+            message: 'An unknown error has occurred.',
+            title: 'Error'
+        });
+        return;
+    }
 
-            //  get stations
-            api.REST.client.get('/v1/monitoring/stations?projectId=' + req['session'].currentProjectId, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
-                let stations = result.data;
+    try {
+        const stationsResult = await api.REST.client.get('/v1/monitoring/stations?projectId=' + req['session'].currentProjectId);
+        stations = stationsResult.data;
 
-                if (err)
-                    req.flash('error', err.message);
+        //  refresh station list
+        if (stationsResult && stationsResult.data)
+            stationList = stationsResult.data;
+    } catch (err: any) {
+        req.flash('error', err.message);
+    }
 
-                //  refresh station list
-                if (result && result.data)
-                    stationList = result.data;
+    try {
+        const monitorsResult = await api.REST.client.get('/v1/monitoring/monitors?projectId=' + req['session'].currentProjectId + '&accessToken=' + req['session']['accessToken']);
+        monitors = monitorsResult ? monitorsResult.data : [];
+    } catch (err: any) {
+        req.flash('error', err.message);
+    }
 
-                api.REST.client.get('/v1/monitoring/monitors?projectId=' + req['session'].currentProjectId + '&accessToken=' + req['session']['accessToken'], function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
-
-                    if (err)
-                        req.flash('error', err.message);
-
-                    res.render('monitors', {
-                        settings: utils.config.settings(),
-                        application: application,
-                        dev: utils.config.dev(),
-                        req: req,
-                        monitors: result ? result.data : [],
-                        monitorTypes: dictionaries.MonitorTypes,
-                        monitorDescriptions: dictionaries.monitorTypes.codes,
-                        contacts: contacts,
-                        stations: stations
-                    });
-                });
-            });
-        }
+    res.render('monitors', {
+        settings: utils.config.settings(),
+        application: application,
+        dev: utils.config.dev(),
+        req: req,
+        monitors: monitors,
+        monitorTypes: dictionaries.MonitorTypes,
+        monitorDescriptions: dictionaries.monitorTypes.codes,
+        contacts: contacts,
+        stations: stations
     });
 }
 
-export function setup(app: express.Application, application: IApplication, callback) {
+export async function setup(app: express.Application, application: IApplication): Promise<void> {
 
     /*
      Monitors
      */
 
-    try {
-        let statusCheck: any = typeof application.statusCheck == 'function' ? application.statusCheck : lib.statusCheckPlaceholder;
+    const statusCheck: any = typeof application.statusCheck == 'function' ? application.statusCheck : lib.statusCheckPlaceholder;
 
-        app.get('/certificates', application.enforceSecure, api.authenticate, statusCheck, function(req: any, res) {
+    app.get('/certificates', application.enforceSecure, api.authenticate, statusCheck, async (req: any, res) => {
 
-            utils.noCache(res);
-            //  get stations
-            api.REST.client.get('/v1/monitoring/stations?projectId=' + req['session'].currentProjectId, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
-                let stations = result.data;
+        utils.noCache(res);
 
-                //  always refresh the monitors list here, since all edits redir back here
-                api.REST.client.get('/v1/monitoring/monitors?projectId=' + req['session'].currentProjectId + '&accessToken=' + req['session']['accessToken'], function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
+        let stations: any = null;
+        let monitors: any[] = [];
 
-                    if (err)
-                        req.flash('error', err.message);
+        try {
+            const stationsResult = await api.REST.client.get('/v1/monitoring/stations?projectId=' + req['session'].currentProjectId);
+            stations = stationsResult.data;
+        } catch {
+            // stations stays null
+        }
 
-                    res.render('certificates', {
-                        settings: utils.config.settings(),
-                        application: application,
-                        dev: utils.config.dev(),
-                        req: req,
-                        monitors: result.data || [],
-                        stations: stations
-                    });
-                });
-            });
+        try {
+            const monitorsResult = await api.REST.client.get('/v1/monitoring/monitors?projectId=' + req['session'].currentProjectId + '&accessToken=' + req['session']['accessToken']);
+            monitors = monitorsResult.data || [];
+        } catch (err: any) {
+            req.flash('error', err.message);
+        }
+
+        res.render('certificates', {
+            settings: utils.config.settings(),
+            application: application,
+            dev: utils.config.dev(),
+            req: req,
+            monitors: monitors,
+            stations: stations
         });
+    });
 
-        app.get('/monitors', application.enforceSecure, api.authenticate, statusCheck, function(req: any, res) {
-            getMonitors(req, res, application);
+    app.get('/monitors', application.enforceSecure, api.authenticate, statusCheck, function (req: any, res) {
+        getMonitors(req, res, application);
+    });
+
+    app.get('/monitors/types', application.enforceSecure, api.authenticate, statusCheck, function (req: any, res) {
+
+        res.render('monitorTypes', {
+            settings: utils.config.settings(),
+            application: application,
+            dev: utils.config.dev(),
+            req: req
         });
+    });
 
-        app.get('/monitors/types', application.enforceSecure, api.authenticate, statusCheck, function(req: any, res) {
+    app.get('/monitors/data', application.enforceSecure, api.authenticate, async (req: any, res) => {
 
-            res.render('monitorTypes', {
-                settings: utils.config.settings(),
-                application: application,
-                dev: utils.config.dev(),
-                req: req
-            });
-        });
+        utils.noCache(res);
 
-        app.get('/monitors/data', application.enforceSecure, api.authenticate, function(req: any, res) {
+        try {
+            const result = await api.REST.client.get('/v1/monitoring/monitors?projectId=' + req['session'].currentProjectId + '&accessToken=' + req['session']['accessToken']);
+            api.REST.sendConditional(res, null, result ? result.data : null);
+        } catch (err) {
+            api.REST.sendConditional(res, err);
+        }
+    });
 
-            utils.noCache(res);
+    //  get down monitors
+    app.get('/monitors/down/data', application.enforceSecure, api.authenticate, async (req: any, res) => {
 
-            //  always refresh the monitor list here, since all edits redir back here
-            api.REST.client.get('/v1/monitoring/monitors?projectId=' + req['session'].currentProjectId + '&accessToken=' + req['session']['accessToken'], function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
-                api.REST.sendConditional(res, err, result ? result.data : null);
-            });
-        });
+        utils.noCache(res);
 
-        //  get down monitors
-        app.get('/monitors/down/data', application.enforceSecure, api.authenticate, function(req: any, res) {
+        try {
+            const result = await api.REST.client.get('/v1/monitoring/monitors/down?projectId=' + req['session'].currentProjectId + '&accessToken=' + req['session']['accessToken']);
+            api.REST.sendConditional(res, null, result ? result.data : null);
+        } catch (err) {
+            api.REST.sendConditional(res, err);
+        }
+    });
 
-            utils.noCache(res);
+    //  create a new monitor
+    app.post('/monitors', application.enforceSecure, api.authenticate, async (req: express.Request, res: express.Response) => {
+        utils.noCache(res);
 
-            //  always refresh the project list here, since all edits redir back here
-            api.REST.client.get('/v1/monitoring/monitors/down?projectId=' + req['session'].currentProjectId + '&accessToken=' + req['session']['accessToken'], function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
-                api.REST.sendConditional(res, err, result ? result.data : null);
-            });
-        });
+        const params = getMonitorParams(req);
 
-        //  create a new monitor
-        app.post('/monitors', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
-            utils.noCache(res);
+        try {
+            const result = await api.REST.client.post('/v1/monitoring/monitors', params);
+            api.REST.sendConditional(res, null, result);
+        } catch (err) {
+            api.REST.sendConditional(res, err);
+        }
+    });
 
-            let params = getMonitorParams(req);
+    //  update an existing monitor
+    app.put('/monitors', application.enforceSecure, api.authenticate, async (req: express.Request, res: express.Response) => {
+        utils.noCache(res);
 
-            api.REST.client.post('/v1/monitoring/monitors', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
-                api.REST.sendConditional(res, err, result);
-            });
-        });
+        const params = getMonitorParams(req);
 
-        //  update an existing monitor
-        app.put('/monitors', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
-            utils.noCache(res);
+        try {
+            await api.REST.client.put('/v1/monitoring/monitors', params);
+            api.REST.sendConditional(res, null);
+        } catch (err) {
+            api.REST.sendConditional(res, err);
+        }
+    });
 
-            let params = getMonitorParams(req);
+    app.delete('/monitors/:id/', application.enforceSecure, api.authenticate, async (req: express.Request, res: express.Response) => {
 
-            api.REST.client.put('/v1/monitoring/monitors', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
-                api.REST.sendConditional(res, err);
-            });
-        });
+        try {
+            await api.REST.client.del('/v1/monitoring/monitors/' + req.params['id'] + '?accessToken=' + req['session']['accessToken']);
+            api.REST.sendConditional(res, null);
+        } catch (err) {
+            api.REST.sendConditional(res, err);
+        }
+    });
 
-        app.delete('/monitors/:id/', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
+    app.get('/monitors/enable/:id/', application.enforceSecure, api.authenticate, async (req: express.Request, res: express.Response) => {
 
-            api.REST.client.del('/v1/monitoring/monitors/' + req.params['id'] + '?accessToken=' + req['session']['accessToken'], function(err: Error, apiRequest: restify.Request, apiResponse: restify.Response) {
-                api.REST.sendConditional(res, err);
-            });
-        });
+        try {
+            await api.REST.client.get('/v1/monitoring/monitors/enable/' + req.params['id'] + '?accessToken=' + req['session']['accessToken']);
+            api.REST.sendConditional(res, null);
+        } catch (err) {
+            api.REST.sendConditional(res, err);
+        }
+    });
 
-        app.get('/monitors/enable/:id/', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
+    app.get('/monitors/disable/:id/', application.enforceSecure, api.authenticate, async (req: express.Request, res: express.Response) => {
 
-            api.REST.client.get('/v1/monitoring/monitors/enable/' + req.params['id'] + '?accessToken=' + req['session']['accessToken'], function(err: Error, apiRequest: restify.Request, apiResponse: restify.Response) {
-                api.REST.sendConditional(res, err);
-            });
-        });
+        try {
+            await api.REST.client.get('/v1/monitoring/monitors/disable/' + req.params['id'] + '?accessToken=' + req['session']['accessToken']);
+            api.REST.sendConditional(res, null);
+        } catch (err) {
+            api.REST.sendConditional(res, err);
+        }
+    });
 
-        app.get('/monitors/disable/:id/', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
+    app.get('/monitors/test', application.enforceSecure, api.authenticate, async (req: express.Request, res: express.Response) => {
+        utils.noCache(res);
 
-            api.REST.client.get('/v1/monitoring/monitors/disable/' + req.params['id'] + '?accessToken=' + req['session']['accessToken'], function(err: Error, apiRequest: restify.Request, apiResponse: restify.Response) {
-                api.REST.sendConditional(res, err);
-            });
-        });
+        try {
+            const result = await api.REST.client.get('/v1/monitoring/monitors/test/' + req.query['monitorId'] + '?accessToken=' + req['session']['accessToken'] + '&stationId=' + req.query['stationId']);
+            api.REST.sendConditional(res, null, result);
+        } catch (err) {
+            api.REST.sendConditional(res, err);
+        }
+    });
 
-        app.get('/monitors/test', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
-            utils.noCache(res);
+    //  test a url as a website test
+    app.get('/test/website', application.enforceSecure, async (req: express.Request, res: express.Response) => {
+        utils.noCache(res);
 
-            api.REST.client.get('/v1/monitoring/monitors/test/' + req.query['monitorId'] + '?accessToken=' + req['session']['accessToken'] + '&stationId=' + req.query['stationId'], function(err: Error, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
-                api.REST.sendConditional(res, err, result);
-            });
-        });
-
-        //  test a url as a website test
-        app.get('/test/website', application.enforceSecure, function (req: express.Request, res: express.Response) {
-            utils.noCache(res);
-
-            api.REST.client.get('/v1/monitoring/test/website?url=' + encodeURIComponent(req.query['url'] as string) + '&stationId=' + req.query['stationId'], function(err: Error, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
-                api.REST.sendConditional(res, err, result);
-            });
-        });
-
-        callback();
-
-    } catch (err) {
-        console.dir(err);
-        callback(err);
-    }
+        try {
+            const result = await api.REST.client.get('/v1/monitoring/test/website?url=' + encodeURIComponent(req.query['url'] as string) + '&stationId=' + req.query['stationId']);
+            api.REST.sendConditional(res, null, result);
+        } catch (err) {
+            api.REST.sendConditional(res, err);
+        }
+    });
 }

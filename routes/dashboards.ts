@@ -1,6 +1,5 @@
 import utils = require("gator-utils");
 import express = require('express');
-import restify = require('restify');
 import api = require('gator-api');
 import lib = require('../lib/index');
 import {IApplication} from "../lib";
@@ -12,7 +11,11 @@ import {IApplication} from "../lib";
 export function getDashboard(application, req, res) {
     utils.noCache(res);
 
-    let dashboards, name = req.query.name, template = req.query.template, dashboard: any = {}, editable = true;
+    const name = req.query.name;
+    const template = req.query.template;
+    let dashboards;
+    let dashboard: any = {};
+    let editable = true;
 
     //  find the dashboard to display
     if (template) {
@@ -32,16 +35,16 @@ export function getDashboard(application, req, res) {
         //  add static report settings to the pod config
         for (let i = 0; i < dashboard.pods.length; i++) {
 
-            let pod = JSON.parse(dashboard.pods[i]);
+            const pod = JSON.parse(dashboard.pods[i]);
 
             if (pod.state && pod.state.id) {
-                let report: any = application.reports.definitions[application.reports.Types[pod.state.id]];
+                const report: any = application.reports.definitions[application.reports.Types[pod.state.id]];
                 pod.settings = report ? report.settings : {};
 
                 //  fill in initial state from definition where not in pod definition
                 if (report.initialState) {
 
-                    for (let key in report.initialState) {
+                    for (const key in report.initialState) {
 
                         if (report.initialState.hasOwnProperty(key) && !pod.state.hasOwnProperty(key))
                             pod.state[key] = report.initialState[key];
@@ -83,9 +86,7 @@ export function getDashboard(application, req, res) {
         req.flash('error', 'No such dashboard');
     }
 
-    let view = 'dashboard';
-
-    res.render(view, {
+    res.render('dashboard', {
         application: application,
         settings: utils.config.settings(),
         req: req,
@@ -96,76 +97,80 @@ export function getDashboard(application, req, res) {
     });
 }
 
-export function setup(app: express.Application, application: IApplication, callback) {
+export async function setup(app: express.Application, application: IApplication): Promise<void> {
 
-    let statusCheck: any = typeof application.statusCheck == 'function' ? application.statusCheck : lib.statusCheckPlaceholder;
+    const statusCheck: any = typeof application.statusCheck == 'function' ? application.statusCheck : lib.statusCheckPlaceholder;
 
     //  get all dashboards for project and show list of them
-    app.get('/setup/dashboards', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
+    app.get('/setup/dashboards', application.enforceSecure, api.authenticate, async (req: express.Request, res: express.Response) => {
         utils.noCache(res);
 
-        //  always refresh the project list here, since all edits redir back here
-        api.REST.client.get('/v1/projects?accessToken=' + req['session']['accessToken'], function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
+        try {
+            const result = await api.REST.client.get('/v1/projects?accessToken=' + req['session']['accessToken']);
+            req['session']['projects'] = result.data.projects;
+        } catch (err: any) {
+            req.flash('error', err.message);
+        }
 
-            if (err)
-                req.flash('error', err.message);
-            else
-                req['session']['projects'] = result.data.projects;
-
-            res.render('dashboards',{
-                application: application,
-                settings: utils.config.settings(),
-                dashboards: api.reporting.currentDashboards(req),
-                req: req
-            });
+        res.render('dashboards', {
+            application: application,
+            settings: utils.config.settings(),
+            dashboards: api.reporting.currentDashboards(req),
+            req: req
         });
     });
 
     //  update existing data
-    app.put('/setup/dashboards', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
+    app.put('/setup/dashboards', application.enforceSecure, api.authenticate, async (req: express.Request, res: express.Response) => {
 
-        let params = {
+        const params = {
             accessToken: req['session']['accessToken'],
             projectId: req['session']['currentProjectId'],
             dashboards: req.body.dashboards
         };
 
-        api.REST.client.put('/v1/projects/dashboards', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
+        try {
+            await api.REST.client.put('/v1/projects/dashboards', params);
+            api.REST.sendConditional(res, null);
+        } catch (err) {
             api.REST.sendConditional(res, err);
-        });
+        }
     });
 
     //  add a pod to a dashboard
-    app.post('/setup/dashboards/pods', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
+    app.post('/setup/dashboards/pods', application.enforceSecure, api.authenticate, async (req: express.Request, res: express.Response) => {
 
-        let dashboards = api.reporting.currentDashboards(req);
+        const dashboards = api.reporting.currentDashboards(req);
 
-        let pod = {
+        const pod = {
             display: req.body.display,
-            title:  req.body.title,
+            title: req.body.title,
             state: req.body.state
         };
 
         dashboards[req.body.name].pods = dashboards[req.body.name].pods || [];
         dashboards[req.body.name].pods.push(JSON.stringify(pod));   //  need to stringify it or mongo won't store it (the $'s are a problem)
 
-        let params = {
+        const params = {
             accessToken: req['session']['accessToken'],
             projectId: req['session']['currentProjectId'],
             dashboards: dashboards
         };
 
-        api.REST.client.put('/v1/projects/dashboards', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
+        try {
+            await api.REST.client.put('/v1/projects/dashboards', params);
+            api.REST.sendConditional(res, null);
+        } catch (err) {
             api.REST.sendConditional(res, err);
-        });
+        }
     });
 
     //  update the pod display order
-    app.post('/setup/dashboards/order', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
+    app.post('/setup/dashboards/order', application.enforceSecure, api.authenticate, async (req: express.Request, res: express.Response) => {
 
-        let dashboards = api.reporting.currentDashboards(req);
+        const dashboards = api.reporting.currentDashboards(req);
 
-        let newOrder = [];
+        const newOrder = [];
 
         for (let i = 0; i < req.body.order.length; i++) {
 
@@ -175,34 +180,40 @@ export function setup(app: express.Application, application: IApplication, callb
 
         dashboards[req.body.name].pods = newOrder;
 
-        let params = {
+        const params = {
             accessToken: req['session']['accessToken'],
             projectId: req['session']['currentProjectId'],
             dashboards: dashboards
         };
 
-        api.REST.client.put('/v1/projects/dashboards', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
+        try {
+            await api.REST.client.put('/v1/projects/dashboards', params);
+            api.REST.sendConditional(res, null);
+        } catch (err) {
             api.REST.sendConditional(res, err);
-        });
+        }
     });
 
     //  delete a pod
-    app.delete('/setup/dashboards/pods', application.enforceSecure, api.authenticate, function (req: express.Request, res: express.Response) {
+    app.delete('/setup/dashboards/pods', application.enforceSecure, api.authenticate, async (req: express.Request, res: express.Response) => {
 
-        let dashboards = api.reporting.currentDashboards(req);
-        let dashboard = dashboards[req.body.name];
+        const dashboards = api.reporting.currentDashboards(req);
+        const dashboard = dashboards[req.body.name];
 
         dashboard.pods.splice(+req.body.pod, 1);
 
-        let params = {
+        const params = {
             accessToken: req['session']['accessToken'],
             projectId: req['session']['currentProjectId'],
             dashboards: dashboards
         };
 
-        api.REST.client.put('/v1/projects/dashboards', params, function(err, apiRequest: restify.Request, apiResponse: restify.Response, result: any) {
+        try {
+            await api.REST.client.put('/v1/projects/dashboards', params);
+            api.REST.sendConditional(res, null);
+        } catch (err) {
             api.REST.sendConditional(res, err);
-        });
+        }
     });
 
 
@@ -210,7 +221,4 @@ export function setup(app: express.Application, application: IApplication, callb
     app.get('/dashboard', application.enforceSecure, api.authenticate, statusCheck, function (req: express.Request, res: express.Response) {
         getDashboard(application, req, res);
     });
-
-    callback();
 }
-

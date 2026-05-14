@@ -38,8 +38,19 @@ export interface Reports {
     definitions: Array<Report>;
 }
 
+export interface ISettings {
+    appName: string;
+    appId: number;
+    nodeHost: string;
+    nodePort: number;
+    nodeUrl: string;
+    apiUrl: string;
+    apiVersion: string;
+    product: string;
+}
+
 export interface IApplication {
-    settings: api.ISettings;
+    settings: ISettings;
     api: any;
     current: any;
     branding: IBranding;
