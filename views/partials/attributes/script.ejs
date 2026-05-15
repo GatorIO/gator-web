@@ -5,7 +5,7 @@
     var attributes = [], attributeObj = <%- JSON.stringify(attributes[req.query.type] || {}) %>;
 
     for (var key in attributeObj) {
-        if (attributeObj.hasOwnProperty(key))
+        if (Object.hasOwn(attributeObj, key))
             attributes.push({ name: key, description: attributeObj[key].description, dataType: attributeObj[key].dataType });
     }
 

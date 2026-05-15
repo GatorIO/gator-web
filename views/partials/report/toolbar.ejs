@@ -163,7 +163,7 @@
     if (dashboards) {
 
         for (var key in dashboards) {
-            if (dashboards.hasOwnProperty(key)) {
+            if (Object.hasOwn(dashboards, key)) {
 %>
                 <option value="<%- key %>"><%- key %>
 <%

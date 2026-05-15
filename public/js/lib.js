@@ -37,7 +37,7 @@ var Data = {
     //  Call the API methods PUT (to update) or POST (to create) form data.
     submitForm: function (url, data, successFunction) {
         $.ajax({
-            type: data.hasOwnProperty('id') && data.id ? "PUT" : "POST",    //  if the data object has an id, PUT the update
+            type: Object.hasOwn(data, 'id') && data.id ? "PUT" : "POST",    //  if the data object has an id, PUT the update
             url: url,
             data: data,
             success: function (data, status) {
@@ -357,7 +357,7 @@ function JSONForm(data, target) {
 
     for (var prop in data) {
 
-        if (data.hasOwnProperty(prop)) {
+        if (Object.hasOwn(data, prop)) {
             html += '<div class="form-group"><label>' + prop + '</label> <input type="email" placeholder="Enter email" class="form-control"></div>';
         }
     }

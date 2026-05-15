@@ -46,7 +46,7 @@ export function getDashboard(application, req, res) {
 
                     for (const key in report.initialState) {
 
-                        if (report.initialState.hasOwnProperty(key) && !pod.state.hasOwnProperty(key))
+                        if (Object.hasOwn(report.initialState, key) && !Object.hasOwn(pod.state, key))
                             pod.state[key] = report.initialState[key];
                     }
                 }
@@ -61,7 +61,7 @@ export function getDashboard(application, req, res) {
             if (pod.state.title)
                 pod.settings.title = pod.state.title;
 
-            if (pod.state.hasOwnProperty('isLog'))
+            if (Object.hasOwn(pod.state, 'isLog'))
                 pod.settings.isLog = pod.state.isLog;
 
             if (!pod.settings.intervals)

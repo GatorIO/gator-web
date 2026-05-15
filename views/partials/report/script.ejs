@@ -253,7 +253,7 @@
 
             for (var key in customSegments) {
 
-                if (customSegments.hasOwnProperty(key)) {
+                if (Object.hasOwn(customSegments, key)) {
                     var segment = customSegments[key];
                     segmentsSelectize[0].selectize.addOption({ value: key, text: segment.text });
                     segmentsSelectize[0].selectize.addItem(key);

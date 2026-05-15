@@ -31,7 +31,7 @@ export class Dictionary<T extends Item> {
 
         for (var key in this.codes) {
 
-            if (this.codes.hasOwnProperty(key)) {
+            if (Object.hasOwn(this.codes, key)) {
                 list.push(this.codes[key].description);
             }
         }
@@ -47,7 +47,7 @@ export class Dictionary<T extends Item> {
 
         for (var key in this.codes) {
 
-            if (this.codes.hasOwnProperty(key)) {
+            if (Object.hasOwn(this.codes, key)) {
                 list.push(key);
             }
         }

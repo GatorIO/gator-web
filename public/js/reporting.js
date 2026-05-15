@@ -417,7 +417,7 @@ Report.prototype.getTableQuery = function(isDownload) {
         }
     }
 
-    if (!state.isLog && state.hasOwnProperty('group')) {
+    if (!state.isLog && Object.hasOwn(state, 'group')) {
         query.group = state.group;
 
         query['sort'] = {};
@@ -516,7 +516,7 @@ Report.prototype.consolidateDates = function(data) {
 
             for (key in row) {
 
-                if (row.hasOwnProperty(key) && groupBys.indexOf(key) == -1 && columnEnum[key]) {
+                if (Object.hasOwn(row, key) && groupBys.indexOf(key) == -1 && columnEnum[key]) {
                     var newColumn = Utils.clone(columnEnum[key]);
                     newColumn.baseName = newColumn.name;
                     newColumn.name = prefix + '-' + key;
@@ -535,7 +535,7 @@ Report.prototype.consolidateDates = function(data) {
         data.columns = [];
 
         for (key in newColumns) {
-            if (newColumns.hasOwnProperty(key)) {
+            if (Object.hasOwn(newColumns, key)) {
                 data.columns.push(newColumns[key]);
             }
         }
@@ -730,7 +730,7 @@ Report.prototype.renderTimeline = function () {
                             break;
                         case 'drawOver':
                             //  timeline draws over gaps
-                            if (data.rows[i].hasOwnProperty(column.name))
+                            if (Object.hasOwn(data.rows[i], column.name))
                                 dataset.data.push([i, data.rows[i][column.name]]);
                             break;
                         default:    //  zeroFill is default
@@ -858,10 +858,10 @@ Report.prototype.renderTimeline = function () {
                     column = columnEnum[chartMetrics[c].name];
                     var total = column.total, pct = '';
 
-                    if (column.hasOwnProperty('totalBy') && column.totalBy == 'sum') {
+                    if (Object.hasOwn(column, 'totalBy') && column.totalBy == 'sum') {
 
                         if (total) {
-                            if (data.rows[item.datapoint[0]].hasOwnProperty(chartMetrics[c].name))
+                            if (Object.hasOwn(data.rows[item.datapoint[0]], chartMetrics[c].name))
                                 pct = ' (' + (data.rows[item.datapoint[0]][chartMetrics[c].name] / total * 100).toFixed(2) + '%)';
                             else
                                 pct = ' (0.00%)';
@@ -1077,7 +1077,7 @@ Report.prototype.renderSnapshot = function () {
                     if (tooltip != 'No data') {
                         tooltip +=  ': ' + item.series.data[0][1];
 
-                        if (item.series.hasOwnProperty('percent'))
+                        if (Object.hasOwn(item.series, 'percent'))
                             tooltip += ' (' + Math.round(item.series.percent) + '%)';
                     }
                 } else {                        //  bar
@@ -1156,7 +1156,7 @@ Report.prototype.configureColumn = function(newCol, column) {
 
                 if (colNo < reportData.columns.length) {
 
-                    if (reportData.columns[colNo].hasOwnProperty('totalBy') && reportData.columns[colNo].totalBy == 'sum') {
+                    if (Object.hasOwn(reportData.columns[colNo], 'totalBy') && reportData.columns[colNo].totalBy == 'sum') {
                         var total = reportData.columns[colNo].total;
 
                         if (total)
@@ -1320,7 +1320,7 @@ Report.prototype.renderTable = function () {
                 }
             }
 
-            if (col.hasOwnProperty('total')) {
+            if (Object.hasOwn(col, 'total')) {
                 var formattedTotal;
 
                 if (this.formatters && typeof this.formatters[col.name] == 'function')
@@ -1362,7 +1362,7 @@ Report.prototype.renderTable = function () {
 
                 for (key in data.query.sort) {
 
-                    if (data.query.sort.hasOwnProperty(key)) {
+                    if (Object.hasOwn(data.query.sort, key)) {
 
                         if (key == col.name)
                             order.push([e + (this.plotKeysEnabled() ? 1 : 0), data.query.sort[key] == -1 ? "desc" : "asc"]);
@@ -1556,7 +1556,7 @@ Report.prototype.propertyExists = function(row, name) {
     if (name.indexOf('.') > -1)
         return this.dotValue(row, name) ? true : false;
     else
-        return row.hasOwnProperty(name);
+        return Object.hasOwn(row, name);
 
 };
 
@@ -1796,7 +1796,7 @@ var Filter = {
             }
         });
 
-        if (dataObj && dataObj.hasOwnProperty('query')) {
+        if (dataObj && Object.hasOwn(dataObj, 'query')) {
             Filter.setRules(containerId, dataObj.query);
         }
 

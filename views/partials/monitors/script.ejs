@@ -23,9 +23,9 @@
         $.fn.dataTable.ext.errMode = 'none';
 
         var options = {
-            ajax: tableOptions.hasOwnProperty('dataUrl') ? tableOptions.dataUrl : "/monitors/data",
-            paging: tableOptions.hasOwnProperty('paging') ? tableOptions.paging : false,
-            searching: tableOptions.hasOwnProperty('searching') ? tableOptions.searching : true,
+            ajax: Object.hasOwn(tableOptions, 'dataUrl') ? tableOptions.dataUrl : "/monitors/data",
+            paging: Object.hasOwn(tableOptions, 'paging') ? tableOptions.paging : false,
+            searching: Object.hasOwn(tableOptions, 'searching') ? tableOptions.searching : true,
             order: [[ 0, "asc" ], [ 1, "asc" ]],
             columnDefs: [
                 {
@@ -57,7 +57,7 @@
                     render: function (data, type, row) {
                         var status = 'OK';
 
-                        if (!row.hasOwnProperty('lastResult')) {
+                        if (!Object.hasOwn(row, 'lastResult')) {
                             return 'Not yet tested';
                         } else if (row.lastResult.code != 0) {
                             status = row.lastResult.result || (row.lastResult.messages ? row.lastResult.messages[row.lastResult.messages.length - 1].message : 'ERROR');
@@ -86,7 +86,7 @@
             ],
             createdRow: function (row, data, index) {
 
-                if (!data.hasOwnProperty('lastResult')) {
+                if (!Object.hasOwn(data, 'lastResult')) {
                     $(row).addClass('warning');
                 } else if (data.lastResult.code != 0) {
                     $(row).addClass('danger');
@@ -113,7 +113,7 @@
             }
 
             //  pop create form if no data on first load
-            if (!tableOptions.hasOwnProperty('popCreateDialog') && tableOptions.popCreateDialog != false) {
+            if (!Object.hasOwn(tableOptions, 'popCreateDialog') && tableOptions.popCreateDialog != false) {
 
                 if (firstLoad && data.length == 0)
                     create();
@@ -178,16 +178,16 @@
         if ($('#enabled-' + monitor.id).is(':checked')) {
             url = '/monitors/enable/' + monitor.id;
 
-            if (tableOptions.hasOwnProperty('pausedCount'))
+            if (Object.hasOwn(tableOptions, 'pausedCount'))
                 tableOptions.pausedCount--;
         } else {
             url = '/monitors/disable/' + monitor.id;
 
-            if (tableOptions.hasOwnProperty('pausedCount'))
+            if (Object.hasOwn(tableOptions, 'pausedCount'))
                 tableOptions.pausedCount++;
         }
 
-        if (tableOptions.hasOwnProperty('displayPausedCount'))
+        if (Object.hasOwn(tableOptions, 'displayPausedCount'))
             tableOptions.displayPausedCount();
 
         $.ajax({
@@ -551,7 +551,7 @@
         $('#password').val(monitor.data.password);
         $('#recordType').val(monitor.data.recordType);
 
-        if (monitor.data.hasOwnProperty('daysLeft'))
+        if (Object.hasOwn(monitor.data, 'daysLeft'))
             $('#daysLeft').val(monitor.data.daysLeft);
         else
             $('#daysLeft').val(7);
@@ -799,7 +799,7 @@
 
         for (var key in stations) {
 
-            if (stations.hasOwnProperty(key))
+            if (Object.hasOwn(stations, key))
                 selectedStations.addOption({ value: key, text: stations[key].description });
         }
 

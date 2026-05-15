@@ -96,7 +96,7 @@ export async function getReport(application, req, res): Promise<void> {
         if (qsOptions.title)
             definition.settings.title = qsOptions.title;
 
-        if (qsOptions.hasOwnProperty('isLog'))
+        if (Object.hasOwn(qsOptions, 'isLog'))
             definition.settings.isLog = qsOptions.isLog;
 
         if (!definition.settings.intervals)
@@ -130,7 +130,7 @@ export async function getReport(application, req, res): Promise<void> {
 
         for (const key in qsOptions) {
 
-            if (qsOptions.hasOwnProperty(key))
+            if (Object.hasOwn(qsOptions, key))
                 definition.initialState[key] = qsOptions[key];
         }
     }

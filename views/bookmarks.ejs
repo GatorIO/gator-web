@@ -43,7 +43,7 @@
     var bookmarks = [], bookmarkObj = <%- JSON.stringify(bookmarks) %>;
 
     for (var key in bookmarkObj) {
-        if (bookmarkObj.hasOwnProperty(key))
+        if (Object.hasOwn(bookmarkObj, key))
             bookmarks.push({ name: key, query: bookmarkObj[key] });
     }
 

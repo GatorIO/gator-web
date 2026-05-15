@@ -173,7 +173,7 @@ ShopifyAPI.prototype.makeRequest = function(endpoint, method, data, callback, re
                 try {
                     if (body.trim() != '') { //on some requests, Shopify retuns an empty body (several spaces)
                         json = BigJSON.parse(body);
-                        if (json.hasOwnProperty('error_description') || json.hasOwnProperty('error') || json.hasOwnProperty('errors')) {
+                        if (Object.hasOwn(json, 'error_description') || Object.hasOwn(json, 'error') || Object.hasOwn(json, 'errors')) {
                             error = {
                                 error : (json.error_description || json.error || json.errors)
                                 , code  : response.statusCode
@@ -248,7 +248,7 @@ ShopifyAPI.prototype.patch = function(endpoint, data, callback) {
 };
 
 ShopifyAPI.prototype.has_header = function(response, header) {
-    return response.headers.hasOwnProperty(header) ? true : false;
+    return Object.hasOwn(response.headers, header) ? true : false;
 };
 
 module.exports = ShopifyAPI;

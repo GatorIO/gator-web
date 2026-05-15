@@ -41,7 +41,7 @@
                             <span class="input-group-addon"><i class="fa fa-globe" style="font-size:18px;color:#bbb"></i></span>
                             <select id="test-station" class="form-control">
                                 <%  for (var key in stations) {
-                                if (stations.hasOwnProperty(key)) {
+                                if (Object.hasOwn(stations, key)) {
                                 %>
                                 <option value="<%-key%>"><%- stations[key].description %></option>
                                 <%      }  %>

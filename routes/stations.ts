@@ -52,7 +52,7 @@ export async function setup(app: express.Application, application: IApplication)
 
                 for (const key in result.data) {
 
-                    if (result.data.hasOwnProperty(key)) {
+                    if (Object.hasOwn(result.data, key)) {
                         const item = result.data[key];
                         item.id = +key;
 

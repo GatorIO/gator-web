@@ -339,7 +339,7 @@
                     height = Math.round(users.total / usersStep0.total * maxHeight);
 
                 //  show completion rate
-                if (step == steps.length - 1 && users && users.hasOwnProperty('total')) {
+                if (step == steps.length - 1 && users && Object.hasOwn(users, 'total')) {
 
                     if (usersStep0.total > 0)
                         completionRate = Math.round(users.total / usersStep0.total * 1000) / 10;
@@ -355,7 +355,7 @@
 
             html += '<div class="funnel-bar-container">' +
                     '  <div class="funnel-bar-positioner">' +
-                    '    <div id="title-' + step +'" class="funnel-title">' + (users && users.hasOwnProperty('total') ? users.total : '') + '</div>' +
+                    '    <div id="title-' + step +'" class="funnel-title">' + (users && Object.hasOwn(users, 'total') ? users.total : '') + '</div>' +
                     '    <div onclick="setActiveStep(' + step + '); return false" id="bar-' + step +  '" class="funnel-bar" style="height:' + height + 'px">' +
                     '    </div>' +
                     '    <button onclick="setActiveStep(' + step + '); return false" id="button-' + step +  '" type="button" class="btn btn-w-m ' + buttonType + ' btn-sm btn-block funnel-button"><span class="fa ' + buttonIcon + '"></span></button>' +
@@ -365,7 +365,7 @@
             if (step > 0) {
                 var rate = 0;
 
-                if (users && users.hasOwnProperty('total')) {
+                if (users && Object.hasOwn(users, 'total')) {
 
                     if (reports[step - 1] && reports[step - 1].tableData) {
 
