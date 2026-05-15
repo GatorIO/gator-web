@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <% include partials/report/header %>
-    <% include partials/master/header %>
+    <%- include('partials/report/header') %>
+    <%- include('partials/master/header') %>
 </head>
 <body class="white-bg">
 <div id="wrapper">
@@ -19,8 +19,8 @@
     </div>
 </div>
 
-<% include partials/master/footerScripts %>
-<% include partials/report/footerScripts %>
+<%- include('partials/master/footerScripts') %>
+<%- include('partials/report/footerScripts') %>
 
 </body>
 </html>

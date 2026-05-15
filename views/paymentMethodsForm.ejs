@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <% include partials/report/header %>
-    <% include partials/master/header %>
+    <%- include('partials/report/header') %>
+    <%- include('partials/master/header') %>
     <title>Authorize Payment Method</title>
     <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
 </head>
@@ -10,16 +10,16 @@
 
 <div id="wrapper">
 
-    <% include partials/master/leftPanel %>
+    <%- include('partials/master/leftPanel') %>
 
     <div id="page-wrapper" class="white-bg">
 
-        <% include partials/master/topPanel %>
+        <%- include('partials/master/topPanel') %>
 
         <div class="wrapper wrapper-content">
 
             <div class="row white-bg" style="min-height: 900px">
-                <% include partials/master/message %>
+                <%- include('partials/master/message') %>
 
                 <div class="col-lg-6">
                     <h1 id="title">Authorize Payment Method</h1>
@@ -56,12 +56,12 @@
                 </div>
             </div>
         </div>
-        <% include partials/master/footer %>
+        <%- include('partials/master/footer') %>
     </div>
 </div>
 
-<% include partials/master/footerScripts %>
-<% include partials/report/footerScripts %>
+<%- include('partials/master/footerScripts') %>
+<%- include('partials/report/footerScripts') %>
 
 <script type="text/javascript">
     Stripe.setPublishableKey('<%- publishableKey %>');

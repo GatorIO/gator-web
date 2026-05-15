@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <% include partials/master/header %>
+    <%- include('partials/master/header') %>
     <link rel="stylesheet" href="/jvectormap/jquery-jvectormap-2.0.4.css" type="text/css" media="screen"/>
 </head>
 <body class="fixed-navigation">
 
 <div id="wrapper">
 
-    <% include partials/master/leftPanel %>
+    <%- include('partials/master/leftPanel') %>
 
     <div id="page-wrapper" class="white-bg">
 
-        <% include partials/master/topPanel %>
+        <%- include('partials/master/topPanel') %>
 
         <div class="wrapper wrapper-content">
             <div class="row white-bg">
 
-                <% include partials/master/message %>
+                <%- include('partials/master/message') %>
                 <div class="col-md-6">
                     <h1>Person Profile</h1>
                     <br />
@@ -270,10 +270,10 @@
             <% } %>
         </div>
 
-        <% include partials/master/footer %>
+        <%- include('partials/master/footer') %>
     </div>
 </div>
-<% include partials/master/footerScripts %>
+<%- include('partials/master/footerScripts') %>
 <script src="/jvectormap/jquery-jvectormap-2.0.4.min.js"></script>
 <script src="/jvectormap/jquery-jvectormap-world-mill.js"></script>
 <script type="text/javascript" src="/js/yaml.min.js"></script>

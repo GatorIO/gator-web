@@ -1,31 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <% include partials/report/header %>
-    <% include partials/master/header %>
+    <%- include('partials/report/header') %>
+    <%- include('partials/master/header') %>
     <link href="/query-builder/css/query-builder.default.css" rel="stylesheet">
     <link href="/css/funnel.css" rel="stylesheet">
 </head>
 <body class="fixed-navigation">
 <div id="wrapper">
 
-    <% include partials/master/leftPanel %>
+    <%- include('partials/master/leftPanel') %>
 
     <div id="page-wrapper" class="white-bg">
 
-        <% include partials/master/topPanel %>
+        <%- include('partials/master/topPanel') %>
 
         <div id="content" class="wrapper wrapper-content" style="padding-right: 15px;">
 
             <div class="row white-bg">
-                <% include partials/master/message %>
+                <%- include('partials/master/message') %>
 
                 <div class="col-md-12 col-lg-7">
                     <h1 id="page-title"></h1>
                     <h2 class="visible-print">Project: <%- application.api.currentProject(req).name %></h2>
                 </div>
                 <div class="col-md-12 col-lg-5">
-                    <% include partials/log/toolbar %>
+                    <%- include('partials/log/toolbar') %>
                 </div>
             </div>
             <div class="row white-bg hidden-print">
@@ -72,13 +72,13 @@
             </div>
         </div>
 
-        <% include partials/master/footer %>
+        <%- include('partials/master/footer') %>
 
     </div>
 </div>
 
-<% include partials/master/footerScripts %>
-<% include partials/report/footerScripts %>
+<%- include('partials/master/footerScripts') %>
+<%- include('partials/report/footerScripts') %>
 <script src="/query-builder/js/query-builder.standalone.min.js"></script>
 <script src="/js/query-builder.custom.js"></script>
 <script src="/typeahead/typeahead.jquery.min.js"></script>

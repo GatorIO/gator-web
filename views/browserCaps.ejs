@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <% include partials/master/header %>
+    <%- include('partials/master/header') %>
 </head>
 
 <body class="fixed-navigation">
 
 <div id="wrapper">
 
-    <% include partials/master/leftPanel %>
+    <%- include('partials/master/leftPanel') %>
 
     <div id="page-wrapper" class="white-bg">
 
-        <% include partials/master/topPanel %>
+        <%- include('partials/master/topPanel') %>
 
         <div class="wrapper wrapper-content animated fadeInRight">
 
-            <% include partials/master/message %>
+            <%- include('partials/master/message') %>
             <div class="ibox-content forum-container">
                 <div class="forum-item active">
                     <div class="row white-bg" style="min-height:900px">
@@ -32,12 +32,12 @@
                 </div>
             </div>
         </div>
-        <% include partials/master/footer %>
+        <%- include('partials/master/footer') %>
     </div>
 </div>
 
-<% include partials/master/footerScripts %>
-<% include partials/report/footerScripts %>
+<%- include('partials/master/footerScripts') %>
+<%- include('partials/report/footerScripts') %>
 
 <script>
 
