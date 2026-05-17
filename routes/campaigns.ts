@@ -52,7 +52,7 @@ export async function setup(app: express.Application, application: IApplication)
         const params = {
             accessToken: req['session']['accessToken'],
             projectId: project.id,
-            campaignReferrers: req.body.campaignReferrers
+            campaignReferrers: req.body?.campaignReferrers || []
         };
 
         try {
