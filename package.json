@@ -18,7 +18,7 @@
     "url": "https://github.com/GatorIO/gator-web.git"
   },
   "engines": {
-    "node": ">=24.15.0"
+    "node": ">=24.14.0"
   },
   "dependencies": {
     "@types/connect-flash": "^0.0.40",
