@@ -102,7 +102,7 @@ export async function setup(app: express.Application, application: IApplication)
             //  specifying the appId will pull the user's account object into the authObject
             const authObject = await api.login(req.body['username'], req.body['password'], application.settings.appId, remoteAddress);
             api.setSessionAuth(req, authObject);
-            api.REST.sendConditional(res, null, authObject, 'success');
+            api.REST.sendConditional(res, null, { accessToken: authObject.accessToken }, 'success');
         } catch (err) {
             api.REST.sendConditional(res, err, null, 'success');
         }
